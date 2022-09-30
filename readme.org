@@ -1,5 +1,5 @@
 #+title: Python Blog
-#+subtitle: Data Analytics and Research
+#+subtitle: https://github.com/AlbertoV5/python-blog
 #+author: Alberto Valdez
 #+SETUPFILE: ./config/org-theme-alt.config
 #+SETUPFILE: ./config/org-header.config
@@ -8,8 +8,6 @@
 :PROPERTIES:
 :CUSTOM_ID: python-blog
 :END:
-
-This repository holds Python related articles I write to help me learn and be a better programmer.
 
 [[https://albertov5.github.io/python-blog/][Webpage here.]]
 

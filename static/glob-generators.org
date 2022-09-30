@@ -1,5 +1,5 @@
 #+title: Glob generators with Python
-#+subtitle: Find all images in a directory
+#+subtitle: https://github.com/AlbertoV5/python-blog
 #+author: Alberto Valdez
 #+SETUPFILE: ../config/org-theme-alt.config
 #+SETUPFILE: ../config/org-header.config
