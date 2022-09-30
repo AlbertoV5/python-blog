@@ -17,11 +17,11 @@ We are going to start with either one of these patterns.
 '*.[jpJP]*[gG$]'
 ```
 
-Our first pattern means &ldquo;files with extension that start with j/J or p/P, then continue with n/N or p/P, then e/E or g/G and continue with any characters or none&rdquo;. This will effectively match `jpg`, `jpeg`, `png` as well as their versions in caps. However this will also match something like `jpega` and `pngx`.
+Our first pattern means &ldquo;files with extensions that start with j/J or p/P, then continue with n/N or p/P, then e/E or g/G and continue with any characters or none&rdquo;. This will effectively match `jpg`, `jpeg`, `png` as well as their versions in caps. However this will also match something like `jpega` and `pngx`.
 
-However, if we wanted to make sure we don&rsquo;t match unintended files, we can use the second pattern which means &ldquo;files with extension that start with either j/J or p/P and end with g/G&rdquo;. This also matches `jpg`, `jpeg` and `png` and it won&rsquo;t match `jpega` or `pngx`, however it will match patterns like `jag` or `pxg`.
+If we wanted to make sure we don&rsquo;t match unintended files, we can use the second pattern which means &ldquo;files with extensions that start with either j/J or p/P and end with g/G&rdquo;. This also matches `jpg`, `jpeg` and `png` and it won&rsquo;t match `jpega` or `pngx`, however it will match patterns like `jag` or `pxg`.
 
-If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target formats.
+If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target extensions.
 
 ```shell
 '*.[jpJP][npNP]*[gG$]'
@@ -141,7 +141,7 @@ We want to convert all `png` files into `jpeg`, as well as renaming `jpg` to `jp
 
 We will use the `ImageOps`<sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module from `PIL` to simplify the resizing operation and maintain aspect ratio. The process is the following: we open the file as an image, convert it to `'RGB'` if `suffix` is `png`, then resize it with `ImageOps.contain` and save it as `jpeg` using `with_suffix`.
 
-Before writing our main process, we will create a function that will replace the file suffix to `jpeg` as well as changing its parent directory. We&rsquo;ll also create a `root` variable for printing purposes.
+Before writing our main process, we will create a function that will replace the file suffix to `jpeg` as well as change its parent directory. We&rsquo;ll also create a `root` variable for printing purposes.
 
 ```python
 from PIL import ImageOps
@@ -172,7 +172,7 @@ for f in get_imgs('../resources'):
     converted/002.jpeg
     converted/006.jpeg
 
-Note that we are placing the results in a parent directory different to the one we use for searching as we are searching recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
+Note that we are placing the results in a parent directory different to the one we use for searching as we are doing so recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
 
 
 ## Conclusion

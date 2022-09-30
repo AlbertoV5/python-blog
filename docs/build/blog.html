@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 12:40 -->
+<!-- 2022-09-30 Fri 13:31 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Find all images in directory</title>
@@ -62,7 +62,7 @@ Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="
 We are going to start with either one of these patterns.
 </p>
 
-<div class="src-name" id="org00510e9">
+<div class="src-name" id="org986a6a7">
 <p>
 
 </p>
@@ -72,7 +72,7 @@ We are going to start with either one of these patterns.
 <pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
 </pre>
 </div>
-<div class="src-name" id="orgbebe858">
+<div class="src-name" id="org9e950c0">
 <p>
 
 </p>
@@ -84,18 +84,18 @@ We are going to start with either one of these patterns.
 </div>
 
 <p>
-Our first pattern means &ldquo;files with extension that start with j/J or p/P, then continue with n/N or p/P, then e/E or g/G and continue with any characters or none&rdquo;. This will effectively match <code>jpg</code>, <code>jpeg</code>, <code>png</code> as well as their versions in caps. However this will also match something like <code>jpega</code> and <code>pngx</code>.
+Our first pattern means &ldquo;files with extensions that start with j/J or p/P, then continue with n/N or p/P, then e/E or g/G and continue with any characters or none&rdquo;. This will effectively match <code>jpg</code>, <code>jpeg</code>, <code>png</code> as well as their versions in caps. However this will also match something like <code>jpega</code> and <code>pngx</code>.
 </p>
 
 <p>
-However, if we wanted to make sure we don&rsquo;t match unintended files, we can use the second pattern which means &ldquo;files with extension that start with either j/J or p/P and end with g/G&rdquo;. This also matches <code>jpg</code>, <code>jpeg</code> and <code>png</code> and it won&rsquo;t match <code>jpega</code> or <code>pngx</code>, however it will match patterns like <code>jag</code> or <code>pxg</code>.
+If we wanted to make sure we don&rsquo;t match unintended files, we can use the second pattern which means &ldquo;files with extensions that start with either j/J or p/P and end with g/G&rdquo;. This also matches <code>jpg</code>, <code>jpeg</code> and <code>png</code> and it won&rsquo;t match <code>jpega</code> or <code>pngx</code>, however it will match patterns like <code>jag</code> or <code>pxg</code>.
 </p>
 
 <p>
-If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target formats.
+If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target extensions.
 </p>
 
-<div class="src-name" id="orgacaac91">
+<div class="src-name" id="org925373e">
 <p>
 
 </p>
@@ -267,7 +267,7 @@ script-1
 </pre>
 </div>
 
-<pre class="example" id="org0647417">
+<pre class="example" id="org0f0c8aa">
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
 resources/final/007.jpeg
@@ -299,10 +299,10 @@ We will use the <code>ImageOps</code><sup><a id="fnr.5" class="footref" href="#f
 </p>
 
 <p>
-Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as changing its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
+Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as change its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
 </p>
 
-<div class="src-name" id="org2a421c6">
+<div class="src-name" id="org2fad221">
 <p>
 
 </p>
@@ -326,7 +326,7 @@ Before writing our main process, we will create a function that will replace the
 </pre>
 </div>
 
-<pre class="example" id="org256bcd9">
+<pre class="example" id="orgf12c7b3">
 converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
 converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
 converted/007.jpeg
@@ -341,7 +341,7 @@ converted/006.jpeg
 </pre>
 
 <p>
-Note that we are placing the results in a parent directory different to the one we use for searching as we are searching recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
+Note that we are placing the results in a parent directory different to the one we use for searching as we are doing so recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
 </p>
 </div>
 </div>
@@ -361,7 +361,7 @@ The benefit of using <code>glob</code> is that we don&rsquo;t have to use Python
 For example, in the following code, we can replace the first comprehension with the second one.
 </p>
 
-<div class="src-name" id="orga49dfe5">
+<div class="src-name" id="org49d857d">
 <p>
 
 </p>
@@ -408,7 +408,7 @@ We could also do it recursively with <code>rglob</code> or adding <code>**/</cod
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 12:40</p>
+<p class="date">Created: 2022-09-30 Fri 13:31</p>
 </div>
 </body>
 </html>

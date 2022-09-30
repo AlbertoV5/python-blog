@@ -28,11 +28,11 @@ We are going to start with either one of these patterns.
 '*.[jpJP]*[gG$]'
 #+end_src
 
-Our first pattern means "files with extension that start with j/J or p/P, then continue with n/N or p/P, then e/E or g/G and continue with any characters or none". This will effectively match =jpg=, =jpeg=, =png= as well as their versions in caps. However this will also match something like =jpega= and =pngx=.
+Our first pattern means "files with extensions that start with j/J or p/P, then continue with n/N or p/P, then e/E or g/G and continue with any characters or none". This will effectively match =jpg=, =jpeg=, =png= as well as their versions in caps. However this will also match something like =jpega= and =pngx=.
 
-However, if we wanted to make sure we don't match unintended files, we can use the second pattern which means "files with extension that start with either j/J or p/P and end with g/G". This also matches =jpg=, =jpeg= and =png= and it won't match =jpega= or =pngx=, however it will match patterns like =jag= or =pxg=.
+If we wanted to make sure we don't match unintended files, we can use the second pattern which means "files with extensions that start with either j/J or p/P and end with g/G". This also matches =jpg=, =jpeg= and =png= and it won't match =jpega= or =pngx=, however it will match patterns like =jag= or =pxg=.
 
-If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target formats.
+If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target extensions.
 
 #+begin_src shell :eval no
 '*.[jpJP][npNP]*[gG$]'
@@ -147,7 +147,7 @@ We want to convert all =png= files into =jpeg=, as well as renaming =jpg= to =jp
 
 We will use the =ImageOps=[fn:7] module from =PIL= to simplify the resizing operation and maintain aspect ratio. The process is the following: we open the file as an image, convert it to ='RGB'= if =suffix= is =png=, then resize it with =ImageOps.contain= and save it as =jpeg= using =with_suffix=.
 
-Before writing our main process, we will create a function that will replace the file suffix to =jpeg= as well as changing its parent directory. We'll also create a =root= variable for printing purposes.
+Before writing our main process, we will create a function that will replace the file suffix to =jpeg= as well as change its parent directory. We'll also create a =root= variable for printing purposes.
 
 #+begin_src python :eval yes
 from PIL import ImageOps
@@ -181,7 +181,7 @@ converted/002.jpeg
 converted/006.jpeg
 #+end_example
 
-Note that we are placing the results in a parent directory different to the one we use for searching as we are searching recursively by default. This is because we don't want to get our results as inputs the second time we run the script.
+Note that we are placing the results in a parent directory different to the one we use for searching as we are doing so recursively by default. This is because we don't want to get our results as inputs the second time we run the script.
 
 ** Conclusion
 :PROPERTIES:
