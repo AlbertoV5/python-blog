@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 01:33 -->
+<!-- 2022-09-30 Fri 12:21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Globbing</title>
@@ -31,32 +31,88 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#a-globbing-puzzle">1. A Globbing Puzzle</a>
+<li><a href="#globbing-image-files">1. Globbing Image Files</a>
 <ul>
-<li><a href="#selecting-images">1.1. Selecting Images</a></li>
+<li><a href="#choosing-a-pattern">1.1. Choosing a Pattern</a></li>
+<li><a href="#globbing-function">1.2. Globbing function</a></li>
+<li><a href="#processing-the-files">1.3. Processing the files</a></li>
+<li><a href="#conclusion">1.4. Conclusion</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-a-globbing-puzzle" class="outline-2">
-<h2 id="a-globbing-puzzle"><span class="section-number-2">1.</span> A Globbing Puzzle</h2>
-<div class="outline-text-2" id="text-a-globbing-puzzle">
+<div id="outline-container-globbing-image-files" class="outline-2">
+<h2 id="globbing-image-files"><span class="section-number-2">1.</span> Globbing Image Files</h2>
+<div class="outline-text-2" id="text-globbing-image-files">
 <p>
-This is an exercise on using globbing<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> and regular expressions to find data in a directory. We are going to use the <code>pathlib</code><sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python library which provides the <code>Path</code> class which includes various methods that allow us to make a few useful system calls<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup>, one of which is the <code>glob</code><sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> method.
+This is an exercise on using globbing<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the <code>pathlib</code><sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the <code>glob</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> in the <code>Path</code> class.
 </p>
 
 <p>
-Glob patterns are also used in <code>.gitignore</code> files so any pattern that works here probably works there and vice versa.
+Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 </p>
 </div>
 
-<div id="outline-container-selecting-images" class="outline-3">
-<h3 id="selecting-images"><span class="section-number-3">1.1.</span> Selecting Images</h3>
-<div class="outline-text-3" id="text-selecting-images">
+<div id="outline-container-choosing-a-pattern" class="outline-3">
+<h3 id="choosing-a-pattern"><span class="section-number-3">1.1.</span> Choosing a Pattern</h3>
+<div class="outline-text-3" id="text-choosing-a-pattern">
 <p>
-We are using <code>pathlib</code> and the <code>Pillow</code> <sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module for processing images.
+We are going to start with either one of these patterns.
+</p>
+
+<div class="src-name" id="org711f97d">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
+</pre>
+</div>
+<div class="src-name" id="orga072fea">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP]*[gG$]'</span>
+</pre>
+</div>
+
+<p>
+Our first pattern means &ldquo;files with extension that start with j/J or p/P, then continue with n/N or p/P, then e/E or g/G and continue with any characters or none&rdquo;. This will effectively match <code>jpg</code>, <code>jpeg</code>, <code>png</code> as well as their versions in caps. However this will also match something like <code>jpega</code> and <code>pngx</code>.
+</p>
+
+<p>
+However, if we wanted to make sure we don&rsquo;t match unintended files, we can use the second pattern which means &ldquo;files with extension that start with either j/J or p/P and end with g/G&rdquo;. This also matches <code>jpg</code>, <code>jpeg</code> and <code>png</code> and it won&rsquo;t match <code>jpega</code> or <code>pngx</code>, however it will match patterns like <code>jag</code> or <code>pxg</code>.
+</p>
+
+<p>
+If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target formats.
+</p>
+
+<div class="src-name" id="org2d91d26">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP]*[gG$]'</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-globbing-function" class="outline-3">
+<h3 id="globbing-function"><span class="section-number-3">1.2.</span> Globbing function</h3>
+<div class="outline-text-3" id="text-globbing-function">
+<p>
+We are going to use the <code>PIL</code> <sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module for processing images once we get their paths with <code>pathlib</code>.
 </p>
 <div class="src-name" id="org51ac918">
 <p>
@@ -67,16 +123,19 @@ imports
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
 <span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> </span><span style="color: #e0e0e0;">PIL</span><span style="color: #4EC9B0;"> </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Image</span>
-<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> re</span>
 </pre>
 </div>
 
 <p>
-We will define a function and write down what we want it to do before writing its content. We want to get a string and then add a couple of options for different use cases. When iterating over a directory, the results will come up unordered so we may want to sort them alphabetically using <code>sorted</code>. Then we may want to search for all directories within our target directory so we may want a recursive search.
+We will define a function and specify what we want to do before writing the code. In our arguments, we want to receive a string and a few boolean values to modify the behaviour of our function.
 </p>
 
 <p>
-We want to make this a generator in case we are searching for a single result, we don&rsquo;t want to hold all data in memory in case we are opening files so we are going to give control to the main procedure a file at a time so we can exit the program at any given iteration. So we are going to <code>yield</code> the file path.
+When iterating over a directory, the results will come up unordered so we may want to sort them alphabetically using <code>sorted</code>. We also may want to search all directories recursively and we can use <code>rglob</code> for that.
+</p>
+
+<p>
+Finally, we want to make this a generator function so we can stop the procedure at any given iteration, so we are going to <code>yield</code> the file path.
 </p>
 
 <div class="src-name" id="org271a38d">
@@ -105,6 +164,7 @@ func
 <p>
 Let&rsquo;s start checking if the given path exists. We are going to use <code>resolve</code> to convert any relative paths to absolute ones and then <code>is_dir</code> to check that the directory exists.
 </p>
+
 <div class="src-name" id="org009a2ee">
 <p>
 path
@@ -119,7 +179,7 @@ path
 </div>
 
 <p>
-Now we will create variables for <code>glob</code>, which its itself a generator, so we can use <code>sorted</code> and <code>glob</code>&rsquo;s cousin <code>rglob</code> to force recursive globbing. Our <code>glob</code> variable will hold the pattern, <code>frec</code> will return <code>rglob</code> if we want our search to be recursive and <code>fsort</code> will use <code>sorted</code> if we want to sort the results.
+Our <code>pattern</code> variable will hold the glob pattern, <code>frec</code> will use <code>rglob</code> if we want our search to be recursive and <code>fsort</code> will use <code>sorted</code> if we want to sort the results.
 </p>
 
 <div class="src-name" id="orgd741f41">
@@ -129,14 +189,14 @@ glob
 
 </div>
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #9CDCFE;">glob</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">'*.[jpg png]*'</span>
+<pre class="src src-python"><span style="color: #9CDCFE;">pattern</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">'*.[jpJP][npNP]*[gG$]'</span>
 <span style="color: #9CDCFE;">frec</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">p</span>, <span style="color: #9CDCFE;">g</span>: p.<span style="color: #ded492;">rglob</span>(g) <span style="color: #569CD6;">if</span> recursive <span style="color: #569CD6;">else</span> p.<span style="color: #ded492;">glob</span>(g)
 <span style="color: #9CDCFE;">fsort</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">x</span>: <span style="color: #C586C0;">sorted</span>(x) <span style="color: #569CD6;">if</span> sort <span style="color: #569CD6;">else</span> x
 </pre>
 </div>
 
 <p>
-Now we&rsquo;ll use both lambda functions sequentially and <code>yield</code> each file path.
+Finally we&rsquo;ll use both lambda functions and <code>yield</code> each file path.
 </p>
 
 <div class="src-name" id="orgc674a59">
@@ -146,7 +206,7 @@ yield
 
 </div>
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">file</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">fsort</span>(<span style="color: #ded492;">frec</span>(path, glob)):
+<pre class="src src-python"><span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">file</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">fsort</span>(<span style="color: #ded492;">frec</span>(path, pattern)):
     <span style="color: #569CD6;">yield</span> file
 </pre>
 </div>
@@ -154,6 +214,7 @@ yield
 <p>
 This is our function once we put it all together.
 </p>
+
 <div class="src-name" id="org547c88d">
 <p>
 get_imgs
@@ -163,7 +224,6 @@ get_imgs
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
 <span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> </span><span style="color: #e0e0e0;">PIL</span><span style="color: #4EC9B0;"> </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Image</span>
-<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> re</span>
 
 
 <span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #9CDCFE;">directory</span>: <span style="color: #4EC9B0;">str</span>, <span style="color: #9CDCFE;">sort</span>: <span style="color: #4EC9B0;">bool</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>, <span style="color: #9CDCFE;">recursive</span>: <span style="color: #4EC9B0;">bool</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>):
@@ -182,32 +242,140 @@ get_imgs
     <span style="color: #9CDCFE;">path</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(directory).<span style="color: #ded492;">resolve</span>()
     <span style="color: #569CD6;">if</span> <span style="color: #569CD6;">not</span> path.<span style="color: #ded492;">is_dir</span>():
         <span style="color: #569CD6;">raise</span> <span style="color: #4EC9B0;">ValueError</span>(<span style="color: #CE9178;">f"'</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">path</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">' is not a directory."</span>)
-    <span style="color: #9CDCFE;">glob</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">'*.[jpg png]*'</span>
+    <span style="color: #9CDCFE;">pattern</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">'*.[jpJP][npNP]*[gG$]'</span>
     <span style="color: #9CDCFE;">frec</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">p</span>, <span style="color: #9CDCFE;">g</span>: p.<span style="color: #ded492;">rglob</span>(g) <span style="color: #569CD6;">if</span> recursive <span style="color: #569CD6;">else</span> p.<span style="color: #ded492;">glob</span>(g)
     <span style="color: #9CDCFE;">fsort</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">x</span>: <span style="color: #C586C0;">sorted</span>(x) <span style="color: #569CD6;">if</span> sort <span style="color: #569CD6;">else</span> x
-    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">file</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">fsort</span>(<span style="color: #ded492;">frec</span>(path, glob)):
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">file</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">fsort</span>(<span style="color: #ded492;">frec</span>(path, pattern)):
         <span style="color: #569CD6;">yield</span> file
+</pre>
+</div>
 
-<span style="color: #9CDCFE;">root</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">".."</span>).<span style="color: #ded492;">resolve</span>()
+<p>
+Let&rsquo;s use it in a script where we simply print all the file paths relative to the root.
+</p>
+
+<div class="src-name" id="orge172c72">
+<p>
+script-1
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #9CDCFE;">root</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">".."</span>).<span style="color: #ded492;">resolve</span>()
 <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #CE9178;">'../resources'</span>):
     <span style="color: #C586C0;">print</span>(f.<span style="color: #ded492;">relative_to</span>(root))
 </pre>
 </div>
 
-<pre class="example" id="org5dfbbc8">
-resources/img/000.jpeg
-resources/img/001.jpeg
-resources/img/002.jpeg
-resources/img/006.jpeg
-resources/img/007.jpeg
+<pre class="example" id="org1a91e3f">
+resources/data/Screen Shot 2022-09-05 at 12.41.33.png
+resources/data/Screen Shot 2022-09-05 at 12.41.45.png
+resources/final/007.jpeg
+resources/final2/000.jpeg
 resources/img/008.jpeg
 resources/img/009.jpg
-resources/img/Screen Shot 2022-09-05 at 12.41.33.png
-resources/img/Screen Shot 2022-09-05 at 12.41.45.png
 resources/img/Screen Shot 2022-09-29 at 13.20.27.png
 resources/img/Screen Shot 2022-09-29 at 20.07.04.png
 resources/img/Screen Shot 2022-09-29 at 20.08.21.png
+resources/old/002.jpeg
+resources/old/006.jpg
 </pre>
+
+<p>
+Now let&rsquo;s move on to processing the files with <code>PIL</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-processing-the-files" class="outline-3">
+<h3 id="processing-the-files"><span class="section-number-3">1.3.</span> Processing the files</h3>
+<div class="outline-text-3" id="text-processing-the-files">
+<p>
+We want to convert all <code>png</code> files into <code>jpeg</code>, as well as renaming <code>jpg</code> to <code>jpeg</code> and then resizing them all to have a given max width.
+</p>
+
+<p>
+We will use the <code>ImageOps</code><sup><a id="fnr.6" class="footref" href="#fn.6" role="doc-backlink">6</a></sup> module from <code>PIL</code> to simplify the resizing operation and maintain aspect ratio. The process is the following: we open the file as an image, convert it to <code>'RGB'</code> if <code>suffix</code> is <code>png</code>, then resize it with <code>ImageOps.contain</code> and save it as <code>jpeg</code> using <code>with_suffix</code>.
+</p>
+
+<p>
+Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as changing its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
+</p>
+
+<div class="src-name" id="org0382b78">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> </span><span style="color: #e0e0e0;">PIL</span><span style="color: #4EC9B0;"> </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">ImageOps</span>
+
+<span style="color: #9CDCFE;">max_width</span> <span style="color: #e0e0e0;">=</span> <span style="color: #BBCCAA;">1280</span>
+<span style="color: #9CDCFE;">with_path</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">f</span>: <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">'../converted'</span>).<span style="color: #ded492;">resolve</span>() <span style="color: #e0e0e0;">/</span> f.<span style="color: #ded492;">with_suffix</span>(<span style="color: #CE9178;">'.jpeg'</span>).<span style="color: #9CDCFE;">name</span>
+<span style="color: #9CDCFE;">root</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">".."</span>).<span style="color: #ded492;">resolve</span>()
+<span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #CE9178;">'../resources'</span>):
+    <span style="color: #569CD6;">with</span> <span style="color: #4EC9B0;">Image</span>.<span style="color: #ded492;">open</span>(f) <span style="color: #569CD6;">as</span> img:
+        <span style="color: #569CD6;">if</span> f.<span style="color: #9CDCFE;">suffix</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">'.png'</span>:
+            <span style="color: #9CDCFE;">img</span> <span style="color: #e0e0e0;">=</span> img.<span style="color: #ded492;">convert</span>(<span style="color: #CE9178;">'RGB'</span>)
+        <span style="color: #569CD6;">if</span> img.<span style="color: #9CDCFE;">size</span>[<span style="color: #BBCCAA;">0</span>] <span style="color: #e0e0e0;">&gt;</span> max_width:
+            <span style="color: #9CDCFE;">img</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">ImageOps</span>.<span style="color: #ded492;">contain</span>(img, (max_width, max_width))
+        <span style="color: #9CDCFE;">fout</span> <span style="color: #e0e0e0;">=</span> <span style="color: #ded492;">with_path</span>(f)
+        img.<span style="color: #ded492;">save</span>(fout, <span style="color: #9CDCFE;">quality</span><span style="color: #e0e0e0;">=</span><span style="color: #BBCCAA;">80</span>)
+        <span style="color: #C586C0;">print</span>(fout.<span style="color: #ded492;">relative_to</span>(root))
+</pre>
+</div>
+
+<pre class="example" id="orgdf4c599">
+converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
+converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
+converted/007.jpeg
+converted/000.jpeg
+converted/008.jpeg
+converted/009.jpeg
+converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
+converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
+converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
+converted/002.jpeg
+converted/006.jpeg
+</pre>
+
+<p>
+Note that we are placing the results in a parent directory different to the one we use for globbing as we are searching recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
+</p>
+</div>
+</div>
+
+<div id="outline-container-conclusion" class="outline-3">
+<h3 id="conclusion"><span class="section-number-3">1.4.</span> Conclusion</h3>
+<div class="outline-text-3" id="text-conclusion">
+<p>
+Generators in Python are one of the most useful tools for processing data. If we want to automate a few tasks without using bash scripts (for whatever reason), we can start with a globbing function that yields the file types we want in an unorganized directory.
+</p>
+
+<p>
+The benefit of using globbing is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily.
+</p>
+
+<p>
+For example, in the following code, we can replace the first comprehension with the second one. We also get to do it recursively with <code>rglob</code> or adding <code>**/</code> to the beginning of our pattern. The downside is matching unintended files if our pattern is not good enough for the job.
+</p>
+
+<div class="src-name" id="org43c7405">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python">[f <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> path.<span style="color: #ded492;">iterdir</span>() <span style="color: #569CD6;">if</span> f.<span style="color: #9CDCFE;">suffix</span> <span style="color: #569CD6;">in</span> (<span style="color: #CE9178;">'.jpeg'</span>, <span style="color: #CE9178;">'.jpg'</span>, <span style="color: #CE9178;">'.png'</span>, <span style="color: #CE9178;">'JPG'</span>, <span style="color: #CE9178;">'JPEG'</span>, <span style="color: #CE9178;">'PNG'</span>)]
+[f <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> path.<span style="color: #ded492;">glob</span>(<span style="color: #CE9178;">'*.[jpJP][npNP]*[gG$]'</span>)]
+</pre>
+</div>
+
+<p>
+By the way, my .gitignore file for this project also includes the patten <code>**/*.[jpJP][npNP]*[gG$]</code>.
+</p>
 </div>
 </div>
 </div>
@@ -224,15 +392,19 @@ resources/img/Screen Shot 2022-09-29 at 20.08.21.png
 </p></div></div>
 
 <div class="footdef"><sup><a id="fn.3" class="footnum" href="#fnr.3" role="doc-backlink">3</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
-<a href="https://en.wikipedia.org/wiki/System_call">https://en.wikipedia.org/wiki/System_call</a>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob">https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob</a>
 </p></div></div>
 
 <div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4" role="doc-backlink">4</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
-<a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob">https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob</a>
+<a href="https://git-scm.com/docs/gitignore">https://git-scm.com/docs/gitignore</a>
 </p></div></div>
 
 <div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5" role="doc-backlink">5</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
 <a href="https://pillow.readthedocs.io/en/stable/">https://pillow.readthedocs.io/en/stable/</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.6" class="footnum" href="#fnr.6" role="doc-backlink">6</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.contain">https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.contain</a>
 </p></div></div>
 
 
@@ -240,7 +412,7 @@ resources/img/Screen Shot 2022-09-29 at 20.08.21.png
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 01:33</p>
+<p class="date">Created: 2022-09-30 Fri 12:21</p>
 </div>
 </body>
 </html>
