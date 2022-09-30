@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 14:55 -->
+<!-- 2022-09-30 Fri 15:04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Glob generators with Python</title>
@@ -47,7 +47,7 @@
 <h2 id="glob-generators-with-python"><span class="section-number-2">1.</span> Glob generators with Python</h2>
 <div class="outline-text-2" id="text-glob-generators-with-python">
 
-<div id="orgb4ba1e7" class="figure">
+<div id="org4d077a1" class="figure">
 <p><img src="../resources/susan-q-yin-2JIvboGLeho-unsplash.jpg" alt="susan-q-yin-2JIvboGLeho-unsplash.jpg" width="800px" />
 </p>
 </div>
@@ -60,7 +60,7 @@ This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" hre
 Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 </p>
 
-<div class="src-name" id="orgefbca79">
+<div class="src-name" id="orgc95298d">
 <p>
 
 </p>
@@ -71,7 +71,7 @@ Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="
 </pre>
 </div>
 
-<pre class="example" id="orgae1f84a">
+<pre class="example" id="org96f876a">
 Python 3.10.7
 </pre>
 </div>
@@ -83,7 +83,7 @@ Python 3.10.7
 We are going to start with either one of these patterns.
 </p>
 
-<div class="src-name" id="org28c8349">
+<div class="src-name" id="org7a6fad2">
 <p>
 
 </p>
@@ -93,7 +93,7 @@ We are going to start with either one of these patterns.
 <pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
 </pre>
 </div>
-<div class="src-name" id="orga8899cb">
+<div class="src-name" id="org1c983d2">
 <p>
 
 </p>
@@ -116,7 +116,7 @@ If we wanted to make sure we don&rsquo;t match unintended files, we can use the 
 If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target extensions.
 </p>
 
-<div class="src-name" id="org9f12403">
+<div class="src-name" id="orgdb2110a">
 <p>
 
 </p>
@@ -281,15 +281,16 @@ script-1
 
 </div>
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #9CDCFE;">root</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">".."</span>).<span style="color: #ded492;">resolve</span>()
-<span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #CE9178;">'../resources'</span>):
+<pre class="src src-python"><span style="color: #9CDCFE;">root</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">"."</span>).<span style="color: #ded492;">resolve</span>()
+<span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #CE9178;">'./resources'</span>):
     <span style="color: #C586C0;">print</span>(f.<span style="color: #ded492;">relative_to</span>(root))
 </pre>
 </div>
 
-<pre class="example" id="orgead86ed">
+<pre class="example" id="org0decbc3">
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
+resources/eli-francis-_M-DrbiNFa4-unsplash.jpg
 resources/final/007.jpeg
 resources/final2/000.jpeg
 resources/img/008.jpeg
@@ -299,6 +300,7 @@ resources/img/Screen Shot 2022-09-29 at 20.07.04.png
 resources/img/Screen Shot 2022-09-29 at 20.08.21.png
 resources/old/002.jpeg
 resources/old/006.jpg
+resources/susan-q-yin-2JIvboGLeho-unsplash.jpg
 </pre>
 
 <p>
@@ -318,7 +320,7 @@ We want to convert all <code>png</code> files into <code>jpeg</code>, as well as
 Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as change its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
 </p>
 
-<div class="src-name" id="orgeffc730">
+<div class="src-name" id="org5dd90af">
 <p>
 
 </p>
@@ -329,9 +331,9 @@ Before writing our main process, we will create a function that will replace the
 
 <span style="color: #569CD6;">if</span> <span style="color: #9CDCFE;">__name__</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"__main__"</span>:
     <span style="color: #9CDCFE;">max_width</span> <span style="color: #e0e0e0;">=</span> <span style="color: #BBCCAA;">1280</span>
-    <span style="color: #9CDCFE;">with_path</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">f</span>: <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">'../converted'</span>).<span style="color: #ded492;">resolve</span>() <span style="color: #e0e0e0;">/</span> f.<span style="color: #ded492;">with_suffix</span>(<span style="color: #CE9178;">'.jpeg'</span>).<span style="color: #9CDCFE;">name</span>
+    <span style="color: #9CDCFE;">with_path</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">f</span>: <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">'./converted'</span>).<span style="color: #ded492;">resolve</span>() <span style="color: #e0e0e0;">/</span> f.<span style="color: #ded492;">with_suffix</span>(<span style="color: #CE9178;">'.jpeg'</span>).<span style="color: #9CDCFE;">name</span>
     <span style="color: #9CDCFE;">root</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">".."</span>).<span style="color: #ded492;">resolve</span>()
-    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #CE9178;">'../resources'</span>):
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #CE9178;">'./resources'</span>):
         <span style="color: #569CD6;">with</span> <span style="color: #4EC9B0;">Image</span>.<span style="color: #ded492;">open</span>(f) <span style="color: #569CD6;">as</span> img:
             <span style="color: #569CD6;">if</span> f.<span style="color: #9CDCFE;">suffix</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">'.png'</span>:
                 <span style="color: #9CDCFE;">img</span> <span style="color: #e0e0e0;">=</span> img.<span style="color: #ded492;">convert</span>(<span style="color: #CE9178;">'RGB'</span>)
@@ -343,8 +345,20 @@ Before writing our main process, we will create a function that will replace the
 </pre>
 </div>
 
-<pre class="example" id="org118dc6d">
-
+<pre class="example" id="orgd99763a">
+python-blog/converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
+python-blog/converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
+python-blog/converted/eli-francis-_M-DrbiNFa4-unsplash.jpeg
+python-blog/converted/007.jpeg
+python-blog/converted/000.jpeg
+python-blog/converted/008.jpeg
+python-blog/converted/009.jpeg
+python-blog/converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
+python-blog/converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
+python-blog/converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
+python-blog/converted/002.jpeg
+python-blog/converted/006.jpeg
+python-blog/converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
 </pre>
 
 <p>
@@ -364,7 +378,7 @@ Generators in Python are one of the most useful tools for processing data. If we
 The benefit of using <code>glob</code> is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily. For example, in the following code, we can replace the first comprehension with the second one.
 </p>
 
-<div class="src-name" id="org20f8e51">
+<div class="src-name" id="org04f0c2d">
 <p>
 
 </p>
@@ -407,7 +421,7 @@ We could also do it recursively with <code>rglob</code> or adding <code>**/</cod
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 14:55</p>
+<p class="date">Created: 2022-09-30 Fri 15:04</p>
 </div>
 </body>
 </html>

@@ -121,13 +121,14 @@ def get_imgs(directory: str, sort = True, recursive = True) -> Generator[Path, N
 Let&rsquo;s use it in a script where we simply print all the file paths relative to the root.
 
 ```python
-root = Path("..").resolve()
-for f in get_imgs('../resources'):
+root = Path(".").resolve()
+for f in get_imgs('./resources'):
     print(f.relative_to(root))
 ```
 
     resources/data/Screen Shot 2022-09-05 at 12.41.33.png
     resources/data/Screen Shot 2022-09-05 at 12.41.45.png
+    resources/eli-francis-_M-DrbiNFa4-unsplash.jpg
     resources/final/007.jpeg
     resources/final2/000.jpeg
     resources/img/008.jpeg
@@ -137,6 +138,7 @@ for f in get_imgs('../resources'):
     resources/img/Screen Shot 2022-09-29 at 20.08.21.png
     resources/old/002.jpeg
     resources/old/006.jpg
+    resources/susan-q-yin-2JIvboGLeho-unsplash.jpg
 
 Now let&rsquo;s move on to processing the files with `PIL`.
 
@@ -152,9 +154,9 @@ Before writing our main process, we will create a function that will replace the
 
 if __name__ == "__main__":
     max_width = 1280
-    with_path = lambda f: Path('../converted').resolve() / f.with_suffix('.jpeg').name
+    with_path = lambda f: Path('./converted').resolve() / f.with_suffix('.jpeg').name
     root = Path("..").resolve()
-    for f in get_imgs('../resources'):
+    for f in get_imgs('./resources'):
         with Image.open(f) as img:
             if f.suffix == '.png':
                 img = img.convert('RGB')
@@ -165,7 +167,19 @@ if __name__ == "__main__":
             print(fout.relative_to(root))
 ```
 
-    
+    python-blog/converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
+    python-blog/converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
+    python-blog/converted/eli-francis-_M-DrbiNFa4-unsplash.jpeg
+    python-blog/converted/007.jpeg
+    python-blog/converted/000.jpeg
+    python-blog/converted/008.jpeg
+    python-blog/converted/009.jpeg
+    python-blog/converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
+    python-blog/converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
+    python-blog/converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
+    python-blog/converted/002.jpeg
+    python-blog/converted/006.jpeg
+    python-blog/converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
 
 Note that we are placing the results in a parent directory different to the one we use for searching as we are doing so recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
 

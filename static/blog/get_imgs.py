@@ -26,9 +26,9 @@ def get_imgs(directory: str, sort = True, recursive = True) -> Generator[Path, N
 
 if __name__ == "__main__":
     max_width = 1280
-    with_path = lambda f: Path('../converted').resolve() / f.with_suffix('.jpeg').name
+    with_path = lambda f: Path('./converted').resolve() / f.with_suffix('.jpeg').name
     root = Path("..").resolve()
-    for f in get_imgs('../resources'):
+    for f in get_imgs('./resources'):
         with Image.open(f) as img:
             if f.suffix == '.png':
                 img = img.convert('RGB')

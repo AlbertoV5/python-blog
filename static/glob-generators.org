@@ -128,15 +128,16 @@ Let's use it in a script where we simply print all the file paths relative to th
 
 #+NAME: script-1
 #+begin_src python :eval yes
-root = Path("..").resolve()
-for f in get_imgs('../resources'):
+root = Path(".").resolve()
+for f in get_imgs('./resources'):
     print(f.relative_to(root))
 #+end_src
 
-#+RESULTS[c02a95fff873af0360fe4dee60e0d973ecafb33f]: script-1
+#+RESULTS[c5ff450b4d15e7c4b0c1c0e36843edc46e328843]: script-1
 #+begin_example
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
+resources/eli-francis-_M-DrbiNFa4-unsplash.jpg
 resources/final/007.jpeg
 resources/final2/000.jpeg
 resources/img/008.jpeg
@@ -146,6 +147,7 @@ resources/img/Screen Shot 2022-09-29 at 20.07.04.png
 resources/img/Screen Shot 2022-09-29 at 20.08.21.png
 resources/old/002.jpeg
 resources/old/006.jpg
+resources/susan-q-yin-2JIvboGLeho-unsplash.jpg
 #+end_example
 
 Now let's move on to processing the files with =PIL=.
@@ -164,9 +166,9 @@ Before writing our main process, we will create a function that will replace the
 
 if __name__ == "__main__":
     max_width = 1280
-    with_path = lambda f: Path('../converted').resolve() / f.with_suffix('.jpeg').name
+    with_path = lambda f: Path('./converted').resolve() / f.with_suffix('.jpeg').name
     root = Path("..").resolve()
-    for f in get_imgs('../resources'):
+    for f in get_imgs('./resources'):
         with Image.open(f) as img:
             if f.suffix == '.png':
                 img = img.convert('RGB')
@@ -177,19 +179,21 @@ if __name__ == "__main__":
             print(fout.relative_to(root))
 #+end_src
 
-#+RESULTS[024ca6245fc6744e2a1019114470bf470114efdf]:
+#+RESULTS[46b47fb3bd53645dd672cfffa070356d9ecabad5]:
 #+begin_example
-converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
-converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
-converted/007.jpeg
-converted/000.jpeg
-converted/008.jpeg
-converted/009.jpeg
-converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
-converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
-converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
-converted/002.jpeg
-converted/006.jpeg
+python-blog/converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
+python-blog/converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
+python-blog/converted/eli-francis-_M-DrbiNFa4-unsplash.jpeg
+python-blog/converted/007.jpeg
+python-blog/converted/000.jpeg
+python-blog/converted/008.jpeg
+python-blog/converted/009.jpeg
+python-blog/converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
+python-blog/converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
+python-blog/converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
+python-blog/converted/002.jpeg
+python-blog/converted/006.jpeg
+python-blog/converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
 #+end_example
 
 Note that we are placing the results in a parent directory different to the one we use for searching as we are doing so recursively by default. This is because we don't want to get our results as inputs the second time we run the script.
