@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 14:10 -->
+<!-- 2022-09-30 Fri 14:40 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Glob generators with Python</title>
@@ -47,7 +47,7 @@
 <h2 id="glob-generators-with-python"><span class="section-number-2">1.</span> Glob generators with Python</h2>
 <div class="outline-text-2" id="text-glob-generators-with-python">
 
-<div id="org5ca60c8" class="figure">
+<div id="orgf60112c" class="figure">
 <p><img src="../resources/susan-q-yin-2JIvboGLeho-unsplash.jpg" alt="susan-q-yin-2JIvboGLeho-unsplash.jpg" width="800px" />
 </p>
 </div>
@@ -60,7 +60,7 @@ This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" hre
 Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 </p>
 
-<div class="src-name" id="org3ab7fa0">
+<div class="src-name" id="org9ea454b">
 <p>
 
 </p>
@@ -71,7 +71,7 @@ Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="
 </pre>
 </div>
 
-<pre class="example" id="org11dc05e">
+<pre class="example" id="orgc6e7f80">
 Python 3.10.7
 </pre>
 </div>
@@ -83,7 +83,7 @@ Python 3.10.7
 We are going to start with either one of these patterns.
 </p>
 
-<div class="src-name" id="org0f374a9">
+<div class="src-name" id="org8aabb23">
 <p>
 
 </p>
@@ -93,7 +93,7 @@ We are going to start with either one of these patterns.
 <pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
 </pre>
 </div>
-<div class="src-name" id="orgeb2455e">
+<div class="src-name" id="orgd2cead6">
 <p>
 
 </p>
@@ -116,7 +116,7 @@ If we wanted to make sure we don&rsquo;t match unintended files, we can use the 
 If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target extensions.
 </p>
 
-<div class="src-name" id="orgab47049">
+<div class="src-name" id="org24f885d">
 <p>
 
 </p>
@@ -136,7 +136,7 @@ If we combine both patterns we can get a more strict match that makes sure the f
 We are going to use the <code>PIL</code> <sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> module for processing images once we get their paths with <code>pathlib</code>. We are also going to include the <code>Generator</code> class for duck typing our generator function.
 </p>
 
-<div class="src-name" id="orgbdadc0d">
+<div class="src-name" id="org694ebac">
 <p>
 imports
 </p>
@@ -161,7 +161,7 @@ When iterating over a directory, the results will come up unordered so we may wa
 Finally, we want to make this a generator function so we can stop the procedure at any given iteration, so we are going to <code>yield</code> the file path.
 </p>
 
-<div class="src-name" id="org01d8dad">
+<div class="src-name" id="org8bcb14b">
 <p>
 func
 </p>
@@ -186,7 +186,7 @@ func
 Let&rsquo;s start checking if the given path exists. We are going to use <code>resolve</code> to convert any relative paths to absolute ones and then <code>is_dir</code> to check that the directory exists.
 </p>
 
-<div class="src-name" id="org5f413c5">
+<div class="src-name" id="orgee30324">
 <p>
 path
 </p>
@@ -203,7 +203,7 @@ path
 Our <code>pattern</code> variable will hold the glob pattern, <code>frec</code> will use <code>rglob</code> if we want our search to be recursive and <code>fsort</code> will use <code>sorted</code> if we want to sort the results.
 </p>
 
-<div class="src-name" id="org7d7f37f">
+<div class="src-name" id="orgc0d8b08">
 <p>
 glob
 </p>
@@ -220,7 +220,7 @@ glob
 Finally we&rsquo;ll use both lambda functions and <code>yield</code> each file path.
 </p>
 
-<div class="src-name" id="orgf81572c">
+<div class="src-name" id="org60baef3">
 <p>
 yield
 </p>
@@ -236,7 +236,7 @@ yield
 This is our function once we put it all together.
 </p>
 
-<div class="src-name" id="orge0f132c">
+<div class="src-name" id="org39cb759">
 <p>
 get_imgs
 </p>
@@ -274,7 +274,7 @@ get_imgs
 Let&rsquo;s use it in a script where we simply print all the file paths relative to the root.
 </p>
 
-<div class="src-name" id="orgbf52042">
+<div class="src-name" id="orgc56afe0">
 <p>
 script-1
 </p>
@@ -287,7 +287,7 @@ script-1
 </pre>
 </div>
 
-<pre class="example" id="orgb58c9a6">
+<pre class="example" id="org2d4f048">
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
 resources/final/007.jpeg
@@ -318,7 +318,7 @@ We want to convert all <code>png</code> files into <code>jpeg</code>, as well as
 Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as change its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
 </p>
 
-<div class="src-name" id="org64a874a">
+<div class="src-name" id="orgdddf3f7">
 <p>
 
 </p>
@@ -343,19 +343,8 @@ Before writing our main process, we will create a function that will replace the
 </pre>
 </div>
 
-<pre class="example" id="orgc786cde">
-converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
-converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
-converted/007.jpeg
-converted/000.jpeg
-converted/008.jpeg
-converted/009.jpeg
-converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
-converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
-converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
-converted/002.jpeg
-converted/006.jpeg
-converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
+<pre class="example" id="org327809e">
+
 </pre>
 
 <p>
@@ -375,7 +364,7 @@ Generators in Python are one of the most useful tools for processing data. If we
 The benefit of using <code>glob</code> is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily. For example, in the following code, we can replace the first comprehension with the second one.
 </p>
 
-<div class="src-name" id="orgdeb9c7f">
+<div class="src-name" id="orgb21abd7">
 <p>
 
 </p>
@@ -418,7 +407,7 @@ We could also do it recursively with <code>rglob</code> or adding <code>**/</cod
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 14:10</p>
+<p class="date">Created: 2022-09-30 Fri 14:40</p>
 </div>
 </body>
 </html>

@@ -165,18 +165,7 @@ if __name__ == "__main__":
             print(fout.relative_to(root))
 ```
 
-    converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
-    converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
-    converted/007.jpeg
-    converted/000.jpeg
-    converted/008.jpeg
-    converted/009.jpeg
-    converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
-    converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
-    converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
-    converted/002.jpeg
-    converted/006.jpeg
-    converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
+    
 
 Note that we are placing the results in a parent directory different to the one we use for searching as we are doing so recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
 

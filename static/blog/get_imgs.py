@@ -1,4 +1,4 @@
-# [[file:../blog.org::#processing-the-files][Processing the files:1]]
+# [[file:../glob-generators.org::#processing-the-files][Processing the files:1]]
 from pathlib import Path
 from PIL import Image, ImageOps
 from typing import Generator
