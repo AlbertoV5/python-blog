@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 12:31 -->
+<!-- 2022-09-30 Fri 12:32 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Find all images in directory</title>
@@ -47,11 +47,11 @@
 <h2 id="find-all-images-in-directory"><span class="section-number-2">1.</span> Find all images in directory</h2>
 <div class="outline-text-2" id="text-find-all-images-in-directory">
 <p>
-This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the <code>pathlib</code><sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the <code>glob</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> in the <code>Path</code> class.
+This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the <code>pathlib</code><sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the <code>glob</code> method in the <code>Path</code> class.
 </p>
 
 <p>
-Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
+Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 </p>
 </div>
 
@@ -62,7 +62,7 @@ Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.4" class="
 We are going to start with either one of these patterns.
 </p>
 
-<div class="src-name" id="orge0dcb7e">
+<div class="src-name" id="orgd77e73c">
 <p>
 
 </p>
@@ -72,7 +72,7 @@ We are going to start with either one of these patterns.
 <pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
 </pre>
 </div>
-<div class="src-name" id="org47f20a9">
+<div class="src-name" id="org6f39843">
 <p>
 
 </p>
@@ -95,7 +95,7 @@ However, if we wanted to make sure we don&rsquo;t match unintended files, we can
 If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target formats.
 </p>
 
-<div class="src-name" id="orgfb46f1c">
+<div class="src-name" id="org433a6e5">
 <p>
 
 </p>
@@ -112,7 +112,7 @@ If we combine both patterns we can get a more strict match that makes sure the f
 <h3 id="glob-function"><span class="section-number-3">1.2.</span> Glob function</h3>
 <div class="outline-text-3" id="text-glob-function">
 <p>
-We are going to use the <code>PIL</code> <sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module for processing images once we get their paths with <code>pathlib</code>.
+We are going to use the <code>PIL</code> <sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> module for processing images once we get their paths with <code>pathlib</code>.
 </p>
 <div class="src-name" id="orgbdadc0d">
 <p>
@@ -267,7 +267,7 @@ script-1
 </pre>
 </div>
 
-<pre class="example" id="orgc7e76f0">
+<pre class="example" id="org5fbef81">
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
 resources/final/007.jpeg
@@ -295,14 +295,14 @@ We want to convert all <code>png</code> files into <code>jpeg</code>, as well as
 </p>
 
 <p>
-We will use the <code>ImageOps</code><sup><a id="fnr.6" class="footref" href="#fn.6" role="doc-backlink">6</a></sup> module from <code>PIL</code> to simplify the resizing operation and maintain aspect ratio. The process is the following: we open the file as an image, convert it to <code>'RGB'</code> if <code>suffix</code> is <code>png</code>, then resize it with <code>ImageOps.contain</code> and save it as <code>jpeg</code> using <code>with_suffix</code>.
+We will use the <code>ImageOps</code><sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module from <code>PIL</code> to simplify the resizing operation and maintain aspect ratio. The process is the following: we open the file as an image, convert it to <code>'RGB'</code> if <code>suffix</code> is <code>png</code>, then resize it with <code>ImageOps.contain</code> and save it as <code>jpeg</code> using <code>with_suffix</code>.
 </p>
 
 <p>
 Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as changing its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
 </p>
 
-<div class="src-name" id="org5287784">
+<div class="src-name" id="org6a1c0c6">
 <p>
 
 </p>
@@ -326,7 +326,7 @@ Before writing our main process, we will create a function that will replace the
 </pre>
 </div>
 
-<pre class="example" id="org251825c">
+<pre class="example" id="orgff2089b">
 converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
 converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
 converted/007.jpeg
@@ -361,7 +361,7 @@ The benefit of using <code>glob</code> is that we don&rsquo;t have to use Python
 For example, in the following code, we can replace the first comprehension with the second one. We also get to do it recursively with <code>rglob</code> or adding <code>**/</code> to the beginning of our pattern. The downside is matching unintended files if our pattern is not good enough for the job.
 </p>
 
-<div class="src-name" id="org7dae2a3">
+<div class="src-name" id="orgd49f1af">
 <p>
 
 </p>
@@ -392,18 +392,14 @@ By the way, my .gitignore file for this project also includes the patten <code>*
 </p></div></div>
 
 <div class="footdef"><sup><a id="fn.3" class="footnum" href="#fnr.3" role="doc-backlink">3</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
-<a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob">https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob</a>
-</p></div></div>
-
-<div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4" role="doc-backlink">4</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
 <a href="https://git-scm.com/docs/gitignore">https://git-scm.com/docs/gitignore</a>
 </p></div></div>
 
-<div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5" role="doc-backlink">5</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4" role="doc-backlink">4</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
 <a href="https://pillow.readthedocs.io/en/stable/">https://pillow.readthedocs.io/en/stable/</a>
 </p></div></div>
 
-<div class="footdef"><sup><a id="fn.6" class="footnum" href="#fnr.6" role="doc-backlink">6</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5" role="doc-backlink">5</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
 <a href="https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.contain">https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.contain</a>
 </p></div></div>
 
@@ -412,7 +408,7 @@ By the way, my .gitignore file for this project also includes the patten <code>*
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 12:31</p>
+<p class="date">Created: 2022-09-30 Fri 12:32</p>
 </div>
 </body>
 </html>

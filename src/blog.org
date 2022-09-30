@@ -10,7 +10,7 @@
 :CUSTOM_ID: find-all-images-in-directory
 :END:
 
-This is an exercise on using glob patterns[fn:1] to find image files in a directory. We are going to use the =pathlib=[fn:2] Python module which provides the =glob=[fn:4] in the =Path= class.
+This is an exercise on using glob patterns[fn:1] to find image files in a directory. We are going to use the =pathlib=[fn:2] Python module which provides the =glob= method in the =Path= class.
 
 Glob patterns are also used in =.gitignore=[fn:6] files so any pattern that works here probably works in git ignore files too and vice versa.
 

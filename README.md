@@ -1,8 +1,8 @@
 # Find all images in directory
 
-This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the `pathlib`<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the `glob`<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> in the `Path` class.
+This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the `pathlib`<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the `glob` method in the `Path` class.
 
-Glob patterns are also used in `.gitignore`<sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
+Glob patterns are also used in `.gitignore`<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 
 
 ## Choosing a Pattern
@@ -30,7 +30,7 @@ If we combine both patterns we can get a more strict match that makes sure the f
 
 ## Glob function
 
-We are going to use the `PIL` <sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module for processing images once we get their paths with `pathlib`.
+We are going to use the `PIL` <sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> module for processing images once we get their paths with `pathlib`.
 
 ```python
 from pathlib import Path
@@ -139,7 +139,7 @@ Now let&rsquo;s move on to processing the files with `PIL`.
 
 We want to convert all `png` files into `jpeg`, as well as renaming `jpg` to `jpeg` and then resizing them all to have a given max width.
 
-We will use the `ImageOps`<sup><a id="fnr.6" class="footref" href="#fn.6" role="doc-backlink">6</a></sup> module from `PIL` to simplify the resizing operation and maintain aspect ratio. The process is the following: we open the file as an image, convert it to `'RGB'` if `suffix` is `png`, then resize it with `ImageOps.contain` and save it as `jpeg` using `with_suffix`.
+We will use the `ImageOps`<sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module from `PIL` to simplify the resizing operation and maintain aspect ratio. The process is the following: we open the file as an image, convert it to `'RGB'` if `suffix` is `png`, then resize it with `ImageOps.contain` and save it as `jpeg` using `with_suffix`.
 
 Before writing our main process, we will create a function that will replace the file suffix to `jpeg` as well as changing its parent directory. We&rsquo;ll also create a `root` variable for printing purposes.
 
@@ -196,10 +196,8 @@ By the way, my .gitignore file for this project also includes the patten `**/*.[
 
 <sup><a id="fn.2" class="footnum" href="#fnr.2">2</a></sup> <https://docs.python.org/3/library/pathlib.html>
 
-<sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup> <https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob>
+<sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup> <https://git-scm.com/docs/gitignore>
 
-<sup><a id="fn.4" class="footnum" href="#fnr.4">4</a></sup> <https://git-scm.com/docs/gitignore>
+<sup><a id="fn.4" class="footnum" href="#fnr.4">4</a></sup> <https://pillow.readthedocs.io/en/stable/>
 
-<sup><a id="fn.5" class="footnum" href="#fnr.5">5</a></sup> <https://pillow.readthedocs.io/en/stable/>
-
-<sup><a id="fn.6" class="footnum" href="#fnr.6">6</a></sup> <https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.contain>
+<sup><a id="fn.5" class="footnum" href="#fnr.5">5</a></sup> <https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.contain>
