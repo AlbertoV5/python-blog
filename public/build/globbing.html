@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-09-30 Fri 01:33 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Globbing</title>
+<meta name="author" content="Alberto Valdez" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://albertovaldez5.gitlab.io/org-template/resources/theme/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://albertovaldez5.gitlab.io/org-template/resources/theme/js/readtheorg.js"></script>
+<link rel="shortcut icon" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/favicon.ico">
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href=""> UP </a>
+ |
+ <a accesskey="H" href="../index.html"> HOME </a>
+</div><div id="content" class="content">
+<h1 class="title">Globbing
+<br />
+<span class="subtitle">Iterate over files</span>
+</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#a-globbing-puzzle">1. A Globbing Puzzle</a>
+<ul>
+<li><a href="#selecting-images">1.1. Selecting Images</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-a-globbing-puzzle" class="outline-2">
+<h2 id="a-globbing-puzzle"><span class="section-number-2">1.</span> A Globbing Puzzle</h2>
+<div class="outline-text-2" id="text-a-globbing-puzzle">
+<p>
+This is an exercise on using globbing<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> and regular expressions to find data in a directory. We are going to use the <code>pathlib</code><sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python library which provides the <code>Path</code> class which includes various methods that allow us to make a few useful system calls<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup>, one of which is the <code>glob</code><sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> method.
+</p>
+
+<p>
+Glob patterns are also used in <code>.gitignore</code> files so any pattern that works here probably works there and vice versa.
+</p>
+</div>
+
+<div id="outline-container-selecting-images" class="outline-3">
+<h3 id="selecting-images"><span class="section-number-3">1.1.</span> Selecting Images</h3>
+<div class="outline-text-3" id="text-selecting-images">
+<p>
+We are using <code>pathlib</code> and the <code>Pillow</code> <sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module for processing images.
+</p>
+<div class="src-name" id="org51ac918">
+<p>
+imports
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> </span><span style="color: #e0e0e0;">PIL</span><span style="color: #4EC9B0;"> </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Image</span>
+<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> re</span>
+</pre>
+</div>
+
+<p>
+We will define a function and write down what we want it to do before writing its content. We want to get a string and then add a couple of options for different use cases. When iterating over a directory, the results will come up unordered so we may want to sort them alphabetically using <code>sorted</code>. Then we may want to search for all directories within our target directory so we may want a recursive search.
+</p>
+
+<p>
+We want to make this a generator in case we are searching for a single result, we don&rsquo;t want to hold all data in memory in case we are opening files so we are going to give control to the main procedure a file at a time so we can exit the program at any given iteration. So we are going to <code>yield</code> the file path.
+</p>
+
+<div class="src-name" id="org271a38d">
+<p>
+func
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #9CDCFE;">directory</span>: <span style="color: #4EC9B0;">str</span>, <span style="color: #9CDCFE;">sort</span>: <span style="color: #4EC9B0;">bool</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>, <span style="color: #9CDCFE;">recursive</span>: <span style="color: #4EC9B0;">bool</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>):
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Yields all image files in given path.</span>
+
+<span style="color: #CE9178;">    Args:</span>
+
+<span style="color: #CE9178;">        directory (str): Relative directory name.</span>
+<span style="color: #CE9178;">        sort (bool, optional): If generator is sorted. Default True.</span>
+<span style="color: #CE9178;">        recursive (bool, optional): If glob is recursive. Default True.</span>
+
+<span style="color: #CE9178;">    Yields:</span>
+
+<span style="color: #CE9178;">        (Path): File path.</span>
+<span style="color: #CE9178;">    </span><span style="color: #CE9178;">"""</span>
+</pre>
+</div>
+
+<p>
+Let&rsquo;s start checking if the given path exists. We are going to use <code>resolve</code> to convert any relative paths to absolute ones and then <code>is_dir</code> to check that the directory exists.
+</p>
+<div class="src-name" id="org009a2ee">
+<p>
+path
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #9CDCFE;">path</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(directory).<span style="color: #ded492;">resolve</span>()
+<span style="color: #569CD6;">if</span> <span style="color: #569CD6;">not</span> path.<span style="color: #ded492;">is_dir</span>():
+    <span style="color: #569CD6;">raise</span> <span style="color: #4EC9B0;">ValueError</span>(<span style="color: #CE9178;">f"'</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">path</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">' is not a directory."</span>)
+</pre>
+</div>
+
+<p>
+Now we will create variables for <code>glob</code>, which its itself a generator, so we can use <code>sorted</code> and <code>glob</code>&rsquo;s cousin <code>rglob</code> to force recursive globbing. Our <code>glob</code> variable will hold the pattern, <code>frec</code> will return <code>rglob</code> if we want our search to be recursive and <code>fsort</code> will use <code>sorted</code> if we want to sort the results.
+</p>
+
+<div class="src-name" id="orgd741f41">
+<p>
+glob
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #9CDCFE;">glob</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">'*.[jpg png]*'</span>
+<span style="color: #9CDCFE;">frec</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">p</span>, <span style="color: #9CDCFE;">g</span>: p.<span style="color: #ded492;">rglob</span>(g) <span style="color: #569CD6;">if</span> recursive <span style="color: #569CD6;">else</span> p.<span style="color: #ded492;">glob</span>(g)
+<span style="color: #9CDCFE;">fsort</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">x</span>: <span style="color: #C586C0;">sorted</span>(x) <span style="color: #569CD6;">if</span> sort <span style="color: #569CD6;">else</span> x
+</pre>
+</div>
+
+<p>
+Now we&rsquo;ll use both lambda functions sequentially and <code>yield</code> each file path.
+</p>
+
+<div class="src-name" id="orgc674a59">
+<p>
+yield
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">file</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">fsort</span>(<span style="color: #ded492;">frec</span>(path, glob)):
+    <span style="color: #569CD6;">yield</span> file
+</pre>
+</div>
+
+<p>
+This is our function once we put it all together.
+</p>
+<div class="src-name" id="org547c88d">
+<p>
+get_imgs
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> </span><span style="color: #e0e0e0;">PIL</span><span style="color: #4EC9B0;"> </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Image</span>
+<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> re</span>
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #9CDCFE;">directory</span>: <span style="color: #4EC9B0;">str</span>, <span style="color: #9CDCFE;">sort</span>: <span style="color: #4EC9B0;">bool</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>, <span style="color: #9CDCFE;">recursive</span>: <span style="color: #4EC9B0;">bool</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>):
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Yields all image files in given path.</span>
+
+<span style="color: #CE9178;">    Args:</span>
+
+<span style="color: #CE9178;">        directory (str): Relative directory name.</span>
+<span style="color: #CE9178;">        sort (bool, optional): If generator is sorted. Default True.</span>
+<span style="color: #CE9178;">        recursive (bool, optional): If glob is recursive. Default True.</span>
+
+<span style="color: #CE9178;">    Yields:</span>
+
+<span style="color: #CE9178;">        (Path): File path.</span>
+<span style="color: #CE9178;">    </span><span style="color: #CE9178;">"""</span>
+    <span style="color: #9CDCFE;">path</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(directory).<span style="color: #ded492;">resolve</span>()
+    <span style="color: #569CD6;">if</span> <span style="color: #569CD6;">not</span> path.<span style="color: #ded492;">is_dir</span>():
+        <span style="color: #569CD6;">raise</span> <span style="color: #4EC9B0;">ValueError</span>(<span style="color: #CE9178;">f"'</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">path</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">' is not a directory."</span>)
+    <span style="color: #9CDCFE;">glob</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">'*.[jpg png]*'</span>
+    <span style="color: #9CDCFE;">frec</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">p</span>, <span style="color: #9CDCFE;">g</span>: p.<span style="color: #ded492;">rglob</span>(g) <span style="color: #569CD6;">if</span> recursive <span style="color: #569CD6;">else</span> p.<span style="color: #ded492;">glob</span>(g)
+    <span style="color: #9CDCFE;">fsort</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">lambda</span> <span style="color: #9CDCFE;">x</span>: <span style="color: #C586C0;">sorted</span>(x) <span style="color: #569CD6;">if</span> sort <span style="color: #569CD6;">else</span> x
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">file</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">fsort</span>(<span style="color: #ded492;">frec</span>(path, glob)):
+        <span style="color: #569CD6;">yield</span> file
+
+<span style="color: #9CDCFE;">root</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">".."</span>).<span style="color: #ded492;">resolve</span>()
+<span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">f</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #CE9178;">'../resources'</span>):
+    <span style="color: #C586C0;">print</span>(f.<span style="color: #ded492;">relative_to</span>(root))
+</pre>
+</div>
+
+<pre class="example" id="org5dfbbc8">
+resources/img/000.jpeg
+resources/img/001.jpeg
+resources/img/002.jpeg
+resources/img/006.jpeg
+resources/img/007.jpeg
+resources/img/008.jpeg
+resources/img/009.jpg
+resources/img/Screen Shot 2022-09-05 at 12.41.33.png
+resources/img/Screen Shot 2022-09-05 at 12.41.45.png
+resources/img/Screen Shot 2022-09-29 at 13.20.27.png
+resources/img/Screen Shot 2022-09-29 at 20.07.04.png
+resources/img/Screen Shot 2022-09-29 at 20.08.21.png
+</pre>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://en.wikipedia.org/wiki/Glob_(programming)">https://en.wikipedia.org/wiki/Glob_(programming)</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://docs.python.org/3/library/pathlib.html">https://docs.python.org/3/library/pathlib.html</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.3" class="footnum" href="#fnr.3" role="doc-backlink">3</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://en.wikipedia.org/wiki/System_call">https://en.wikipedia.org/wiki/System_call</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4" role="doc-backlink">4</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob">https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5" role="doc-backlink">5</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://pillow.readthedocs.io/en/stable/">https://pillow.readthedocs.io/en/stable/</a>
+</p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Alberto Valdez</p>
+<p class="date">Created: 2022-09-30 Fri 01:33</p>
+</div>
+</body>
+</html>

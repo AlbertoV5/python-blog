@@ -1,0 +1,118 @@
+#+title: Globbing
+#+subtitle: Iterate over files
+#+author: Alberto Valdez
+#+SETUPFILE: ../config/org-theme-alt.config
+#+SETUPFILE: ../config/org-header.config
+#+PROPERTY: header-args:python :eval no :session Python
+
+* A Globbing Puzzle
+:PROPERTIES:
+:CUSTOM_ID: a-globbing-puzzle
+:END:
+
+This is an exercise on using globbing[fn:1] and regular expressions to find data in a directory. We are going to use the =pathlib=[fn:2] Python library which provides the =Path= class which includes various methods that allow us to make a few useful system calls[fn:3], one of which is the =glob=[fn:4] method.
+
+Glob patterns are also used in =.gitignore= files so any pattern that works here probably works there and vice versa.
+
+** Selecting Images
+:PROPERTIES:
+:CUSTOM_ID: selecting-images
+:END:
+
+We are using =pathlib= and the =Pillow= [fn:5] module for processing images.
+#+NAME: imports
+#+begin_src python
+from pathlib import Path
+from PIL import Image
+import re
+#+end_src
+
+We will define a function and write down what we want it to do before writing its content. We want to get a string and then add a couple of options for different use cases. When iterating over a directory, the results will come up unordered so we may want to sort them alphabetically using =sorted=. Then we may want to search for all directories within our target directory so we may want a recursive search.
+
+We want to make this a generator in case we are searching for a single result, we don't want to hold all data in memory in case we are opening files so we are going to give control to the main procedure a file at a time so we can exit the program at any given iteration. So we are going to =yield= the file path.
+
+#+NAME: func
+#+begin_src python
+def get_imgs(directory: str, sort: bool = True, recursive: bool = True):
+    """Yields all image files in given path.
+
+    Args:
+
+        directory (str): Relative directory name.
+        sort (bool, optional): If generator is sorted. Default True.
+        recursive (bool, optional): If glob is recursive. Default True.
+
+    Yields:
+
+        (Path): File path.
+    """
+#+end_src
+
+Let's start checking if the given path exists. We are going to use =resolve= to convert any relative paths to absolute ones and then =is_dir= to check that the directory exists.
+#+NAME: path
+#+begin_src python
+path = Path(directory).resolve()
+if not path.is_dir():
+    raise ValueError(f"'{path}' is not a directory.")
+#+end_src
+
+Now we will create variables for =glob=, which its itself a generator, so we can use =sorted= and =glob='s cousin =rglob= to force recursive globbing. Our =glob= variable will hold the pattern, =frec= will return =rglob= if we want our search to be recursive and =fsort= will use =sorted= if we want to sort the results.
+
+#+NAME: glob
+#+begin_src python
+glob = '*.[jpg png]*'
+frec = lambda p, g: p.rglob(g) if recursive else p.glob(g)
+fsort = lambda x: sorted(x) if sort else x
+#+end_src
+
+Now we'll use both lambda functions sequentially and =yield= each file path.
+
+#+NAME: yield
+#+begin_src python
+for file in fsort(frec(path, glob)):
+    yield file
+#+end_src
+
+This is our function once we put it all together.
+#+NAME: get_imgs
+#+begin_src python :tangle ./globbing/imgs.py :eval yes
+<<imports>>
+
+
+<<func>>
+    <<path>>
+    <<glob>>
+    <<yield>>
+
+root = Path("..").resolve()
+for f in get_imgs('../resources'):
+    print(f.relative_to(root))
+#+end_src
+
+#+RESULTS[8df312164f878c747d3f98fa82a1620d37d23fb7]: get_imgs
+#+begin_example
+resources/img/000.jpeg
+resources/img/001.jpeg
+resources/img/002.jpeg
+resources/img/006.jpeg
+resources/img/007.jpeg
+resources/img/008.jpeg
+resources/img/009.jpg
+resources/img/Screen Shot 2022-09-05 at 12.41.33.png
+resources/img/Screen Shot 2022-09-05 at 12.41.45.png
+resources/img/Screen Shot 2022-09-29 at 13.20.27.png
+resources/img/Screen Shot 2022-09-29 at 20.07.04.png
+resources/img/Screen Shot 2022-09-29 at 20.08.21.png
+#+end_example
+
+
+* Footnotes
+:PROPERTIES:
+:CUSTOM_ID: footnotes
+:END:
+
+[fn:5]https://pillow.readthedocs.io/en/stable/
+[fn:4]https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob
+[fn:3]https://en.wikipedia.org/wiki/System_call
+[fn:2]https://docs.python.org/3/library/pathlib.html
+[fn:1]https://en.wikipedia.org/wiki/Glob_(programming)
