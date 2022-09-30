@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 12:21 -->
+<!-- 2022-09-30 Fri 12:24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Globbing</title>
@@ -62,7 +62,7 @@ Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.4" class="
 We are going to start with either one of these patterns.
 </p>
 
-<div class="src-name" id="org711f97d">
+<div class="src-name" id="orgd5ac54b">
 <p>
 
 </p>
@@ -72,7 +72,7 @@ We are going to start with either one of these patterns.
 <pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
 </pre>
 </div>
-<div class="src-name" id="orga072fea">
+<div class="src-name" id="org41cb784">
 <p>
 
 </p>
@@ -95,7 +95,7 @@ However, if we wanted to make sure we don&rsquo;t match unintended files, we can
 If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target formats.
 </p>
 
-<div class="src-name" id="org2d91d26">
+<div class="src-name" id="org9161ccb">
 <p>
 
 </p>
@@ -267,7 +267,7 @@ script-1
 </pre>
 </div>
 
-<pre class="example" id="org1a91e3f">
+<pre class="example" id="org332c9a5">
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
 resources/final/007.jpeg
@@ -302,7 +302,7 @@ We will use the <code>ImageOps</code><sup><a id="fnr.6" class="footref" href="#f
 Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as changing its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
 </p>
 
-<div class="src-name" id="org0382b78">
+<div class="src-name" id="org8bf9d00">
 <p>
 
 </p>
@@ -326,7 +326,7 @@ Before writing our main process, we will create a function that will replace the
 </pre>
 </div>
 
-<pre class="example" id="orgdf4c599">
+<pre class="example" id="orge3eefd0">
 converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
 converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
 converted/007.jpeg
@@ -361,7 +361,7 @@ The benefit of using globbing is that we don&rsquo;t have to use Python to check
 For example, in the following code, we can replace the first comprehension with the second one. We also get to do it recursively with <code>rglob</code> or adding <code>**/</code> to the beginning of our pattern. The downside is matching unintended files if our pattern is not good enough for the job.
 </p>
 
-<div class="src-name" id="org43c7405">
+<div class="src-name" id="org2da90bb">
 <p>
 
 </p>
@@ -412,7 +412,7 @@ By the way, my .gitignore file for this project also includes the patten <code>*
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 12:21</p>
+<p class="date">Created: 2022-09-30 Fri 12:24</p>
 </div>
 </body>
 </html>

@@ -255,4 +255,4 @@ resources/secrets
 # **/*.[jpJP][npNP][egEG]*
 **/*.[jpJP][npNP]*[gG$]
 **/*.txt
-!public/build
+!docs/build

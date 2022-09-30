@@ -5,7 +5,7 @@ EMACS = emacsclient --suppress-output --eval
 # Directories:
 CONFIG = config
 DOCS = docs
-PUBLIC = public
+PUBLIC = docs
 RESOURCES = resources
 SOURCE = src
 BUILD = $(PUBLIC)/build
