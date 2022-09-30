@@ -1,4 +1,4 @@
-PROJECT_NAME = globbing
+PROJECT_NAME = blog
 # Run the publishing functions from given .el file on given file path.
 # Make sure to open emacs server/GUI in project directory.
 EMACS = emacsclient --suppress-output --eval

@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 12:24 -->
+<!-- 2022-09-30 Fri 12:31 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Globbing</title>
+<title>Find all images in directory</title>
 <meta name="author" content="Alberto Valdez" />
 <meta name="generator" content="Org Mode" />
 <link rel="stylesheet" type="text/css" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/css/htmlize.css"/>
@@ -23,7 +23,7 @@
  |
  <a accesskey="H" href="../index.html"> HOME </a>
 </div><div id="content" class="content">
-<h1 class="title">Globbing
+<h1 class="title">Find all images in directory
 <br />
 <span class="subtitle">Iterate over files</span>
 </h1>
@@ -31,10 +31,10 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#globbing-image-files">1. Globbing Image Files</a>
+<li><a href="#find-all-images-in-directory">1. Find all images in directory</a>
 <ul>
 <li><a href="#choosing-a-pattern">1.1. Choosing a Pattern</a></li>
-<li><a href="#globbing-function">1.2. Globbing function</a></li>
+<li><a href="#glob-function">1.2. Glob function</a></li>
 <li><a href="#processing-the-files">1.3. Processing the files</a></li>
 <li><a href="#conclusion">1.4. Conclusion</a></li>
 </ul>
@@ -43,11 +43,11 @@
 </div>
 </div>
 
-<div id="outline-container-globbing-image-files" class="outline-2">
-<h2 id="globbing-image-files"><span class="section-number-2">1.</span> Globbing Image Files</h2>
-<div class="outline-text-2" id="text-globbing-image-files">
+<div id="outline-container-find-all-images-in-directory" class="outline-2">
+<h2 id="find-all-images-in-directory"><span class="section-number-2">1.</span> Find all images in directory</h2>
+<div class="outline-text-2" id="text-find-all-images-in-directory">
 <p>
-This is an exercise on using globbing<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the <code>pathlib</code><sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the <code>glob</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> in the <code>Path</code> class.
+This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the <code>pathlib</code><sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the <code>glob</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> in the <code>Path</code> class.
 </p>
 
 <p>
@@ -62,7 +62,7 @@ Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.4" class="
 We are going to start with either one of these patterns.
 </p>
 
-<div class="src-name" id="orgd5ac54b">
+<div class="src-name" id="orge0dcb7e">
 <p>
 
 </p>
@@ -72,7 +72,7 @@ We are going to start with either one of these patterns.
 <pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
 </pre>
 </div>
-<div class="src-name" id="org41cb784">
+<div class="src-name" id="org47f20a9">
 <p>
 
 </p>
@@ -95,7 +95,7 @@ However, if we wanted to make sure we don&rsquo;t match unintended files, we can
 If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target formats.
 </p>
 
-<div class="src-name" id="org9161ccb">
+<div class="src-name" id="orgfb46f1c">
 <p>
 
 </p>
@@ -108,13 +108,13 @@ If we combine both patterns we can get a more strict match that makes sure the f
 </div>
 </div>
 
-<div id="outline-container-globbing-function" class="outline-3">
-<h3 id="globbing-function"><span class="section-number-3">1.2.</span> Globbing function</h3>
-<div class="outline-text-3" id="text-globbing-function">
+<div id="outline-container-glob-function" class="outline-3">
+<h3 id="glob-function"><span class="section-number-3">1.2.</span> Glob function</h3>
+<div class="outline-text-3" id="text-glob-function">
 <p>
 We are going to use the <code>PIL</code> <sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module for processing images once we get their paths with <code>pathlib</code>.
 </p>
-<div class="src-name" id="org51ac918">
+<div class="src-name" id="orgbdadc0d">
 <p>
 imports
 </p>
@@ -138,7 +138,7 @@ When iterating over a directory, the results will come up unordered so we may wa
 Finally, we want to make this a generator function so we can stop the procedure at any given iteration, so we are going to <code>yield</code> the file path.
 </p>
 
-<div class="src-name" id="org271a38d">
+<div class="src-name" id="org01d8dad">
 <p>
 func
 </p>
@@ -165,7 +165,7 @@ func
 Let&rsquo;s start checking if the given path exists. We are going to use <code>resolve</code> to convert any relative paths to absolute ones and then <code>is_dir</code> to check that the directory exists.
 </p>
 
-<div class="src-name" id="org009a2ee">
+<div class="src-name" id="org5f413c5">
 <p>
 path
 </p>
@@ -182,7 +182,7 @@ path
 Our <code>pattern</code> variable will hold the glob pattern, <code>frec</code> will use <code>rglob</code> if we want our search to be recursive and <code>fsort</code> will use <code>sorted</code> if we want to sort the results.
 </p>
 
-<div class="src-name" id="orgd741f41">
+<div class="src-name" id="org7d7f37f">
 <p>
 glob
 </p>
@@ -199,7 +199,7 @@ glob
 Finally we&rsquo;ll use both lambda functions and <code>yield</code> each file path.
 </p>
 
-<div class="src-name" id="orgc674a59">
+<div class="src-name" id="orgf81572c">
 <p>
 yield
 </p>
@@ -215,7 +215,7 @@ yield
 This is our function once we put it all together.
 </p>
 
-<div class="src-name" id="org547c88d">
+<div class="src-name" id="orge0f132c">
 <p>
 get_imgs
 </p>
@@ -254,7 +254,7 @@ get_imgs
 Let&rsquo;s use it in a script where we simply print all the file paths relative to the root.
 </p>
 
-<div class="src-name" id="orge172c72">
+<div class="src-name" id="orgbf52042">
 <p>
 script-1
 </p>
@@ -267,7 +267,7 @@ script-1
 </pre>
 </div>
 
-<pre class="example" id="org332c9a5">
+<pre class="example" id="orgc7e76f0">
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
 resources/final/007.jpeg
@@ -302,7 +302,7 @@ We will use the <code>ImageOps</code><sup><a id="fnr.6" class="footref" href="#f
 Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as changing its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
 </p>
 
-<div class="src-name" id="org8bf9d00">
+<div class="src-name" id="org5287784">
 <p>
 
 </p>
@@ -326,7 +326,7 @@ Before writing our main process, we will create a function that will replace the
 </pre>
 </div>
 
-<pre class="example" id="orge3eefd0">
+<pre class="example" id="org251825c">
 converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
 converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
 converted/007.jpeg
@@ -341,7 +341,7 @@ converted/006.jpeg
 </pre>
 
 <p>
-Note that we are placing the results in a parent directory different to the one we use for globbing as we are searching recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
+Note that we are placing the results in a parent directory different to the one we use for searching as we are searching recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
 </p>
 </div>
 </div>
@@ -350,18 +350,18 @@ Note that we are placing the results in a parent directory different to the one 
 <h3 id="conclusion"><span class="section-number-3">1.4.</span> Conclusion</h3>
 <div class="outline-text-3" id="text-conclusion">
 <p>
-Generators in Python are one of the most useful tools for processing data. If we want to automate a few tasks without using bash scripts (for whatever reason), we can start with a globbing function that yields the file types we want in an unorganized directory.
+Generators in Python are one of the most useful tools for processing data. If we want to automate a few tasks without using bash scripts (for whatever reason), we can start with a glob pattern function that yields the file types we want in an unorganized directory.
 </p>
 
 <p>
-The benefit of using globbing is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily.
+The benefit of using <code>glob</code> is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily.
 </p>
 
 <p>
 For example, in the following code, we can replace the first comprehension with the second one. We also get to do it recursively with <code>rglob</code> or adding <code>**/</code> to the beginning of our pattern. The downside is matching unintended files if our pattern is not good enough for the job.
 </p>
 
-<div class="src-name" id="org2da90bb">
+<div class="src-name" id="org7dae2a3">
 <p>
 
 </p>
@@ -412,7 +412,7 @@ By the way, my .gitignore file for this project also includes the patten <code>*
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 12:24</p>
+<p class="date">Created: 2022-09-30 Fri 12:31</p>
 </div>
 </body>
 </html>

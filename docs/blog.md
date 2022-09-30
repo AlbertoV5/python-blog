@@ -1,6 +1,6 @@
-# Globbing Image Files
+# Find all images in directory
 
-This is an exercise on using globbing<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the `pathlib`<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the `glob`<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> in the `Path` class.
+This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the `pathlib`<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the `glob`<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> in the `Path` class.
 
 Glob patterns are also used in `.gitignore`<sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 
@@ -28,7 +28,7 @@ If we combine both patterns we can get a more strict match that makes sure the f
 ```
 
 
-## Globbing function
+## Glob function
 
 We are going to use the `PIL` <sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module for processing images once we get their paths with `pathlib`.
 
@@ -172,14 +172,14 @@ for f in get_imgs('../resources'):
     converted/002.jpeg
     converted/006.jpeg
 
-Note that we are placing the results in a parent directory different to the one we use for globbing as we are searching recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
+Note that we are placing the results in a parent directory different to the one we use for searching as we are searching recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
 
 
 ## Conclusion
 
-Generators in Python are one of the most useful tools for processing data. If we want to automate a few tasks without using bash scripts (for whatever reason), we can start with a globbing function that yields the file types we want in an unorganized directory.
+Generators in Python are one of the most useful tools for processing data. If we want to automate a few tasks without using bash scripts (for whatever reason), we can start with a glob pattern function that yields the file types we want in an unorganized directory.
 
-The benefit of using globbing is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily.
+The benefit of using `glob` is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily.
 
 For example, in the following code, we can replace the first comprehension with the second one. We also get to do it recursively with `rglob` or adding `**/` to the beginning of our pattern. The downside is matching unintended files if our pattern is not good enough for the job.
 

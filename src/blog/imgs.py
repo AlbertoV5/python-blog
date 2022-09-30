@@ -1,4 +1,4 @@
-# [[file:../globbing.org::#globbing-function][get_imgs]]
+# [[file:../blog.org::#glob-function][get_imgs]]
 from pathlib import Path
 from PIL import Image
 
