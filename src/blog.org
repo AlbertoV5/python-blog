@@ -192,14 +192,14 @@ Generators in Python are one of the most useful tools for processing data. If we
 
 The benefit of using =glob= is that we don't have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily.
 
-For example, in the following code, we can replace the first comprehension with the second one. We also get to do it recursively with =rglob= or adding =**/= to the beginning of our pattern. The downside is matching unintended files if our pattern is not good enough for the job.
+For example, in the following code, we can replace the first comprehension with the second one.
 
 #+begin_src python
 [f for f in path.iterdir() if f.suffix in ('.jpeg', '.jpg', '.png', 'JPG', 'JPEG', 'PNG')]
 [f for f in path.glob('*.[jpJP][npNP]*[gG$]')]
 #+end_src
 
-By the way, my .gitignore file for this project also includes the patten =**/*.[jpJP][npNP]*[gG$]=.
+We could also do it recursively with =rglob= or adding =**/= to the beginning of our pattern. The downsides are that we could be matching unintended files if our pattern is not good enough for the job, and that globs are not as powerful as regular expressions. As a bonus we can use the same glob pattern in our .gitignore file.
 
 * Footnotes
 :PROPERTIES:
