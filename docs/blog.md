@@ -6,6 +6,12 @@ This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" hre
 
 Glob patterns are also used in `.gitignore`<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 
+```shell
+python --version
+```
+
+    Python 3.10.7
+
 
 ## Choosing a Pattern
 
@@ -32,11 +38,12 @@ If we combine both patterns we can get a more strict match that makes sure the f
 
 ## Glob function
 
-We are going to use the `PIL` <sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> module for processing images once we get their paths with `pathlib`.
+We are going to use the `PIL` <sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> module for processing images once we get their paths with `pathlib`. We are also going to include the `Generator` class for duck typing our generator function.
 
 ```python
 from pathlib import Path
 from PIL import Image, ImageOps
+from typing import Generator
 ```
 
 We will define a function and specify what we want to do before writing the code. In our arguments, we want to receive a string and a few boolean values to modify the behaviour of our function.
@@ -46,17 +53,15 @@ When iterating over a directory, the results will come up unordered so we may wa
 Finally, we want to make this a generator function so we can stop the procedure at any given iteration, so we are going to `yield` the file path.
 
 ```python
-def get_imgs(directory: str, sort = True, recursive = True):
+def get_imgs(directory: str, sort = True, recursive = True) -> Generator[Path, None, None]:
     """Yields all image files in given path.
 
     Args:
-
         directory (str): Relative directory name.
         sort (bool, optional): If generator is sorted. Default True.
         recursive (bool, optional): If glob is recursive. Default True.
 
     Yields:
-
         (Path): File path.
     """
 ```
@@ -89,19 +94,18 @@ This is our function once we put it all together.
 ```python
 from pathlib import Path
 from PIL import Image, ImageOps
+from typing import Generator
 
 
-def get_imgs(directory: str, sort = True, recursive = True):
+def get_imgs(directory: str, sort = True, recursive = True) -> Generator[Path, None, None]:
     """Yields all image files in given path.
 
     Args:
-
         directory (str): Relative directory name.
         sort (bool, optional): If generator is sorted. Default True.
         recursive (bool, optional): If glob is recursive. Default True.
 
     Yields:
-
         (Path): File path.
     """
     path = Path(directory).resolve()
@@ -172,6 +176,7 @@ if __name__ == "__main__":
     converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
     converted/002.jpeg
     converted/006.jpeg
+    converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
 
 Note that we are placing the results in a parent directory different to the one we use for searching as we are doing so recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
 

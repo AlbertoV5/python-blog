@@ -1,19 +1,18 @@
 # [[file:../blog.org::#processing-the-files][Processing the files:1]]
 from pathlib import Path
 from PIL import Image, ImageOps
+from typing import Generator
 
 
-def get_imgs(directory: str, sort = True, recursive = True):
+def get_imgs(directory: str, sort = True, recursive = True) -> Generator[Path, None, None]:
     """Yields all image files in given path.
 
     Args:
-
         directory (str): Relative directory name.
         sort (bool, optional): If generator is sorted. Default True.
         recursive (bool, optional): If glob is recursive. Default True.
 
     Yields:
-
         (Path): File path.
     """
     path = Path(directory).resolve()

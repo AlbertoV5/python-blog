@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 14:02 -->
+<!-- 2022-09-30 Fri 14:10 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Glob generators with Python</title>
@@ -47,7 +47,7 @@
 <h2 id="glob-generators-with-python"><span class="section-number-2">1.</span> Glob generators with Python</h2>
 <div class="outline-text-2" id="text-glob-generators-with-python">
 
-<div id="org951c568" class="figure">
+<div id="org5ca60c8" class="figure">
 <p><img src="../resources/susan-q-yin-2JIvboGLeho-unsplash.jpg" alt="susan-q-yin-2JIvboGLeho-unsplash.jpg" width="800px" />
 </p>
 </div>
@@ -59,6 +59,21 @@ This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" hre
 <p>
 Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 </p>
+
+<div class="src-name" id="org3ab7fa0">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">python</span> <span style="color: #e0e0e0;">--version</span>
+</pre>
+</div>
+
+<pre class="example" id="org11dc05e">
+Python 3.10.7
+</pre>
 </div>
 
 <div id="outline-container-choosing-a-pattern" class="outline-3">
@@ -68,7 +83,7 @@ Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="
 We are going to start with either one of these patterns.
 </p>
 
-<div class="src-name" id="org4992816">
+<div class="src-name" id="org0f374a9">
 <p>
 
 </p>
@@ -78,7 +93,7 @@ We are going to start with either one of these patterns.
 <pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
 </pre>
 </div>
-<div class="src-name" id="org5caa8ce">
+<div class="src-name" id="orgeb2455e">
 <p>
 
 </p>
@@ -101,7 +116,7 @@ If we wanted to make sure we don&rsquo;t match unintended files, we can use the 
 If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target extensions.
 </p>
 
-<div class="src-name" id="org8343ddc">
+<div class="src-name" id="orgab47049">
 <p>
 
 </p>
@@ -118,8 +133,9 @@ If we combine both patterns we can get a more strict match that makes sure the f
 <h3 id="glob-function"><span class="section-number-3">1.2.</span> Glob function</h3>
 <div class="outline-text-3" id="text-glob-function">
 <p>
-We are going to use the <code>PIL</code> <sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> module for processing images once we get their paths with <code>pathlib</code>.
+We are going to use the <code>PIL</code> <sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup> module for processing images once we get their paths with <code>pathlib</code>. We are also going to include the <code>Generator</code> class for duck typing our generator function.
 </p>
+
 <div class="src-name" id="orgbdadc0d">
 <p>
 imports
@@ -129,6 +145,7 @@ imports
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
 <span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> </span><span style="color: #e0e0e0;">PIL</span><span style="color: #4EC9B0;"> </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Image</span><span style="color: #4EC9B0;">, </span><span style="color: #4EC9B0;">ImageOps</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> typing </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Generator</span>
 </pre>
 </div>
 
@@ -151,17 +168,15 @@ func
 
 </div>
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #9CDCFE;">directory</span>: <span style="color: #4EC9B0;">str</span>, <span style="color: #9CDCFE;">sort</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>, <span style="color: #9CDCFE;">recursive</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>):
+<pre class="src src-python"><span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #9CDCFE;">directory</span>: <span style="color: #4EC9B0;">str</span>, <span style="color: #9CDCFE;">sort</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>, <span style="color: #9CDCFE;">recursive</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>) -&gt; <span style="color: #4EC9B0;">Generator</span>[<span style="color: #4EC9B0;">Path</span>, <span style="color: #569CD6;">None</span>, <span style="color: #569CD6;">None</span>]:
     <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Yields all image files in given path.</span>
 
 <span style="color: #CE9178;">    Args:</span>
-
 <span style="color: #CE9178;">        directory (str): Relative directory name.</span>
 <span style="color: #CE9178;">        sort (bool, optional): If generator is sorted. Default True.</span>
 <span style="color: #CE9178;">        recursive (bool, optional): If glob is recursive. Default True.</span>
 
 <span style="color: #CE9178;">    Yields:</span>
-
 <span style="color: #CE9178;">        (Path): File path.</span>
 <span style="color: #CE9178;">    </span><span style="color: #CE9178;">"""</span>
 </pre>
@@ -230,19 +245,18 @@ get_imgs
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
 <span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> </span><span style="color: #e0e0e0;">PIL</span><span style="color: #4EC9B0;"> </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Image</span><span style="color: #4EC9B0;">, </span><span style="color: #4EC9B0;">ImageOps</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> typing </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Generator</span>
 
 
-<span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #9CDCFE;">directory</span>: <span style="color: #4EC9B0;">str</span>, <span style="color: #9CDCFE;">sort</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>, <span style="color: #9CDCFE;">recursive</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>):
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_imgs</span>(<span style="color: #9CDCFE;">directory</span>: <span style="color: #4EC9B0;">str</span>, <span style="color: #9CDCFE;">sort</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>, <span style="color: #9CDCFE;">recursive</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>) -&gt; <span style="color: #4EC9B0;">Generator</span>[<span style="color: #4EC9B0;">Path</span>, <span style="color: #569CD6;">None</span>, <span style="color: #569CD6;">None</span>]:
     <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Yields all image files in given path.</span>
 
 <span style="color: #CE9178;">    Args:</span>
-
 <span style="color: #CE9178;">        directory (str): Relative directory name.</span>
 <span style="color: #CE9178;">        sort (bool, optional): If generator is sorted. Default True.</span>
 <span style="color: #CE9178;">        recursive (bool, optional): If glob is recursive. Default True.</span>
 
 <span style="color: #CE9178;">    Yields:</span>
-
 <span style="color: #CE9178;">        (Path): File path.</span>
 <span style="color: #CE9178;">    </span><span style="color: #CE9178;">"""</span>
     <span style="color: #9CDCFE;">path</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(directory).<span style="color: #ded492;">resolve</span>()
@@ -273,7 +287,7 @@ script-1
 </pre>
 </div>
 
-<pre class="example" id="org52b6a72">
+<pre class="example" id="orgb58c9a6">
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
 resources/final/007.jpeg
@@ -304,7 +318,7 @@ We want to convert all <code>png</code> files into <code>jpeg</code>, as well as
 Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as change its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
 </p>
 
-<div class="src-name" id="org3922ce5">
+<div class="src-name" id="org64a874a">
 <p>
 
 </p>
@@ -329,7 +343,7 @@ Before writing our main process, we will create a function that will replace the
 </pre>
 </div>
 
-<pre class="example" id="org6992883">
+<pre class="example" id="orgc786cde">
 converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
 converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
 converted/007.jpeg
@@ -341,6 +355,7 @@ converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
 converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
 converted/002.jpeg
 converted/006.jpeg
+converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
 </pre>
 
 <p>
@@ -360,7 +375,7 @@ Generators in Python are one of the most useful tools for processing data. If we
 The benefit of using <code>glob</code> is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily. For example, in the following code, we can replace the first comprehension with the second one.
 </p>
 
-<div class="src-name" id="orga6cd734">
+<div class="src-name" id="orgdeb9c7f">
 <p>
 
 </p>
@@ -403,7 +418,7 @@ We could also do it recursively with <code>rglob</code> or adding <code>**/</cod
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 14:02</p>
+<p class="date">Created: 2022-09-30 Fri 14:10</p>
 </div>
 </body>
 </html>

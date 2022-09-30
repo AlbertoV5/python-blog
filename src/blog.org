@@ -17,6 +17,15 @@ This is an exercise on using glob patterns[fn:1] to find image files in a direct
 
 Glob patterns are also used in =.gitignore=[fn:6] files so any pattern that works here probably works in git ignore files too and vice versa.
 
+#+begin_src shell
+python --version
+#+end_src
+
+#+RESULTS[2d6f814ad96ae3fab91d24df7539ec5453a55939]:
+#+begin_example
+Python 3.10.7
+#+end_example
+
 ** Choosing a Pattern
 :PROPERTIES:
 :CUSTOM_ID: choosing-a-pattern
@@ -46,11 +55,13 @@ If we combine both patterns we can get a more strict match that makes sure the f
 :CUSTOM_ID: glob-function
 :END:
 
-We are going to use the =PIL= [fn:5] module for processing images once we get their paths with =pathlib=.
+We are going to use the =PIL= [fn:5] module for processing images once we get their paths with =pathlib=. We are also going to include the =Generator= class for duck typing our generator function.
+
 #+NAME: imports
 #+begin_src python
 from pathlib import Path
 from PIL import Image, ImageOps
+from typing import Generator
 #+end_src
 
 We will define a function and specify what we want to do before writing the code. In our arguments, we want to receive a string and a few boolean values to modify the behaviour of our function.
@@ -61,17 +72,15 @@ Finally, we want to make this a generator function so we can stop the procedure 
 
 #+NAME: func
 #+begin_src python
-def get_imgs(directory: str, sort = True, recursive = True):
+def get_imgs(directory: str, sort = True, recursive = True) -> Generator[Path, None, None]:
     """Yields all image files in given path.
 
     Args:
-
         directory (str): Relative directory name.
         sort (bool, optional): If generator is sorted. Default True.
         recursive (bool, optional): If glob is recursive. Default True.
 
     Yields:
-
         (Path): File path.
     """
 #+end_src
