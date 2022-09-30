@@ -256,3 +256,4 @@ resources/secrets
 **/*.[jpJP][npNP]*[gG$]
 **/*.txt
 !docs/build
+!susan-q-yin-2JIvboGLeho-unsplash.jpg

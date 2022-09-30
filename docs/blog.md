@@ -1,4 +1,6 @@
-# Find all images in directory
+# Glob generators with Python
+
+![img](../resources/susan-q-yin-2JIvboGLeho-unsplash.jpg)
 
 This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the `pathlib`<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the `glob` method in the `Path` class.
 
@@ -34,7 +36,7 @@ We are going to use the `PIL` <sup><a id="fnr.4" class="footref" href="#fn.4" ro
 
 ```python
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageOps
 ```
 
 We will define a function and specify what we want to do before writing the code. In our arguments, we want to receive a string and a few boolean values to modify the behaviour of our function.
@@ -44,7 +46,7 @@ When iterating over a directory, the results will come up unordered so we may wa
 Finally, we want to make this a generator function so we can stop the procedure at any given iteration, so we are going to `yield` the file path.
 
 ```python
-def get_imgs(directory: str, sort: bool = True, recursive: bool = True):
+def get_imgs(directory: str, sort = True, recursive = True):
     """Yields all image files in given path.
 
     Args:
@@ -86,10 +88,10 @@ This is our function once we put it all together.
 
 ```python
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageOps
 
 
-def get_imgs(directory: str, sort: bool = True, recursive: bool = True):
+def get_imgs(directory: str, sort = True, recursive = True):
     """Yields all image files in given path.
 
     Args:
@@ -137,27 +139,26 @@ Now let&rsquo;s move on to processing the files with `PIL`.
 
 ## Processing the files
 
-We want to convert all `png` files into `jpeg`, as well as renaming `jpg` to `jpeg` and then resizing them all to have a given max width.
-
-We will use the `ImageOps`<sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup> module from `PIL` to simplify the resizing operation and maintain aspect ratio. The process is the following: we open the file as an image, convert it to `'RGB'` if `suffix` is `png`, then resize it with `ImageOps.contain` and save it as `jpeg` using `with_suffix`.
+We want to convert all `png` files into `jpeg`, as well as renaming `jpg` to `jpeg` and then resizing them all to have a given max width. The process is the following: we open the file as an image, convert it to `'RGB'` if `suffix` is `png`, then resize it with `ImageOps.contain` and save it as `jpeg` using `with_suffix`.
 
 Before writing our main process, we will create a function that will replace the file suffix to `jpeg` as well as change its parent directory. We&rsquo;ll also create a `root` variable for printing purposes.
 
 ```python
-from PIL import ImageOps
 
-max_width = 1280
-with_path = lambda f: Path('../converted').resolve() / f.with_suffix('.jpeg').name
-root = Path("..").resolve()
-for f in get_imgs('../resources'):
-    with Image.open(f) as img:
-        if f.suffix == '.png':
-            img = img.convert('RGB')
-        if img.size[0] > max_width:
-            img = ImageOps.contain(img, (max_width, max_width))
-        fout = with_path(f)
-        img.save(fout, quality=80)
-        print(fout.relative_to(root))
+
+if __name__ == "__main__":
+    max_width = 1280
+    with_path = lambda f: Path('../converted').resolve() / f.with_suffix('.jpeg').name
+    root = Path("..").resolve()
+    for f in get_imgs('../resources'):
+        with Image.open(f) as img:
+            if f.suffix == '.png':
+                img = img.convert('RGB')
+            if img.size[0] > max_width:
+                img = ImageOps.contain(img, (max_width, max_width))
+            fout = with_path(f)
+            img.save(fout, quality=80)
+            print(fout.relative_to(root))
 ```
 
     converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
@@ -177,11 +178,9 @@ Note that we are placing the results in a parent directory different to the one 
 
 ## Conclusion
 
-Generators in Python are one of the most useful tools for processing data. If we want to automate a few tasks without using bash scripts (for whatever reason), we can start with a glob pattern function that yields the file types we want in an unorganized directory.
+Generators in Python are one of the most useful tools for processing data. If we want to automate a few tasks without using bash scripts (for whatever reason), we can start with a glob generator function that yields the file types we want in an unorganized directory.
 
-The benefit of using `glob` is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily.
-
-For example, in the following code, we can replace the first comprehension with the second one.
+The benefit of using `glob` is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily. For example, in the following code, we can replace the first comprehension with the second one.
 
 ```python
 [f for f in path.iterdir() if f.suffix in ('.jpeg', '.jpg', '.png', 'JPG', 'JPEG', 'PNG')]
@@ -199,5 +198,3 @@ We could also do it recursively with `rglob` or adding `**/` to the beginning of
 <sup><a id="fn.3" class="footnum" href="#fnr.3">3</a></sup> <https://git-scm.com/docs/gitignore>
 
 <sup><a id="fn.4" class="footnum" href="#fnr.4">4</a></sup> <https://pillow.readthedocs.io/en/stable/>
-
-<sup><a id="fn.5" class="footnum" href="#fnr.5">5</a></sup> <https://pillow.readthedocs.io/en/stable/reference/ImageOps.html#PIL.ImageOps.contain>
