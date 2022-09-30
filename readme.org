@@ -9,7 +9,9 @@
 :CUSTOM_ID: python-blog
 :END:
 
-Various Python and Data related articles I've written that help me learn and be a better programmer.
+This repository holds Python related articles I write to help me learn and be a better programmer.
+
+[[https://albertov5.github.io/python-blog/][Webpage here.]]
 
 ** [[./static/glob-generators.org][Glob Generators]]
 :PROPERTIES:

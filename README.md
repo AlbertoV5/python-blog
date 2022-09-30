@@ -1,6 +1,8 @@
 # Python Blog
 
-Various Python and Data related articles I&rsquo;ve written that help me learn and be a better programmer.
+This repository holds Python related articles I write to help me learn and be a better programmer.
+
+[Webpage here.](https://albertov5.github.io/python-blog/)
 
 
 ## [Glob Generators](./static/glob-generators.md)
