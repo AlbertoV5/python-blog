@@ -161,7 +161,7 @@ We want to convert all =png= files into =jpeg=, as well as renaming =jpg= to =jp
 
 Before writing our main process, we will create a function that will replace the file suffix to =jpeg= as well as change its parent directory. We'll also create a =root= variable for printing purposes.
 
-#+begin_src python :eval yes :tangle ./blog/get_imgs.py :noweb strip-export
+#+begin_src python :eval yes :tangle ../src/glob/get_imgs.py :noweb strip-export
 <<get_imgs>>
 
 if __name__ == "__main__":
