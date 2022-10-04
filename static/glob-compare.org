@@ -1,0 +1,260 @@
+#+title: Glob v.s. the world
+#+subtitle: https://github.com/AlbertoV5/python-blog
+#+author: Alberto Valdez
+#+SETUPFILE: ../config/org-theme-alt.config
+#+SETUPFILE: ../config/org-header.config
+
+* Is os.walk the best?
+
+In this article, we are going to explore many methods for directory searching in Python and compare them to the =glob= pattern method.
+
+We are going to use cProfile to measure the code execution time and plot a few graphs to compare the data.
+
+#+NAME: import-modules
+#+begin_src python
+from pathlib import Path
+from itertools import permutations
+from pprint import pprint
+import subprocess
+import cProfile
+import logging
+import pstats
+import shutil
+import os
+import re
+#+end_src
+
+** Mock Testing
+
+We are going to construct a test case before writing the rest of the code. We will do so by creating a few directories and filling them with various file extensions.
+
+In this scenario we will be searching for four file types: =csv=, =xlsx=, =tsv= and =txt=. So we are going to add those extensions to a list that we will use to generate all possible permutations of the the extensions' characters.
+
+We are going to use =set= extensively so we make sure we don't process extra data when doing the permutations and any further processing.
+
+#+NAME: make-options
+#+begin_src python :eval no
+def create_options(extensions):
+    data = list(i for e in extensions for i in list(e))
+    data.append("")
+    return list(set("".join(c) for c in permutations(data, 4)))
+#+end_src
+
+If we print our options, we can see that we have a large number of possible file prefixes we can use for testing.
+
+#+NAME: check-1
+#+begin_src python :noweb strip-export
+<<import-odules>>
+<<make-options>>
+options = create_options(["csv", "tsv", "txt"])
+print(len(options))
+#+end_src
+
+#+RESULTS[245a720ce03ac7d8ad575a89168396e1cd5a0657]: check-1
+#+begin_example
+467
+#+end_example
+
+Before creating the files in the test directory, we are going to add a few children directories so we can test recursive search too.
+
+We are going to create 2 'tuneable' variables, =depth= and =n=, which will effectively bring the total amount of directories to =depth ** n=. Then we are going to create the directories somewhat recursively while adding each one to a =directories= list.
+
+#+NAME: make-dirs
+#+begin_src python :eval no
+def create_directories(root: str, number: int, depth: int):
+    root = Path(root).resolve()
+    if root.is_dir():
+        shutil.rmtree(root)
+    Path.mkdir(root, parents=True)
+    # func
+    def mk_dirs(parent, data, n, depth):
+        if depth == 0:
+            return 0
+        for i in range(n):
+            child = parent / f"{i}"
+            Path.mkdir(child)
+            data.append(child)
+            mk_dirs(child, data, n, depth - 1)
+
+    directories = []
+    mk_dirs(root, directories, number, depth)
+    directories.insert(0, root)
+    return directories
+#+end_src
+
+Then we can separate the file extensions in different directories. We end up with call_check-2() {{{results(=40=)}}} directories if we count the root directory. So we are going to separate our call_check-1() {{{results(=480=)}}} into 12 files per directory.
+
+#+NAME: check-2
+#+begin_src python :noweb strip-export
+<<import-modules>>
+<<make-dirs>>
+create_directories('../tests/extensions', 3, 3)
+print(len(directories))
+#+end_src
+
+#+RESULTS[8cacc6d2b61efd3ce2e08d11dc2db0dafcff843d]: check-2
+#+begin_example
+40
+#+end_example
+
+** Final Test Function
+
+Finally, we create all the files spread across multiple directories and =assert= that there are at more files than the base =number= directories in each directory.
+
+#+NAME: make-files
+#+begin_src python :eval no
+def test_makefiles(ext = ["csv", "tsv", "txt"], number = 3, depth = 3):
+    options = create_options(ext)
+    directories = create_directories('../tests/extensions', number, depth)
+    n_opt = len(options)
+    n_dir = len(directories)
+    ratio = int(n_opt/n_dir)
+    for i in range(0, n_dir):
+        for j in range(i * ratio, (i * ratio) + ratio):
+            filepath = directories[i] / f"file.{options[j]}"
+            subprocess.run(['touch', filepath])
+        # assert len(list(directories[i].glob('*'))) > number
+    print('All files were created.')
+#+end_src
+
+#+RESULTS[9ed085fe095de3ea9377eb8c59c47a7fe26dcdb4]: make-files
+#+begin_example
+All files were created.
+#+end_example
+
+** Profiler
+
+We will create a profiler wrapper function so we can apply it to whichever test function we want and get the profile data into a file with its name.
+
+We are also gonna create a logger instance to display all info to the pytest stdout.
+
+#+NAME: profiler
+#+begin_src python :eval no
+def profile(func):
+    def wrapper(*args, **kwargs):
+        with cProfile.Profile() as pr:
+            path = func(*args, **kwargs)
+            stats = pstats.Stats(pr)
+            stats.sort_stats(pstats.SortKey.TIME)
+            stats.dump_stats(filename=f"{path / func.__name__}.prof")
+
+    return wrapper
+
+#+end_src
+
+** Creating the Functions
+
+We are going to start with simple functions for listing all files that match the pattern.
+
+#+begin_src python :tangle ../tests/glob/test_main.py
+<<import-modules>>
+
+<<make-options>>
+<<make-dirs>>
+<<make-files>>
+<<profiler>>
+
+@profile
+def test_main():
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.DEBUG)
+    ext = ['csv', 'tsv', 'txt']
+    pattern = '**/*.[ct][sx][vt$]'
+    rootd = '../tests/extensions'
+    outcome = {"glob":[], "os":[]}
+
+    # using glob
+    def use_glob():
+        for f in Path(rootd).glob(pattern):
+            yield f
+
+    def consume_glob():
+        return list(Path(rootd).glob(pattern))
+
+    # using os
+    def use_os_comp():
+        outcome["os"] = [
+            f
+            for root, dirs, files in os.walk(rootd)
+            for f in files if f.split('.')[1] in ext
+        ]
+
+    def use_os():
+        for root, dirs, files in os.walk(rootd):
+            path = root.split(os.sep)
+            for file in files:
+                if file.split(".")[1] in ext:
+                    outcome["os"].append(file)
+
+    def use_os_gen():
+        for root, dirs, files in os.walk(rootd):
+            path = root.split(os.sep)
+            for file in files:
+                if file.split(".")[1] in ext:
+                    yield file
+    # process
+    times = 100
+    [use_glob() for i in range(times)]
+    [consume_glob() for i in range(times)]
+    [use_os() for i in range(times)]
+    [use_os_comp() for i in range(times)]
+    [use_os_gen() for i in range(times)]
+
+    def consume_gen(gen):
+        for file in gen:
+            # if file.replace("file.", "") == "csv":
+                # break
+            if file.suffix == ".csv":
+                break
+            # if file.suffix in ext:
+                # ext.pop(ext.index(file.suffix.replace(".", "")))
+            # if len(ext) == 0:
+                # break
+    # [consume_gen(use_glob()) for i in range(times)]
+    # log
+    log.debug(outcome)
+    return Path('tests/prof')
+
+if __name__ == "__main__":
+    ext = ['csv', 'tsv', 'txt', 'xlsx', 'jpg', 'png']
+    test_makefiles(ext, 5, 5)
+    test_main()
+#+end_src
+
+#+begin_src shell :dir ..
+pytest --log-cli-level=10
+#+end_src
+
+#+RESULTS[d9dc5efe42e6095e3156e79cede8715814e255f8]:
+#+begin_example
+============================= test session starts ==============================
+platform darwin -- Python 3.10.7, pytest-7.1.3, pluggy-1.0.0
+rootdir: /Users/albertovaldez/python-blog
+plugins: profiling-1.7.0
+collected 2 items
+
+tests/glob/test_main.py::test_makefiles PASSED                           [ 50%]
+tests/glob/test_main.py::test_main
+-------------------------------- live log call ---------------------------------
+DEBUG    test_main:test_main.py:91 {'glob': <generator object Path.glob at 0x10e9798c0>, 'os': ['file.tsv', 'file.txt', 'file.csv']}
+PASSED                                                                   [100%]
+
+============================== 2 passed in 4.53s ===============================
+#+end_example
+
+** Reading the Profiler data
+
+We are going to read the data with =snakeviz=.
+#+begin_src shell :eval no
+pip install snakeviz
+#+end_src
+
+#+begin_src shell :dir .. :eval no
+snakeviz tests/prof/test_main.prof
+#+end_src
+
+#+attr_html: :width 700px
+[[../resources/profiler/glob-1.png]]
+
+#+attr_html: :width 700px
+[[../resources/profiler/glob-2.png]]
