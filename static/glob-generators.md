@@ -167,19 +167,7 @@ if __name__ == "__main__":
             print(fout.relative_to(root))
 ```
 
-    python-blog/converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
-    python-blog/converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
-    python-blog/converted/eli-francis-_M-DrbiNFa4-unsplash.jpeg
-    python-blog/converted/007.jpeg
-    python-blog/converted/000.jpeg
-    python-blog/converted/008.jpeg
-    python-blog/converted/009.jpeg
-    python-blog/converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
-    python-blog/converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
-    python-blog/converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
-    python-blog/converted/002.jpeg
-    python-blog/converted/006.jpeg
-    python-blog/converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
+    
 
 Note that we are placing the results in a parent directory different to the one we use for searching as we are doing so recursively by default. This is because we don&rsquo;t want to get our results as inputs the second time we run the script.
 

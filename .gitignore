@@ -256,5 +256,8 @@ resources/secrets
 **/*.[jpJP][npNP]*[gG$]
 **/*.txt
 !docs/build
+!resources/profiler/*
+tests/extensions
 !susan-q-yin-2JIvboGLeho-unsplash.jpg
 !eli-francis-_M-DrbiNFa4-unsplash.jpg
+!nasa-CpHNKNRwXps-unsplash.jpg

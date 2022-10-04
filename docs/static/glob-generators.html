@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-09-30 Fri 15:04 -->
+<!-- 2022-10-03 Mon 22:15 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Glob generators with Python</title>
@@ -47,7 +47,7 @@
 <h2 id="glob-generators-with-python"><span class="section-number-2">1.</span> Glob generators with Python</h2>
 <div class="outline-text-2" id="text-glob-generators-with-python">
 
-<div id="org4d077a1" class="figure">
+<div id="org397a7d2" class="figure">
 <p><img src="../resources/susan-q-yin-2JIvboGLeho-unsplash.jpg" alt="susan-q-yin-2JIvboGLeho-unsplash.jpg" width="800px" />
 </p>
 </div>
@@ -60,7 +60,7 @@ This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" hre
 Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
 </p>
 
-<div class="src-name" id="orgc95298d">
+<div class="src-name" id="org0573ec4">
 <p>
 
 </p>
@@ -71,7 +71,7 @@ Glob patterns are also used in <code>.gitignore</code><sup><a id="fnr.3" class="
 </pre>
 </div>
 
-<pre class="example" id="org96f876a">
+<pre class="example" id="org577619c">
 Python 3.10.7
 </pre>
 </div>
@@ -83,7 +83,7 @@ Python 3.10.7
 We are going to start with either one of these patterns.
 </p>
 
-<div class="src-name" id="org7a6fad2">
+<div class="src-name" id="org5f93750">
 <p>
 
 </p>
@@ -93,7 +93,7 @@ We are going to start with either one of these patterns.
 <pre class="src src-shell"><span style="color: #CE9178;">'*.[jpJP][npNP][egEG]*'</span>
 </pre>
 </div>
-<div class="src-name" id="org1c983d2">
+<div class="src-name" id="orgb0dfbb0">
 <p>
 
 </p>
@@ -116,7 +116,7 @@ If we wanted to make sure we don&rsquo;t match unintended files, we can use the 
 If we combine both patterns we can get a more strict match that makes sure the file format ends in g/G and matches all three of our target extensions.
 </p>
 
-<div class="src-name" id="orgdb2110a">
+<div class="src-name" id="orgdf09c11">
 <p>
 
 </p>
@@ -287,7 +287,7 @@ script-1
 </pre>
 </div>
 
-<pre class="example" id="org0decbc3">
+<pre class="example" id="orge7de3af">
 resources/data/Screen Shot 2022-09-05 at 12.41.33.png
 resources/data/Screen Shot 2022-09-05 at 12.41.45.png
 resources/eli-francis-_M-DrbiNFa4-unsplash.jpg
@@ -320,7 +320,7 @@ We want to convert all <code>png</code> files into <code>jpeg</code>, as well as
 Before writing our main process, we will create a function that will replace the file suffix to <code>jpeg</code> as well as change its parent directory. We&rsquo;ll also create a <code>root</code> variable for printing purposes.
 </p>
 
-<div class="src-name" id="org5dd90af">
+<div class="src-name" id="org08195ed">
 <p>
 
 </p>
@@ -345,20 +345,8 @@ Before writing our main process, we will create a function that will replace the
 </pre>
 </div>
 
-<pre class="example" id="orgd99763a">
-python-blog/converted/Screen Shot 2022-09-05 at 12.41.33.jpeg
-python-blog/converted/Screen Shot 2022-09-05 at 12.41.45.jpeg
-python-blog/converted/eli-francis-_M-DrbiNFa4-unsplash.jpeg
-python-blog/converted/007.jpeg
-python-blog/converted/000.jpeg
-python-blog/converted/008.jpeg
-python-blog/converted/009.jpeg
-python-blog/converted/Screen Shot 2022-09-29 at 13.20.27.jpeg
-python-blog/converted/Screen Shot 2022-09-29 at 20.07.04.jpeg
-python-blog/converted/Screen Shot 2022-09-29 at 20.08.21.jpeg
-python-blog/converted/002.jpeg
-python-blog/converted/006.jpeg
-python-blog/converted/susan-q-yin-2JIvboGLeho-unsplash.jpeg
+<pre class="example" id="org8cc4fcb">
+
 </pre>
 
 <p>
@@ -378,7 +366,7 @@ Generators in Python are one of the most useful tools for processing data. If we
 The benefit of using <code>glob</code> is that we don&rsquo;t have to use Python to check that each file suffix matches a list of file formats so we can scale our process more easily. For example, in the following code, we can replace the first comprehension with the second one.
 </p>
 
-<div class="src-name" id="org04f0c2d">
+<div class="src-name" id="orgbb5ce8f">
 <p>
 
 </p>
@@ -421,7 +409,7 @@ We could also do it recursively with <code>rglob</code> or adding <code>**/</cod
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-09-30 Fri 15:04</p>
+<p class="date">Created: 2022-10-03 Mon 22:15</p>
 </div>
 </body>
 </html>

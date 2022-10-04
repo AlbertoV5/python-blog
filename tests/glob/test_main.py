@@ -1,19 +1,18 @@
-# [[file:../../static/glob-compare.org::*Creating the Functions][Creating the Functions:1]]
+# [[file:../../static/glob-compare.org::#final-test-script][Final Test Script:1]]
 from pathlib import Path
 from itertools import permutations
-from pprint import pprint
 import subprocess
 import cProfile
 import logging
 import pstats
 import shutil
 import os
-import re
 
 def create_options(extensions):
     data = list(i for e in extensions for i in list(e))
     data.append("")
     return list(set("".join(c) for c in permutations(data, 4)))
+
 def create_directories(root: str, number: int, depth: int):
     root = Path(root).resolve()
     if root.is_dir():
@@ -33,6 +32,7 @@ def create_directories(root: str, number: int, depth: int):
     mk_dirs(root, directories, number, depth)
     directories.insert(0, root)
     return directories
+
 def test_makefiles(ext = ["csv", "tsv", "txt"], number = 3, depth = 3):
     options = create_options(ext)
     directories = create_directories('../tests/extensions', number, depth)
@@ -45,6 +45,7 @@ def test_makefiles(ext = ["csv", "tsv", "txt"], number = 3, depth = 3):
             subprocess.run(['touch', filepath])
         # assert len(list(directories[i].glob('*'))) > number
     print('All files were created.')
+
 def profile(func):
     def wrapper(*args, **kwargs):
         with cProfile.Profile() as pr:
@@ -71,7 +72,7 @@ def test_main():
             yield f
 
     def consume_glob():
-        return list(Path(rootd).glob(pattern))
+        outcome["glob"] = list(Path(rootd).glob(pattern))
 
     # using os
     def use_os_comp():
@@ -90,7 +91,6 @@ def test_main():
 
     def use_os_gen():
         for root, dirs, files in os.walk(rootd):
-            path = root.split(os.sep)
             for file in files:
                 if file.split(".")[1] in ext:
                     yield file
@@ -108,12 +108,7 @@ def test_main():
                 # break
             if file.suffix == ".csv":
                 break
-            # if file.suffix in ext:
-                # ext.pop(ext.index(file.suffix.replace(".", "")))
-            # if len(ext) == 0:
-                # break
-    # [consume_gen(use_glob()) for i in range(times)]
-    # log
+    [consume_gen(use_glob()) for i in range(times)]
     log.debug(outcome)
     return Path('tests/prof')
 
@@ -121,4 +116,4 @@ if __name__ == "__main__":
     ext = ['csv', 'tsv', 'txt', 'xlsx', 'jpg', 'png']
     test_makefiles(ext, 5, 5)
     test_main()
-# Creating the Functions:1 ends here
+# Final Test Script:1 ends here
