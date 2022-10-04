@@ -55,7 +55,7 @@ print(len(options))
 
     467
 
-Before creating the files in the test directory, we are going to add a few children directories so we can test recursive search too. We are going to create 2 &rsquo;tuneable&rsquo; variables, `depth` and `n`, which will effectively bring the total amount of directories to `depth ** n`. Then we are going to create the directories somewhat recursively while adding each one to a `directories` list.
+Before creating the files in the test directory, we are going to add a few children directories so we can test recursive search too. We are going to create 2 &rsquo;tuneable&rsquo; variables, `depth` and `number`, which will effectively bring the total amount of directories to `depth ** number`. Then we are going to create the directories somewhat recursively while adding each one to a `directories` list.
 
 ```python
 def create_directories(root: str, number: int, depth: int):
@@ -80,7 +80,7 @@ def create_directories(root: str, number: int, depth: int):
 
 ```
 
-Then we can separate the file extensions in different directories. We end up with `40` directories if we count the root directory. So we are going to separate our `467` into 12 files per directory.
+Then we can separate the file extensions in different directories. We end up with `= directories if we count the root directory. So we are going to separate our {{{results(=467`)}}} into `x` files per directory.
 
 ```python
 
@@ -88,8 +88,6 @@ Then we can separate the file extensions in different directories. We end up wit
 create_directories('../tests/extensions', 3, 3)
 print(len(directories))
 ```
-
-    40
 
 
 ## Final mock function
@@ -107,7 +105,7 @@ def test_makefiles(ext = ["csv", "tsv", "txt"], number = 3, depth = 3):
         for j in range(i * ratio, (i * ratio) + ratio):
             filepath = directories[i] / f"file.{options[j]}"
             subprocess.run(['touch', filepath])
-        # assert len(list(directories[i].glob('*'))) > number
+        assert len(list(directories[i].glob('*'))) > number
     print('All files were created.')
 
 ```
@@ -117,7 +115,7 @@ def test_makefiles(ext = ["csv", "tsv", "txt"], number = 3, depth = 3):
 
 ## Profiler
 
-We will create a profiler wrapper function so we can apply it to whichever test function we want and get the profile data into a file with its name. We are also gonna create a logger instance to display all info to the pytest stdout.
+We will create a profiler wrapper function so we can apply it to whichever test function we want and get the profile data into a file with its name.
 
 ```python
 def profile(func):
@@ -135,7 +133,7 @@ def profile(func):
 
 ## Final Test Script
 
-We are going to start with simple functions for listing all files that match the pattern.
+We are going to combine all previous functions into a single script and include default values for running the test, which includes generating new extensions and directories. We are also gonna create a logger instance to display all info to the pytest stdout. Finally we are going to execute each function `n` number of times for better profiler results.
 
 ```python
 from pathlib import Path
@@ -182,7 +180,7 @@ def test_makefiles(ext = ["csv", "tsv", "txt"], number = 3, depth = 3):
         for j in range(i * ratio, (i * ratio) + ratio):
             filepath = directories[i] / f"file.{options[j]}"
             subprocess.run(['touch', filepath])
-        # assert len(list(directories[i].glob('*'))) > number
+        assert len(list(directories[i].glob('*'))) > number
     print('All files were created.')
 
 def profile(func):
@@ -247,6 +245,7 @@ def test_main():
                 # break
             if file.suffix == ".csv":
                 break
+
     [consume_gen(use_glob()) for i in range(times)]
     log.debug(outcome)
     return Path('tests/prof')

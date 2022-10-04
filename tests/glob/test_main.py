@@ -43,7 +43,7 @@ def test_makefiles(ext = ["csv", "tsv", "txt"], number = 3, depth = 3):
         for j in range(i * ratio, (i * ratio) + ratio):
             filepath = directories[i] / f"file.{options[j]}"
             subprocess.run(['touch', filepath])
-        # assert len(list(directories[i].glob('*'))) > number
+        assert len(list(directories[i].glob('*'))) > number
     print('All files were created.')
 
 def profile(func):
@@ -108,6 +108,7 @@ def test_main():
                 # break
             if file.suffix == ".csv":
                 break
+
     [consume_gen(use_glob()) for i in range(times)]
     log.debug(outcome)
     return Path('tests/prof')

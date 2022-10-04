@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-10-03 Mon 23:10 -->
+<!-- 2022-10-03 Mon 23:20 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Glob v.s. OS Walk</title>
@@ -49,7 +49,7 @@
 <h2 id="glob-v-s-os-walk"><span class="section-number-2">1.</span> Glob v.s. OS Walk</h2>
 <div class="outline-text-2" id="text-glob-v-s-os-walk">
 
-<div id="orgd460665" class="figure">
+<div id="org10666bf" class="figure">
 <p><img src="../resources/nasa-CpHNKNRwXps-unsplash.jpg" alt="nasa-CpHNKNRwXps-unsplash.jpg" width="800px" />
 </p>
 </div>
@@ -66,7 +66,7 @@ This article is a follow-up to &ldquo;Glob generators in Python&rdquo;, we are g
 The question we are trying to answer is if we want to use <code>Path.glob</code> at all or if it is better to check for specific file extensions instead of using patterns.
 </p>
 
-<div class="src-name" id="org5ab99e6">
+<div class="src-name" id="org8eb816c">
 <p>
 
 </p>
@@ -77,7 +77,7 @@ The question we are trying to answer is if we want to use <code>Path.glob</code>
 </pre>
 </div>
 
-<pre class="example" id="orgc85d25d">
+<pre class="example" id="orgc3bd99e">
 Python 3.10.7
 </pre>
 
@@ -152,12 +152,12 @@ check-1
 </pre>
 </div>
 
-<pre class="example" id="org698e5c8">
+<pre class="example" id="orgc039a82">
 467
 </pre>
 
 <p>
-Before creating the files in the test directory, we are going to add a few children directories so we can test recursive search too. We are going to create 2 &rsquo;tuneable&rsquo; variables, <code>depth</code> and <code>n</code>, which will effectively bring the total amount of directories to <code>depth ** n</code>. Then we are going to create the directories somewhat recursively while adding each one to a <code>directories</code> list.
+Before creating the files in the test directory, we are going to add a few children directories so we can test recursive search too. We are going to create 2 &rsquo;tuneable&rsquo; variables, <code>depth</code> and <code>number</code>, which will effectively bring the total amount of directories to <code>depth ** number</code>. Then we are going to create the directories somewhat recursively while adding each one to a <code>directories</code> list.
 </p>
 
 <div class="src-name" id="org329abfb">
@@ -191,7 +191,7 @@ make-dirs
 </div>
 
 <p>
-Then we can separate the file extensions in different directories. We end up with <code>40</code> directories if we count the root directory. So we are going to separate our <code>467</code> into 12 files per directory.
+Then we can separate the file extensions in different directories. We end up with <code>= directories if we count the root directory. So we are going to separate our {{{results(=467</code>)}}} into <code>x</code> files per directory.
 </p>
 
 <div class="src-name" id="orgc6ebe28">
@@ -208,8 +208,8 @@ check-2
 </pre>
 </div>
 
-<pre class="example" id="org75004fe">
-40
+<pre class="example" id="org702266b">
+
 </pre>
 </div>
 </div>
@@ -238,13 +238,13 @@ make-files
         <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">j</span> <span style="color: #569CD6;">in</span> <span style="color: #C586C0;">range</span>(i <span style="color: #e0e0e0;">*</span> ratio, (i <span style="color: #e0e0e0;">*</span> ratio) <span style="color: #e0e0e0;">+</span> ratio):
             <span style="color: #9CDCFE;">filepath</span> <span style="color: #e0e0e0;">=</span> directories[i] <span style="color: #e0e0e0;">/</span> <span style="color: #CE9178;">f"file.</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">options[j]</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>
             subprocess.<span style="color: #ded492;">run</span>([<span style="color: #CE9178;">'touch'</span>, filepath])
-        <span style="color: #579C4C;"># assert len(list(directories[i].glob('*'))) &gt; number</span>
+        <span style="color: #569CD6;">assert</span> <span style="color: #C586C0;">len</span>(<span style="color: #C586C0;">list</span>(directories[i].<span style="color: #ded492;">glob</span>(<span style="color: #CE9178;">'*'</span>))) <span style="color: #e0e0e0;">&gt;</span> number
     <span style="color: #C586C0;">print</span>(<span style="color: #CE9178;">'All files were created.'</span>)
 
 </pre>
 </div>
 
-<pre class="example" id="orgf83519e">
+<pre class="example" id="org564edee">
 All files were created.
 </pre>
 </div>
@@ -254,7 +254,7 @@ All files were created.
 <h3 id="profiler"><span class="section-number-3">1.3.</span> Profiler</h3>
 <div class="outline-text-3" id="text-profiler">
 <p>
-We will create a profiler wrapper function so we can apply it to whichever test function we want and get the profile data into a file with its name. We are also gonna create a logger instance to display all info to the pytest stdout.
+We will create a profiler wrapper function so we can apply it to whichever test function we want and get the profile data into a file with its name.
 </p>
 
 <div class="src-name" id="org7e8b3e9">
@@ -283,10 +283,10 @@ make-profiler
 <h3 id="final-test-script"><span class="section-number-3">1.4.</span> Final Test Script</h3>
 <div class="outline-text-3" id="text-final-test-script">
 <p>
-We are going to start with simple functions for listing all files that match the pattern.
+We are going to combine all previous functions into a single script and include default values for running the test, which includes generating new extensions and directories. We are also gonna create a logger instance to display all info to the pytest stdout. Finally we are going to execute each function <code>n</code> number of times for better profiler results.
 </p>
 
-<div class="src-name" id="orgd99adf7">
+<div class="src-name" id="orgd82676b">
 <p>
 
 </p>
@@ -337,7 +337,7 @@ We are going to start with simple functions for listing all files that match the
         <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">j</span> <span style="color: #569CD6;">in</span> <span style="color: #C586C0;">range</span>(i <span style="color: #e0e0e0;">*</span> ratio, (i <span style="color: #e0e0e0;">*</span> ratio) <span style="color: #e0e0e0;">+</span> ratio):
             <span style="color: #9CDCFE;">filepath</span> <span style="color: #e0e0e0;">=</span> directories[i] <span style="color: #e0e0e0;">/</span> <span style="color: #CE9178;">f"file.</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">options[j]</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>
             subprocess.<span style="color: #ded492;">run</span>([<span style="color: #CE9178;">'touch'</span>, filepath])
-        <span style="color: #579C4C;"># assert len(list(directories[i].glob('*'))) &gt; number</span>
+        <span style="color: #569CD6;">assert</span> <span style="color: #C586C0;">len</span>(<span style="color: #C586C0;">list</span>(directories[i].<span style="color: #ded492;">glob</span>(<span style="color: #CE9178;">'*'</span>))) <span style="color: #e0e0e0;">&gt;</span> number
     <span style="color: #C586C0;">print</span>(<span style="color: #CE9178;">'All files were created.'</span>)
 
 <span style="color: #569CD6;">def</span> <span style="color: #ded492;">profile</span>(<span style="color: #9CDCFE;">func</span>):
@@ -402,6 +402,7 @@ We are going to start with simple functions for listing all files that match the
                 <span style="color: #579C4C;"># break</span>
             <span style="color: #569CD6;">if</span> file.<span style="color: #9CDCFE;">suffix</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">".csv"</span>:
                 <span style="color: #569CD6;">break</span>
+
     [<span style="color: #ded492;">consume_gen</span>(<span style="color: #ded492;">use_glob</span>()) <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">i</span> <span style="color: #569CD6;">in</span> <span style="color: #C586C0;">range</span>(times)]
     log.<span style="color: #ded492;">debug</span>(outcome)
     <span style="color: #569CD6;">return</span> <span style="color: #4EC9B0;">Path</span>(<span style="color: #CE9178;">'tests/prof'</span>)
@@ -422,7 +423,7 @@ We are going to start with simple functions for listing all files that match the
 We&rsquo;ll run the test with <code>pytest</code>.
 </p>
 
-<div class="src-name" id="orgab46f40">
+<div class="src-name" id="org84c7174">
 <p>
 
 </p>
@@ -433,7 +434,7 @@ We&rsquo;ll run the test with <code>pytest</code>.
 </pre>
 </div>
 
-<pre class="example" id="org1b194e4">
+<pre class="example" id="orgf518328">
 ============================= test session starts ==============================
 platform darwin -- Python 3.10.7, pytest-7.1.3, pluggy-1.0.0
 rootdir: /Users/albertovaldez/python-blog
@@ -456,7 +457,7 @@ The first result that we can see from the command line log is that the pattern w
 <p>
 Then we are going to read the profiler output with <code>snakeviz</code>.
 </p>
-<div class="src-name" id="org76acff0">
+<div class="src-name" id="org66c03a3">
 <p>
 
 </p>
@@ -467,7 +468,7 @@ Then we are going to read the profiler output with <code>snakeviz</code>.
 </pre>
 </div>
 
-<div class="src-name" id="org3699a1d">
+<div class="src-name" id="org074b523">
 <p>
 
 </p>
@@ -516,7 +517,7 @@ The first time we ran the test we compared the execution time of the following f
 
 
 
-<div id="orge3ba9b9" class="figure">
+<div id="orge7adbc4" class="figure">
 <p><img src="../resources/profiler/glob-0.png" alt="glob-0.png" width="700px" />
 </p>
 </div>
@@ -530,7 +531,7 @@ However, if we stop the generator from the <code>glob</code> method once a condi
 </p>
 
 
-<div id="org17f3d50" class="figure">
+<div id="orgaf61cc4" class="figure">
 <p><img src="../resources/profiler/glob-1.png" alt="glob-1.png" width="700px" />
 </p>
 </div>
@@ -540,7 +541,7 @@ When using <code>os.walk</code> as a generator we get a slightly slower executio
 </p>
 
 
-<div id="org36ea288" class="figure">
+<div id="org4374b35" class="figure">
 <p><img src="../resources/profiler/glob-2.png" alt="glob-2.png" width="700px" />
 </p>
 </div>
@@ -554,7 +555,7 @@ When using <code>os.walk</code> as a generator we get a slightly slower executio
 Generators win any argument no matter what. The results from <code>glob</code> weren&rsquo;t favorable as we had too many collateral file extension, mainly because of how our test was setup. This is not enough accuracy for us to support using glob patterns so making our own generator from <code>os.walk</code> may be the best option. We can always combine both modules for better filepath information and object-oriented features.
 </p>
 
-<div class="src-name" id="org82eb61e">
+<div class="src-name" id="org14976bc">
 <p>
 
 </p>
@@ -572,7 +573,7 @@ Generators win any argument no matter what. The results from <code>glob</code> w
 </pre>
 </div>
 
-<pre class="example" id="org7b5876e">
+<pre class="example" id="org951ed87">
 ../tests/prof/test_main.prof
 ../tests/glob/test_main.py
 </pre>
@@ -600,7 +601,7 @@ Generators win any argument no matter what. The results from <code>glob</code> w
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-10-03 Mon 23:10</p>
+<p class="date">Created: 2022-10-03 Mon 23:20</p>
 </div>
 </body>
 </html>
