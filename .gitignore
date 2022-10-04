@@ -257,6 +257,7 @@ resources/secrets
 **/*.txt
 !docs/build
 !resources/profiler/*
+!docs/resources/profiler/*
 tests/extensions
 !susan-q-yin-2JIvboGLeho-unsplash.jpg
 !eli-francis-_M-DrbiNFa4-unsplash.jpg
