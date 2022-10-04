@@ -12,8 +12,6 @@
 #+attr_html: :width 800px
 [[../resources/nasa-CpHNKNRwXps-unsplash.jpg]]
 
-https://unsplash.com/photos/CpHNKNRwXps?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink
-
 This article is a follow-up to "Glob generators in Python", we are going to compare the =os.walk=[fn:1] to the =Path.glob= method[fn:2] that we used in the past, both in the context of generators.
 
 The question we are trying to answer is if we want to use =Path.glob= at all or if it is better to check for specific file extensions instead of using patterns.
@@ -340,6 +338,7 @@ for f in walk_gen("../tests", ["py", "prof"]):
 :CUSTOM_ID: footnotes
 :END:
 
+https://unsplash.com/photos/CpHNKNRwXps?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink
 [fn:3]https://jiffyclub.github.io/snakeviz/
 [fn:2]https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob
 [fn:1]https://docs.python.org/3/library/os.html#os.walk

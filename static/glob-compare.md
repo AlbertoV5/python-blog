@@ -2,8 +2,6 @@
 
 ![img](../resources/nasa-CpHNKNRwXps-unsplash.jpg)
 
-<https://unsplash.com/photos/CpHNKNRwXps?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink>
-
 This article is a follow-up to &ldquo;Glob generators in Python&rdquo;, we are going to compare the `os.walk`<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to the `Path.glob` method<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> that we used in the past, both in the context of generators.
 
 The question we are trying to answer is if we want to use `Path.glob` at all or if it is better to check for specific file extensions instead of using patterns.

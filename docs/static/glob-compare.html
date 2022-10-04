@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-10-03 Mon 23:20 -->
+<!-- 2022-10-03 Mon 23:23 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Glob v.s. OS Walk</title>
@@ -49,14 +49,10 @@
 <h2 id="glob-v-s-os-walk"><span class="section-number-2">1.</span> Glob v.s. OS Walk</h2>
 <div class="outline-text-2" id="text-glob-v-s-os-walk">
 
-<div id="org10666bf" class="figure">
+<div id="org052eec9" class="figure">
 <p><img src="../resources/nasa-CpHNKNRwXps-unsplash.jpg" alt="nasa-CpHNKNRwXps-unsplash.jpg" width="800px" />
 </p>
 </div>
-
-<p>
-<a href="https://unsplash.com/photos/CpHNKNRwXps?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditShareLink">https://unsplash.com/photos/CpHNKNRwXps?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditShareLink</a>
-</p>
 
 <p>
 This article is a follow-up to &ldquo;Glob generators in Python&rdquo;, we are going to compare the <code>os.walk</code><sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to the <code>Path.glob</code> method<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> that we used in the past, both in the context of generators.
@@ -66,7 +62,7 @@ This article is a follow-up to &ldquo;Glob generators in Python&rdquo;, we are g
 The question we are trying to answer is if we want to use <code>Path.glob</code> at all or if it is better to check for specific file extensions instead of using patterns.
 </p>
 
-<div class="src-name" id="org8eb816c">
+<div class="src-name" id="orgc712c05">
 <p>
 
 </p>
@@ -77,7 +73,7 @@ The question we are trying to answer is if we want to use <code>Path.glob</code>
 </pre>
 </div>
 
-<pre class="example" id="orgc3bd99e">
+<pre class="example" id="org3c94a16">
 Python 3.10.7
 </pre>
 
@@ -152,7 +148,7 @@ check-1
 </pre>
 </div>
 
-<pre class="example" id="orgc039a82">
+<pre class="example" id="org51ba8e5">
 467
 </pre>
 
@@ -208,7 +204,7 @@ check-2
 </pre>
 </div>
 
-<pre class="example" id="org702266b">
+<pre class="example" id="org2138661">
 
 </pre>
 </div>
@@ -244,7 +240,7 @@ make-files
 </pre>
 </div>
 
-<pre class="example" id="org564edee">
+<pre class="example" id="org3ad457f">
 All files were created.
 </pre>
 </div>
@@ -286,7 +282,7 @@ make-profiler
 We are going to combine all previous functions into a single script and include default values for running the test, which includes generating new extensions and directories. We are also gonna create a logger instance to display all info to the pytest stdout. Finally we are going to execute each function <code>n</code> number of times for better profiler results.
 </p>
 
-<div class="src-name" id="orgd82676b">
+<div class="src-name" id="org6c3ab96">
 <p>
 
 </p>
@@ -423,7 +419,7 @@ We are going to combine all previous functions into a single script and include 
 We&rsquo;ll run the test with <code>pytest</code>.
 </p>
 
-<div class="src-name" id="org84c7174">
+<div class="src-name" id="orgd80cd5d">
 <p>
 
 </p>
@@ -434,7 +430,7 @@ We&rsquo;ll run the test with <code>pytest</code>.
 </pre>
 </div>
 
-<pre class="example" id="orgf518328">
+<pre class="example" id="org7bf8093">
 ============================= test session starts ==============================
 platform darwin -- Python 3.10.7, pytest-7.1.3, pluggy-1.0.0
 rootdir: /Users/albertovaldez/python-blog
@@ -457,7 +453,7 @@ The first result that we can see from the command line log is that the pattern w
 <p>
 Then we are going to read the profiler output with <code>snakeviz</code>.
 </p>
-<div class="src-name" id="org66c03a3">
+<div class="src-name" id="orga27769e">
 <p>
 
 </p>
@@ -468,7 +464,7 @@ Then we are going to read the profiler output with <code>snakeviz</code>.
 </pre>
 </div>
 
-<div class="src-name" id="org074b523">
+<div class="src-name" id="org34ca888">
 <p>
 
 </p>
@@ -517,7 +513,7 @@ The first time we ran the test we compared the execution time of the following f
 
 
 
-<div id="orge7adbc4" class="figure">
+<div id="org39d4e97" class="figure">
 <p><img src="../resources/profiler/glob-0.png" alt="glob-0.png" width="700px" />
 </p>
 </div>
@@ -531,7 +527,7 @@ However, if we stop the generator from the <code>glob</code> method once a condi
 </p>
 
 
-<div id="orgaf61cc4" class="figure">
+<div id="orga755110" class="figure">
 <p><img src="../resources/profiler/glob-1.png" alt="glob-1.png" width="700px" />
 </p>
 </div>
@@ -541,7 +537,7 @@ When using <code>os.walk</code> as a generator we get a slightly slower executio
 </p>
 
 
-<div id="org4374b35" class="figure">
+<div id="orgabd1ce7" class="figure">
 <p><img src="../resources/profiler/glob-2.png" alt="glob-2.png" width="700px" />
 </p>
 </div>
@@ -555,7 +551,7 @@ When using <code>os.walk</code> as a generator we get a slightly slower executio
 Generators win any argument no matter what. The results from <code>glob</code> weren&rsquo;t favorable as we had too many collateral file extension, mainly because of how our test was setup. This is not enough accuracy for us to support using glob patterns so making our own generator from <code>os.walk</code> may be the best option. We can always combine both modules for better filepath information and object-oriented features.
 </p>
 
-<div class="src-name" id="org14976bc">
+<div class="src-name" id="orga7064ee">
 <p>
 
 </p>
@@ -573,7 +569,7 @@ Generators win any argument no matter what. The results from <code>glob</code> w
 </pre>
 </div>
 
-<pre class="example" id="org951ed87">
+<pre class="example" id="orgd903934">
 ../tests/prof/test_main.prof
 ../tests/glob/test_main.py
 </pre>
@@ -601,7 +597,7 @@ Generators win any argument no matter what. The results from <code>glob</code> w
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-10-03 Mon 23:20</p>
+<p class="date">Created: 2022-10-03 Mon 23:23</p>
 </div>
 </body>
 </html>
