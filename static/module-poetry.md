@@ -109,7 +109,7 @@ description = ""
 authors = ["AlbertoV5 <58243333+AlbertoV5@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "html_index_maker"}]
+packages = [{include = "html_index_maker", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -341,6 +341,8 @@ PASSED                                                         [100%]
 ```
 
 We get the string output in the pytest log so we can move on now!
+
+Note: Don&rsquo;t forget to commit your changes!
 
 
 ## The Development Cycle
