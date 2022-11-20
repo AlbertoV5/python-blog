@@ -342,7 +342,7 @@ PASSED                                                         [100%]
 
 We get the string output in the pytest log so we can move on now!
 
-Note: Don&rsquo;t forget to commit your changes!
+Note: Don&rsquo;t forget to commit your changes! You can also add a .gitignore template for Python and macOS: <https://www.toptal.com/developers/gitignore/api/python,macos>
 
 
 ## The Development Cycle
