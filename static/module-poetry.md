@@ -109,7 +109,7 @@ description = ""
 authors = ["AlbertoV5 <58243333+AlbertoV5@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "html_index_maker", from = "src"}]
+packages = [{include = "html_index_maker"}]
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -120,12 +120,10 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 ```
 
-However, note that the `packages` must match the folder under &ldquo;src&rdquo;!
-
-So make sure to change it in the TOML file if needed.
+However, note that the `packages` must match the folder under &ldquo;src&rdquo;! So make sure to change it in the TOML file if needed.
 
 ```toml
-packages = [{include = "html-index-maker"}]
+packages = [{include = "html-index-maker", from = "src"}]
 ```
 
 
