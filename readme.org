@@ -23,3 +23,10 @@ This is an exercise on using glob patterns to find image files in a directory. W
 :END:
 
 This article is a follow-up to "Glob generators in Python", we are going to compare the =os.walk= to the =Path.glob= method that we used in the past, both in the context of generators.
+
+** [[./static/sql-converter.org][SQL Converter]]
+:PROPERTIES:
+:CUSTOM_ID: static-sql-converter-org-sql-converter
+:END:
+
+We take a look at the possibility of using Regex and string processing to convert multiple SQL statements to Python classes (SQLAlchemy and Pydantic models) for using with FastAPI.

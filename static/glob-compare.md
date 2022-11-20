@@ -10,7 +10,9 @@ The question we are trying to answer is if we want to use `Path.glob` at all or 
 python --version
 ```
 
-    Python 3.10.7
+```
+Python 3.10.7
+```
 
 We are going to use cProfile to measure the code execution and snakeviz <sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> to visualize the results. We are going to use a few other modules to help us build and evaluate the tests.
 
@@ -51,7 +53,9 @@ options = create_options(["csv", "tsv", "txt"])
 print(len(options))
 ```
 
-    467
+```
+
+```
 
 Before creating the files in the test directory, we are going to add a few children directories so we can test recursive search too. We are going to create 2 &rsquo;tuneable&rsquo; variables, `depth` and `number`, which will effectively bring the total amount of directories to `depth ** number`. Then we are going to create the directories somewhat recursively while adding each one to a `directories` list.
 
@@ -87,6 +91,10 @@ create_directories('../tests/extensions', 3, 3)
 print(len(directories))
 ```
 
+```
+
+```
+
 
 ## Final mock function
 
@@ -108,7 +116,9 @@ def test_makefiles(ext = ["csv", "tsv", "txt"], number = 3, depth = 3):
 
 ```
 
-    All files were created.
+```
+All files were created.
+```
 
 
 ## Profiler
@@ -263,19 +273,21 @@ We&rsquo;ll run the test with `pytest`.
 pytest --log-cli-level=10
 ```
 
-    ============================= test session starts ==============================
-    platform darwin -- Python 3.10.7, pytest-7.1.3, pluggy-1.0.0
-    rootdir: /Users/albertovaldez/python-blog
-    plugins: profiling-1.7.0
-    collected 2 items
-    
-    tests/glob/test_main.py::test_makefiles PASSED                           [ 50%]
-    tests/glob/test_main.py::test_main
-    -------------------------------- live log call ---------------------------------
-    DEBUG    test_main:test_main.py:113 {'glob': [PosixPath('../tests/extensions/0/1/1/file.txv'), PosixPath('../tests/extensions/1/1/2/file.cxt'), PosixPath('../tests/extensions/1/2/file.tsv'), PosixPath('../tests/extensions/2/0/0/file.csv'), PosixPath('../tests/extensions/2/0/1/file.cst'), PosixPath('../tests/extensions/2/0/1/file.tst'), PosixPath('../tests/extensions/2/1/file.cxv')], 'os': ['file.tsv', 'file.csv']}
-    PASSED                                                                   [100%]
-    
-    ============================== 2 passed in 2.56s ===============================
+```
+============================= test session starts ==============================
+platform darwin -- Python 3.10.7, pytest-7.1.3, pluggy-1.0.0
+rootdir: /Users/albertovaldez/python-blog
+plugins: profiling-1.7.0
+collected 2 items
+
+tests/glob/test_main.py::test_makefiles PASSED                           [ 50%]
+tests/glob/test_main.py::test_main
+-------------------------------- live log call ---------------------------------
+DEBUG    test_main:test_main.py:113 {'glob': [PosixPath('../tests/extensions/0/1/1/file.txv'), PosixPath('../tests/extensions/1/1/2/file.cxt'), PosixPath('../tests/extensions/1/2/file.tsv'), PosixPath('../tests/extensions/2/0/0/file.csv'), PosixPath('../tests/extensions/2/0/1/file.cst'), PosixPath('../tests/extensions/2/0/1/file.tst'), PosixPath('../tests/extensions/2/1/file.cxv')], 'os': ['file.tsv', 'file.csv']}
+PASSED                                                                   [100%]
+
+============================== 2 passed in 2.56s ===============================
+```
 
 The first result that we can see from the command line log is that the pattern will find files that overlap with the extensions we are looking for. For example: `txv`, `cxt` and `tst`. This may be enough downside for not considering using only glob patterns.
 
@@ -325,8 +337,10 @@ for f in walk_gen("../tests", ["py", "prof"]):
     print(f)
 ```
 
-    ../tests/prof/test_main.prof
-    ../tests/glob/test_main.py
+```
+../tests/prof/test_main.prof
+../tests/glob/test_main.py
+```
 
 ## Footnotes
 

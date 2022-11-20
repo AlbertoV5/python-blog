@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-11-19 Sat 21:57 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sql Converter</title>
+<meta name="author" content="Alberto Valdez" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://albertovaldez5.gitlab.io/org-template/resources/theme/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://albertovaldez5.gitlab.io/org-template/resources/theme/js/readtheorg.js"></script>
+<link rel="shortcut icon" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/favicon.ico">
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href=""> UP </a>
+ |
+ <a accesskey="H" href="../index.html"> HOME </a>
+</div><div id="content" class="content">
+<h1 class="title">Sql Converter
+<br />
+<span class="subtitle"><a href="https://github.com/AlbertoV5/python-blog">https://github.com/AlbertoV5/python-blog</a></span>
+</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#sql-converter">1. SQL Converter</a>
+<ul>
+<li><a href="#starting-at-the-end">1.1. Starting at the End</a></li>
+<li><a href="#the-header-constants">1.2. The Header Constants</a></li>
+<li><a href="#helper-functions">1.3. Helper Functions</a></li>
+<li><a href="#top-and-bottom-of-main">1.4. Top and Bottom of main</a></li>
+<li><a href="#the-table-class">1.5. The Table class</a></li>
+<li><a href="#the-column-class">1.6. The Column Class</a></li>
+<li><a href="#type-lookup-table">1.7. Type Lookup Table</a></li>
+<li><a href="#reviewing-main">1.8. Reviewing Main</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sql-converter" class="outline-2">
+<h2 id="sql-converter"><span class="section-number-2">1.</span> SQL Converter</h2>
+<div class="outline-text-2" id="text-sql-converter">
+<p>
+Have you ever had to convert dozens of SQL tables to Python models? Well, you can always turn to Regex.
+</p>
+
+<p>
+In this article we will go over the steps for reading an SQL schema and match all the &ldquo;CREATE TABLE&rdquo; statements with a very simple Regex pattern, then write strings of Python classes/models with the column information.
+</p>
+
+<p>
+Final code <a href="https://github.com/AlbertoV5/psql-to-models">here.</a>
+</p>
+
+<p>
+Note that we will use Python 3.10 for this exercise. The results are designed to be used with FastAPI 0.86.0, SQLAlchemy 1.4 and Pydantic 1.10. We are also following <a href="https://github.com/faraday-academy/fast-api-lms">this</a> style of FastAPI.
+</p>
+
+<p>
+Finally, we will use <a href="https://github.com/MIT-LCP/mimic-code/blob/main/mimic-iii/buildmimic/postgres/postgres_create_tables.sql">this</a> SQL schema as our use case, so we want to convert all 26 tables without partitions to SQLAlchemy/Pydantic models.
+</p>
+
+<div class="src-name" id="org2cf80a3">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">pyenv</span> local 3.10.7 &amp; <span style="color: #ded492;">python</span> <span style="color: #e0e0e0;">--version</span>
+</pre>
+</div>
+
+<pre class="example" id="org08ea2ab">
+Python 3.10.7
+</pre>
+</div>
+
+<div id="outline-container-starting-at-the-end" class="outline-3">
+<h3 id="starting-at-the-end"><span class="section-number-3">1.1.</span> Starting at the End</h3>
+<div class="outline-text-3" id="text-starting-at-the-end">
+<p>
+This will be a retrospective process as the utility is already written, so we will start with the main function and then go down from there.
+</p>
+
+<p>
+We want to read a .sql file, then output 2 .py files, one for the SQLAlchemy models and other for the Pydantic models.
+</p>
+
+<div class="src-name" id="orgd7a965b">
+<p>
+main
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">def</span> <span style="color: #ded492;">main</span>(<span style="color: #9CDCFE;">argv</span>: <span style="color: #4EC9B0;">Arguments</span>):
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Read .sql file with CREATE TABLE queries and store models</span><span style="color: #CE9178;">"""</span>
+    <span style="color: #569CD6;">with</span> <span style="color: #C586C0;">open</span>(<span style="color: #4EC9B0;">Path</span>(argv.<span style="color: #9CDCFE;">input</span>).<span style="color: #ded492;">resolver</span>()) <span style="color: #569CD6;">as</span> file:
+        <span style="color: #9CDCFE;">sql_string</span> <span style="color: #e0e0e0;">=</span> file.<span style="color: #ded492;">read</span>()
+    <span style="color: #579C4C;"># Match pattern</span>
+    <span style="color: #9CDCFE;">pattern</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">r"(?:CREATE TABLE )((.|\n*?));"</span>
+    <span style="color: #9CDCFE;">tables</span>: <span style="color: #4EC9B0;">list</span>[<span style="color: #4EC9B0;">Table</span>] <span style="color: #e0e0e0;">=</span> [
+        <span style="color: #4EC9B0;">Table</span>.<span style="color: #ded492;">from_string</span>(table[<span style="color: #BBCCAA;">0</span>]) <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">table</span> <span style="color: #569CD6;">in</span> <span style="color: #4EC9B0;">re</span>.<span style="color: #ded492;">findall</span>(patterb, sql_string)
+    ]
+    <span style="color: #579C4C;"># String processing</span>
+    <span style="color: #9CDCFE;">alchemy_data</span> <span style="color: #e0e0e0;">=</span> <span style="color: #e0e0e0;">ALCHEMY_HEADER</span>
+    <span style="color: #9CDCFE;">pydantic_data</span> <span style="color: #e0e0e0;">=</span> <span style="color: #e0e0e0;">PYDANTIC_HEADER</span>
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">model</span>, <span style="color: #9CDCFE;">pydantic</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">generate_strings</span>(tables):
+        <span style="color: #9CDCFE;">alchemy_data</span> <span style="color: #e0e0e0;">+=</span> model
+        <span style="color: #9CDCFE;">pydantic_data</span> <span style="color: #e0e0e0;">+=</span> pydantic
+    <span style="color: #579C4C;"># Output</span>
+    <span style="color: #569CD6;">with</span> <span style="color: #C586C0;">open</span>(<span style="color: #4EC9B0;">Path</span>(argv.<span style="color: #9CDCFE;">alchemy</span>).<span style="color: #ded492;">resolve</span>(), <span style="color: #CE9178;">"w"</span>) <span style="color: #569CD6;">as</span> file:
+        file.<span style="color: #ded492;">write</span>(alchemy_data)
+    <span style="color: #569CD6;">with</span> <span style="color: #C586C0;">open</span>(<span style="color: #4EC9B0;">Path</span>(argv.<span style="color: #9CDCFE;">pydantic</span>).<span style="color: #ded492;">resolve</span>(), <span style="color: #CE9178;">"w"</span>) <span style="color: #569CD6;">as</span> file:
+        file.<span style="color: #ded492;">write</span>(pydantic_data)
+</pre>
+</div>
+
+<p>
+The regex pattern is really simple, it says &ldquo;look for CREATE TABLE but don&rsquo;t include it&rdquo;, then &ldquo;include any number of subgroups that are made of anything or a linebreak&rdquo;, then &ldquo;repeat that subgroup any number of times in a non-greedy way&rdquo;, then finally &ldquo;end with a semicolon&rdquo;. The non-greedy part means that it will match as few repetitions as possible, so we stop at &ldquo;;&rdquo; <sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup>.
+</p>
+
+<p>
+Note that we include a lot of constants, classes and methods that we haven&rsquo;t talked about, so let&rsquo;s take a look at those.
+</p>
+</div>
+</div>
+
+<div id="outline-container-the-header-constants" class="outline-3">
+<h3 id="the-header-constants"><span class="section-number-3">1.2.</span> The Header Constants</h3>
+<div class="outline-text-3" id="text-the-header-constants">
+<p>
+We are generating python files that depend on other libraries, so we will create strings that match our setup. In this case we need the SQLAlchemy types along with our <code>declarative base</code> <sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> for the alchemy file and the Pydantic BaseModel and datetime type for the pydantic file. <sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup>
+</p>
+
+<div class="src-name" id="org62cb381">
+<p>
+constants
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #9CDCFE;">ALCHEMY_HEADER</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">'''"""</span>
+<span style="color: #CE9178;">SQLAlchemy Models</span>
+<span style="color: #CE9178;">"""</span>
+<span style="color: #CE9178;">from sqlalchemy import Column, Integer, String, CHAR, TIMESTAMP, SmallInteger</span>
+<span style="color: #CE9178;">from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION</span>
+<span style="color: #CE9178;">from db.setup import Base</span>
+<span style="color: #CE9178;">'''</span>
+
+<span style="color: #9CDCFE;">PYDANTIC_HEADER</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">'''"""</span>
+<span style="color: #CE9178;">Pydantic Models</span>
+<span style="color: #CE9178;">"""</span>
+<span style="color: #CE9178;">from pydantic import BaseModel</span>
+<span style="color: #CE9178;">from datetime import datetime</span>
+<span style="color: #CE9178;">'''</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-helper-functions" class="outline-3">
+<h3 id="helper-functions"><span class="section-number-3">1.3.</span> Helper Functions</h3>
+<div class="outline-text-3" id="text-helper-functions">
+<p>
+The last step before writing the output files is to iterate over the results of our parsed SQL string in order to generate the strings of the Models. So we will use a couple of helper functions for appending to our final string.
+</p>
+
+<div class="src-name" id="orgc0abc66">
+<p>
+helpers
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #9CDCFE;">BANNED_TABLES</span> <span style="color: #e0e0e0;">=</span> [<span style="color: #CE9178;">"chartevents_"</span>]
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">is_valid</span>(<span style="color: #9CDCFE;">table</span>: <span style="color: #4EC9B0;">Table</span>) -&gt; <span style="color: #4EC9B0;">bool</span>:
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Whether table is in banned tables or not.</span><span style="color: #CE9178;">"""</span>
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">banned</span> <span style="color: #569CD6;">in</span> <span style="color: #e0e0e0;">BANNED_TABLES</span>:
+        <span style="color: #569CD6;">if</span> banned <span style="color: #569CD6;">in</span> table.<span style="color: #9CDCFE;">name</span>:
+            <span style="color: #569CD6;">return</span> <span style="color: #569CD6;">False</span>
+    <span style="color: #569CD6;">return</span> <span style="color: #569CD6;">True</span>
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">generate_strings</span>(<span style="color: #9CDCFE;">tables</span>: <span style="color: #4EC9B0;">list</span>[<span style="color: #4EC9B0;">Table</span>]) -&gt; <span style="color: #4EC9B0;">Generator</span>[tuple[str, str], <span style="color: #569CD6;">None</span>, <span style="color: #569CD6;">None</span>]:
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Yields SQLAlchemy and Pydantic Models as strings for each table.</span><span style="color: #CE9178;">"""</span>
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">table</span> <span style="color: #569CD6;">in</span> tables:
+        table.<span style="color: #ded492;">get_constraints</span>()
+        <span style="color: #9CDCFE;">alchemy</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">f"</span><span style="color: #569CD6;">\n</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">table.</span><span style="color: #ded492; background-color: #252525;">make_alchemy</span><span style="color: #9CDCFE; background-color: #252525;">()</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span> <span style="color: #569CD6;">if</span> <span style="color: #ded492;">is_valid</span>(table) <span style="color: #569CD6;">else</span> <span style="color: #CE9178;">""</span>
+        <span style="color: #9CDCFE;">pydantic</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">f"</span><span style="color: #569CD6;">\n</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">table.</span><span style="color: #ded492; background-color: #252525;">make_pydantic</span><span style="color: #9CDCFE; background-color: #252525;">()</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span> <span style="color: #569CD6;">if</span> <span style="color: #ded492;">is_valid</span>(table) <span style="color: #569CD6;">else</span> <span style="color: #CE9178;">""</span>
+        <span style="color: #569CD6;">yield</span> alchemy, pydantic
+</pre>
+</div>
+
+<p>
+The generate_strings function will iterate over a list of &ldquo;Table&rdquo; object that represent each SQL table and then simply call a method to create a string and yield them to the main function. We use the is_valid function as a crutch for our Regex pattern as we don&rsquo;t mind matching ALL tables and then filtering out the ones that are not needed.
+</p>
+</div>
+</div>
+
+<div id="outline-container-top-and-bottom-of-main" class="outline-3">
+<h3 id="top-and-bottom-of-main"><span class="section-number-3">1.4.</span> Top and Bottom of main</h3>
+<div class="outline-text-3" id="text-top-and-bottom-of-main">
+<p>
+Before taking a look at the implementation of the &ldquo;Table&rdquo;, we will include the imports in the main function and the argument parser so we can focus on the rest.
+</p>
+
+<div class="src-name" id="org51ae0b4">
+<p>
+imports
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #CE9178;">"""</span>
+<span style="color: #CE9178;">This script will read the postgres_create_tables.sql file from MIMIC and</span>
+<span style="color: #CE9178;">generate python files for the sqlalchemy models and pydantic schemas for the API.</span>
+<span style="color: #CE9178;">"""</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> typing </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Generator</span><span style="color: #4EC9B0;">, </span><span style="color: #4EC9B0;">Protocol</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> argparse </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">ArgumentParser</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
+<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> re</span>
+
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> .table </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Table</span>
+
+
+<span style="color: #569CD6;">class</span> <span style="color: #4EC9B0;">Arguments</span>(<span style="color: #4EC9B0;">Protocol</span>):
+    <span style="color: #9CDCFE;">input</span>: <span style="color: #4EC9B0;">str</span>
+    <span style="color: #9CDCFE;">alchemy</span>: <span style="color: #4EC9B0;">str</span>
+    <span style="color: #9CDCFE;">pydantic</span>: <span style="color: #4EC9B0;">str</span>
+</pre>
+</div>
+
+<p>
+Then the arguments are simply the file locations.
+</p>
+
+<div class="src-name" id="orgcde3577">
+<p>
+args
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">if</span> <span style="color: #9CDCFE;">__name__</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"__main__"</span>:
+    <span style="color: #9CDCFE;">default_sql_input</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">"./schema.sql"</span>
+    <span style="color: #9CDCFE;">default_alchemy_output</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">"./models_alchemy.py"</span>
+    <span style="color: #9CDCFE;">default_pydantic_output</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">"./models_pydantic.py"</span>
+    <span style="color: #9CDCFE;">args</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">ArgumentParser</span>(
+        <span style="color: #9CDCFE;">prog</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"Convert PostgreSQL schema to SQLAlchemy and Pydantic Models."</span>,
+        <span style="color: #9CDCFE;">usage</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">f"python -m psql-to-models"</span>,
+        <span style="color: #9CDCFE;">description</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"Regex-match the .sql schema file and outputs SQLAlchemy and Pydantic models as .py files."</span>,
+    )
+    args.<span style="color: #ded492;">add_argument</span>(
+        <span style="color: #CE9178;">"-i"</span>,
+        <span style="color: #CE9178;">"--input"</span>,
+        <span style="color: #9CDCFE;">metavar</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"input"</span>,
+        <span style="color: #9CDCFE;">default</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">default_sql_input</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>,
+        <span style="color: #9CDCFE;">help</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">f"PostgreSQL Schema input file. Defaults to </span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">default_sql_input</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">."</span>,
+    )
+    args.<span style="color: #ded492;">add_argument</span>(
+        <span style="color: #CE9178;">"-a"</span>,
+        <span style="color: #CE9178;">"--alchemy"</span>,
+        <span style="color: #9CDCFE;">metavar</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"output_alchemy"</span>,
+        <span style="color: #9CDCFE;">default</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">default_alchemy_output</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>,
+        <span style="color: #9CDCFE;">help</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">f"SQLAlchemy Models output. Defaults to </span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">default_alchemy_output</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>,
+    )
+    args.<span style="color: #ded492;">add_argument</span>(
+        <span style="color: #CE9178;">"-p"</span>,
+        <span style="color: #CE9178;">"--pydantic"</span>,
+        <span style="color: #9CDCFE;">metavar</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"output_pydantic"</span>,
+        <span style="color: #9CDCFE;">default</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">default_pydantic_output</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>,
+        <span style="color: #9CDCFE;">help</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">f"Pydantic Models output. Defaults to </span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">default_alchemy_output</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>,
+    )
+    <span style="color: #ded492;">main</span>(args.<span style="color: #ded492;">parse_args</span>())
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-the-table-class" class="outline-3">
+<h3 id="the-table-class"><span class="section-number-3">1.5.</span> The Table class</h3>
+<div class="outline-text-3" id="text-the-table-class">
+<p>
+Now that we have the overall logic of our program, we will go down one more layer to the &ldquo;Table&rdquo;, which is simply a data class that splits the SQL string into pieces.
+</p>
+
+<div class="src-name" id="org38d1308">
+<p>
+table
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #CE9178;">"""</span>
+<span style="color: #CE9178;">Table representation and processor.</span>
+<span style="color: #CE9178;">Call any get_* functions before calling make_* functions.</span>
+<span style="color: #CE9178;">"""</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> dataclasses </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> dataclass</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> .column </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Column</span>
+
+
+<span style="color: #ded492;">@dataclass</span>
+<span style="color: #569CD6;">class</span> <span style="color: #4EC9B0;">Table</span>:
+    <span style="color: #9CDCFE;">name</span>: <span style="color: #4EC9B0;">str</span>
+    <span style="color: #9CDCFE;">columns</span>: <span style="color: #4EC9B0;">list</span>[<span style="color: #4EC9B0;">Column</span>]
+
+    <span style="color: #ded492;">@classmethod</span>
+    <span style="color: #569CD6;">def</span> <span style="color: #ded492;">from_string</span>(<span style="color: #9CDCFE;">cls</span>, <span style="color: #9CDCFE;">table</span>: <span style="color: #4EC9B0;">str</span>) -&gt; <span style="color: #4EC9B0;">"Table"</span>:
+        <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Create Table from string.</span><span style="color: #CE9178;">"""</span>
+        <span style="color: #9CDCFE;">data</span> <span style="color: #e0e0e0;">=</span> table.<span style="color: #ded492;">split</span>(<span style="color: #CE9178;">"</span><span style="color: #569CD6;">\n</span><span style="color: #CE9178;">"</span>)
+        <span style="color: #569CD6;">return</span> <span style="color: #4EC9B0;">Table</span>(
+            <span style="color: #9CDCFE;">name</span><span style="color: #e0e0e0;">=</span>data[<span style="color: #BBCCAA;">0</span>], <span style="color: #9CDCFE;">columns</span><span style="color: #e0e0e0;">=</span>[<span style="color: #4EC9B0;">Column</span>.<span style="color: #ded492;">from_string</span>(col) <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">col</span> <span style="color: #569CD6;">in</span> data[<span style="color: #BBCCAA;">2</span>:<span style="color: #e0e0e0;">-</span><span style="color: #BBCCAA;">1</span>]]
+        )
+
+    <span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_constraints</span>(<span style="color: #569CD6;">self</span>) -&gt; <span style="color: #569CD6;">None</span>:
+        <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Use the CONSTRAINT columns to modify the rest of the columns.</span><span style="color: #CE9178;">"""</span>
+        <span style="color: #9CDCFE;">constraints</span> <span style="color: #e0e0e0;">=</span> [col.<span style="color: #9CDCFE;">params</span> <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">col</span> <span style="color: #569CD6;">in</span> <span style="color: #569CD6;">self</span>.<span style="color: #9CDCFE;">columns</span> <span style="color: #569CD6;">if</span> col.<span style="color: #9CDCFE;">name</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"CONSTRAINT"</span>]
+        <span style="color: #9CDCFE;">data</span> <span style="color: #e0e0e0;">=</span> [c.<span style="color: #ded492;">replace</span>(<span style="color: #CE9178;">")"</span>, <span style="color: #CE9178;">""</span>).<span style="color: #ded492;">split</span>(<span style="color: #CE9178;">"("</span>) <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">c</span> <span style="color: #569CD6;">in</span> constraints]
+        <span style="color: #9CDCFE;">data</span> <span style="color: #e0e0e0;">=</span> {k.<span style="color: #ded492;">strip</span>(): v.<span style="color: #ded492;">strip</span>() <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">v</span>, <span style="color: #9CDCFE;">k</span> <span style="color: #569CD6;">in</span> data}
+        <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">column</span> <span style="color: #569CD6;">in</span> <span style="color: #569CD6;">self</span>.<span style="color: #9CDCFE;">columns</span>:
+            <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">k</span> <span style="color: #569CD6;">in</span> data:
+                <span style="color: #569CD6;">if</span> column.<span style="color: #9CDCFE;">name</span> <span style="color: #e0e0e0;">==</span> k:
+                    column.<span style="color: #9CDCFE;">primary_key</span> <span style="color: #e0e0e0;">=</span> (
+                        <span style="color: #CE9178;">"primary_key=True"</span> <span style="color: #569CD6;">if</span> data[k] <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"PRIMARY KEY"</span> <span style="color: #569CD6;">else</span> <span style="color: #CE9178;">""</span>
+                    )
+                    column.<span style="color: #9CDCFE;">unique</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">"unique=True"</span> <span style="color: #569CD6;">if</span> data[k] <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"UNIQUE"</span> <span style="color: #569CD6;">else</span> <span style="color: #CE9178;">""</span>
+
+    <span style="color: #569CD6;">def</span> <span style="color: #ded492;">make_alchemy</span>(<span style="color: #569CD6;">self</span>) -&gt; <span style="color: #4EC9B0;">str</span>:
+        <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Make SQLAlchemy model string from this Table.</span><span style="color: #CE9178;">"""</span>
+        <span style="color: #9CDCFE;">cols</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">"</span><span style="color: #569CD6;">\n</span><span style="color: #CE9178;">    "</span>.<span style="color: #ded492;">join</span>(
+            col.<span style="color: #ded492;">make_alchemy_column</span>()
+            <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">col</span> <span style="color: #569CD6;">in</span> <span style="color: #569CD6;">self</span>.<span style="color: #9CDCFE;">columns</span>
+            <span style="color: #569CD6;">if</span> col.<span style="color: #9CDCFE;">name</span> <span style="color: #e0e0e0;">!=</span> <span style="color: #CE9178;">"CONSTRAINT"</span>
+        )
+        <span style="color: #569CD6;">return</span> (
+            <span style="color: #CE9178;">f"class </span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">name</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #ded492; background-color: #252525;">capitalize</span><span style="color: #9CDCFE; background-color: #252525;">()</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">(Base):</span><span style="color: #569CD6;">\n\n</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f'    __tablename__ = "</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">name</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #ded492; background-color: #252525;">lower</span><span style="color: #9CDCFE; background-color: #252525;">()</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span><span style="color: #569CD6;">\n\n</span><span style="color: #CE9178;">'</span>
+            <span style="color: #CE9178;">f"    </span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">cols</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #569CD6;">\n\n</span><span style="color: #CE9178;">"</span>
+        )
+
+    <span style="color: #569CD6;">def</span> <span style="color: #ded492;">make_pydantic</span>(<span style="color: #569CD6;">self</span>) -&gt; <span style="color: #4EC9B0;">str</span>:
+        <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Make Pydantic model string from this Table.</span><span style="color: #CE9178;">"""</span>
+        <span style="color: #9CDCFE;">params</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">"</span><span style="color: #569CD6;">\n</span><span style="color: #CE9178;">    "</span>.<span style="color: #ded492;">join</span>(
+            col.<span style="color: #ded492;">make_pydantic_column</span>()
+            <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">col</span> <span style="color: #569CD6;">in</span> <span style="color: #569CD6;">self</span>.<span style="color: #9CDCFE;">columns</span>
+            <span style="color: #569CD6;">if</span> col.<span style="color: #9CDCFE;">name</span> <span style="color: #e0e0e0;">!=</span> <span style="color: #CE9178;">"CONSTRAINT"</span>
+        )
+        <span style="color: #569CD6;">return</span> (
+            <span style="color: #CE9178;">f"class </span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">name</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #ded492; background-color: #252525;">capitalize</span><span style="color: #9CDCFE; background-color: #252525;">()</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">(BaseModel):</span><span style="color: #569CD6;">\n\n</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f"    </span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">params</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #569CD6;">\n\n</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f"    class Config:</span><span style="color: #569CD6;">\n</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f"        orm_mode = True</span><span style="color: #569CD6;">\n\n</span><span style="color: #CE9178;">"</span>
+        )
+</pre>
+</div>
+
+<pre class="example" id="org360f548">
+
+</pre>
+
+<p>
+Note that the constructor we want to use is a class method, it could be a post init process, or we could have created it as an external factory function but we simply keep it as part of the Table for convenience. We can also get rid of the dataclass decorator and be a bit more hands on but we like the convenience of the data class. <sup><a id="fnr.4" class="footref" href="#fn.4" role="doc-backlink">4</a></sup>
+</p>
+
+<p>
+The Column class is similar to the Table but specializes in parsing the SQL column STATEMENT (&ldquo;column_name INT NOT NULL&rdquo;) and creating the strings for the Python class attributes.
+</p>
+
+<p>
+The design of the Table class is to separate the processing in &ldquo;get&rdquo; methods which process the information in the list of Columns, and &ldquo;make&rdquo; methods which convert the Columns into strings. We use get_constraints to look for the &ldquo;CONSTRAINT&rdquo; SQL statements in the list of &ldquo;Columns&rdquo; and then modify the attributes of the &ldquo;actual&rdquo; Columns, this includes the &ldquo;primary_key&rdquo; attribute, the &ldquo;unique&rdquo; one, etc.
+</p>
+
+<p>
+The &ldquo;make&rdquo; methods will join the Columns into a string that Python understands as a class.
+</p>
+</div>
+</div>
+
+<div id="outline-container-the-column-class" class="outline-3">
+<h3 id="the-column-class"><span class="section-number-3">1.6.</span> The Column Class</h3>
+<div class="outline-text-3" id="text-the-column-class">
+<p>
+This class should probably be named &ldquo;Statement&rdquo; as it includes any other SQL statement that may not be a column, but we generalize and filter at the Table level.
+</p>
+
+<p>
+We need to split the single SQL statement into different attributes that we can use to describe names or types, as well as expressing CONSTRAINTS like &ldquo;unique&rdquo; in SQLAlchemy or &ldquo;optional&rdquo; in Pydantic.
+</p>
+
+<div class="src-name" id="org4af7b81">
+<p>
+column
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #CE9178;">"""</span>
+<span style="color: #CE9178;">Column representation and processor.</span>
+<span style="color: #CE9178;">"""</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> dataclasses </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> dataclass</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> .types </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #e0e0e0;">TYPE_LOOKUP</span>
+
+
+<span style="color: #ded492;">@dataclass</span>
+<span style="color: #569CD6;">class</span> <span style="color: #4EC9B0;">Column</span>:
+    <span style="color: #9CDCFE;">name</span>: <span style="color: #4EC9B0;">str</span>
+    <span style="color: #9CDCFE;">type</span>: <span style="color: #4EC9B0;">str</span>
+    <span style="color: #9CDCFE;">params</span>: <span style="color: #4EC9B0;">str</span>
+    <span style="color: #9CDCFE;">primary_key</span>: <span style="color: #4EC9B0;">str</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">""</span>
+    <span style="color: #9CDCFE;">unique</span>: <span style="color: #4EC9B0;">str</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">""</span>
+
+    <span style="color: #ded492;">@classmethod</span>
+    <span style="color: #569CD6;">def</span> <span style="color: #ded492;">from_string</span>(<span style="color: #9CDCFE;">cls</span>, <span style="color: #9CDCFE;">col</span>: <span style="color: #4EC9B0;">str</span>) -&gt; <span style="color: #4EC9B0;">"Column"</span>:
+        <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Create column from string.</span><span style="color: #CE9178;">"""</span>
+        <span style="color: #9CDCFE;">data</span> <span style="color: #e0e0e0;">=</span> col.<span style="color: #ded492;">strip</span>().<span style="color: #ded492;">replace</span>(<span style="color: #CE9178;">","</span>, <span style="color: #CE9178;">""</span>).<span style="color: #ded492;">split</span>(<span style="color: #CE9178;">" "</span>, <span style="color: #9CDCFE;">maxsplit</span><span style="color: #e0e0e0;">=</span><span style="color: #BBCCAA;">2</span>)
+        <span style="color: #569CD6;">return</span> <span style="color: #4EC9B0;">Column</span>(
+            <span style="color: #9CDCFE;">name</span><span style="color: #e0e0e0;">=</span>data[<span style="color: #BBCCAA;">0</span>], <span style="color: #9CDCFE;">type</span><span style="color: #e0e0e0;">=</span>data[<span style="color: #BBCCAA;">1</span>], <span style="color: #9CDCFE;">params</span><span style="color: #e0e0e0;">=</span>data[<span style="color: #BBCCAA;">2</span>] <span style="color: #569CD6;">if</span> <span style="color: #C586C0;">len</span>(data) <span style="color: #e0e0e0;">&gt;</span> <span style="color: #BBCCAA;">2</span> <span style="color: #569CD6;">else</span> <span style="color: #CE9178;">""</span>
+        )
+
+    <span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_type</span>(<span style="color: #569CD6;">self</span>, <span style="color: #9CDCFE;">sqlalchemy</span>: <span style="color: #4EC9B0;">bool</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>) -&gt; <span style="color: #4EC9B0;">str</span>:
+        <span style="color: #CE9178;">"""</span>
+<span style="color: #CE9178;">        Lookup types and return either SQLAlchemy's or Pydantic's.</span>
+<span style="color: #CE9178;">        </span><span style="color: #CE9178;">"""</span>
+        <span style="color: #9CDCFE;">t</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">self</span>.<span style="color: #9CDCFE;">type</span>.<span style="color: #ded492;">replace</span>(<span style="color: #CE9178;">")"</span>, <span style="color: #CE9178;">""</span>).<span style="color: #ded492;">split</span>(<span style="color: #CE9178;">"("</span>)
+        <span style="color: #9CDCFE;">index</span> <span style="color: #e0e0e0;">=</span> <span style="color: #BBCCAA;">0</span> <span style="color: #569CD6;">if</span> sqlalchemy <span style="color: #569CD6;">else</span> <span style="color: #BBCCAA;">1</span>
+        <span style="color: #569CD6;">if</span> <span style="color: #C586C0;">len</span>(t) <span style="color: #e0e0e0;">&gt;</span> <span style="color: #BBCCAA;">1</span>:
+            <span style="color: #569CD6;">return</span> (
+                <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #e0e0e0; background-color: #252525;">TYPE_LOOKUP</span><span style="color: #9CDCFE; background-color: #252525;">[t[</span><span style="color: #BBCCAA; background-color: #252525;">0</span><span style="color: #9CDCFE; background-color: #252525;">]][index]</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">(</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">t[</span><span style="color: #BBCCAA; background-color: #252525;">1</span><span style="color: #9CDCFE; background-color: #252525;">]</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">)"</span>
+                <span style="color: #569CD6;">if</span> sqlalchemy
+                <span style="color: #569CD6;">else</span> <span style="color: #e0e0e0;">TYPE_LOOKUP</span>[t[<span style="color: #BBCCAA;">0</span>]][index]
+            )
+        <span style="color: #569CD6;">return</span> <span style="color: #e0e0e0;">TYPE_LOOKUP</span>[<span style="color: #569CD6;">self</span>.<span style="color: #9CDCFE;">type</span>][index]
+
+    <span style="color: #569CD6;">def</span> <span style="color: #ded492;">make_alchemy_column</span>(<span style="color: #569CD6;">self</span>) -&gt; <span style="color: #4EC9B0;">str</span>:
+        <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Make SQLAlchemy Model column string.</span><span style="color: #CE9178;">"""</span>
+        <span style="color: #569CD6;">return</span> (
+            <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">name</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #ded492; background-color: #252525;">lower</span><span style="color: #9CDCFE; background-color: #252525;">()</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;"> = Column("</span>
+            <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #ded492; background-color: #252525;">get_type</span><span style="color: #9CDCFE; background-color: #252525;">()</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #9CDCFE; background-color: #252525;">, nullable=False</span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">if</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #9CDCFE; background-color: #252525;">NOT NULL</span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">in</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">params</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">else</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #CE9178; background-color: #252525;">''</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #CE9178; background-color: #252525;">''</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">if</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">primary_key</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #e0e0e0; background-color: #252525;">==</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #CE9178; background-color: #252525;">''</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">else</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #CE9178; background-color: #252525;">f'</span><span style="color: #9CDCFE; background-color: #252525;">, </span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">primary_key</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #CE9178; background-color: #252525;">''</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">if</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">unique</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #e0e0e0; background-color: #252525;">==</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #CE9178; background-color: #252525;">''</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">else</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #CE9178; background-color: #252525;">f'</span><span style="color: #9CDCFE; background-color: #252525;">, </span><span style="color: #9CDCFE; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">unique</span><span style="color: #9CDCFE; background-color: #252525;">}</span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f")"</span>
+        )
+
+    <span style="color: #569CD6;">def</span> <span style="color: #ded492;">make_pydantic_column</span>(<span style="color: #569CD6;">self</span>) -&gt; <span style="color: #4EC9B0;">str</span>:
+        <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Make Pydantic Model column string.</span><span style="color: #CE9178;">"""</span>
+        <span style="color: #569CD6;">return</span> (
+            <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">name</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #ded492; background-color: #252525;">lower</span><span style="color: #9CDCFE; background-color: #252525;">()</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">: "</span>
+            <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #ded492; background-color: #252525;">get_type</span><span style="color: #9CDCFE; background-color: #252525;">(</span><span style="color: #9CDCFE; background-color: #252525;">sqlalchemy</span><span style="color: #e0e0e0; background-color: #252525;">=</span><span style="color: #569CD6; background-color: #252525;">False</span><span style="color: #9CDCFE; background-color: #252525;">)</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>
+            <span style="color: #CE9178;">f"</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #CE9178; background-color: #252525;">''</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">if</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #9CDCFE; background-color: #252525;">NOT NULL</span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">in</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">self</span><span style="color: #9CDCFE; background-color: #252525;">.</span><span style="color: #9CDCFE; background-color: #252525;">params</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #569CD6; background-color: #252525;">else</span><span style="color: #9CDCFE; background-color: #252525;"> </span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #9CDCFE; background-color: #252525;"> | None</span><span style="color: #CE9178; background-color: #252525;">'</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>
+        )
+
+</pre>
+</div>
+
+<p>
+We repeat the &ldquo;class method as constructor&rdquo; pattern as well as the &ldquo;get&rdquo; then &ldquo;make&rdquo; pattern from the Table class but this time we include the &ldquo;TYPE_LOOKUP&rdquo; constant which will help us &ldquo;translate&rdquo; the SQL types to other types that interest us.
+</p>
+
+<p>
+Note that the Optional pattern is converted to the &ldquo;new&rdquo; Python 3.10 syntax <sup><a id="fnr.5" class="footref" href="#fn.5" role="doc-backlink">5</a></sup>, so it should be modified to support &ldquo;Optional or Union&rdquo; for previous Python versions.
+</p>
+</div>
+</div>
+
+<div id="outline-container-type-lookup-table" class="outline-3">
+<h3 id="type-lookup-table"><span class="section-number-3">1.7.</span> Type Lookup Table</h3>
+<div class="outline-text-3" id="text-type-lookup-table">
+<p>
+This is the current TYPE_LOOKUP table as of the time of writing this article.
+</p>
+
+<div class="src-name" id="org2922be0">
+<p>
+types
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Define constants for type lookup.</span><span style="color: #CE9178;">"""</span>
+
+<span style="color: #9CDCFE;">TYPE_LOOKUP</span>: <span style="color: #4EC9B0;">dict</span>[<span style="color: #4EC9B0;">str</span>, tuple[str, str]] <span style="color: #e0e0e0;">=</span> {
+    <span style="color: #CE9178;">"INT"</span>: (<span style="color: #CE9178;">"Integer"</span>, <span style="color: #CE9178;">"int"</span>),
+    <span style="color: #CE9178;">"SMALLINT"</span>: (<span style="color: #CE9178;">"SmallInteger"</span>, <span style="color: #CE9178;">"int"</span>),
+    <span style="color: #CE9178;">"VARCHAR"</span>: (<span style="color: #CE9178;">"String"</span>, <span style="color: #CE9178;">"str"</span>),
+    <span style="color: #CE9178;">"TIMESTAMP"</span>: (<span style="color: #CE9178;">"TIMESTAMP"</span>, <span style="color: #CE9178;">"datetime"</span>),
+    <span style="color: #CE9178;">"DOUBLE"</span>: (<span style="color: #CE9178;">"DOUBLE_PRECISION"</span>, <span style="color: #CE9178;">"float"</span>),
+    <span style="color: #CE9178;">"CHAR"</span>: (<span style="color: #CE9178;">"CHAR"</span>, <span style="color: #CE9178;">"str"</span>),
+    <span style="color: #CE9178;">"TEXT"</span>: (<span style="color: #CE9178;">"String"</span>, <span style="color: #CE9178;">"str"</span>),
+}
+<span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Values are tuples of SQLAlchemy Model Type and Pydantic/Python Type.</span><span style="color: #CE9178;">"""</span>
+</pre>
+</div>
+
+<p>
+This forces us to use a tuple instead of a second level of keys for accesing each value as we assume we are only going to use this tool for two target models, and any other models can simply be included by extending the tuple length.
+</p>
+</div>
+</div>
+
+<div id="outline-container-reviewing-main" class="outline-3">
+<h3 id="reviewing-main"><span class="section-number-3">1.8.</span> Reviewing Main</h3>
+<div class="outline-text-3" id="text-reviewing-main">
+<p>
+Now that we know the internals of the string splitting, we can go back and review the core of this utility, which is matching the pattern, then storing and processing the strings with our data classes, and creating a new &ldquo;Python string&rdquo; that Python will understand as classes, and then SQLAlchemy and Pydantic will understand as models.
+</p>
+
+<div class="src-name" id="orgabe3f49">
+<p>
+review
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python">    <span style="color: #579C4C;"># Pattern Matching</span>
+    <span style="color: #9CDCFE;">pattern</span> <span style="color: #e0e0e0;">=</span> <span style="color: #CE9178;">r"(?:CREATE TABLE )((.|\n)*?);"</span>
+    <span style="color: #9CDCFE;">tables</span>: <span style="color: #4EC9B0;">list</span>[<span style="color: #4EC9B0;">Table</span>] <span style="color: #e0e0e0;">=</span> [
+        <span style="color: #4EC9B0;">Table</span>.<span style="color: #ded492;">from_string</span>(table[<span style="color: #BBCCAA;">0</span>]) <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">table</span> <span style="color: #569CD6;">in</span> <span style="color: #4EC9B0;">re</span>.<span style="color: #ded492;">findall</span>(pattern, sql_string)
+    ]
+    <span style="color: #579C4C;"># String Processing</span>
+    <span style="color: #9CDCFE;">alchemy_data</span> <span style="color: #e0e0e0;">=</span> <span style="color: #e0e0e0;">ALCHEMY_HEADER</span>
+    <span style="color: #9CDCFE;">pydantic_data</span> <span style="color: #e0e0e0;">=</span> <span style="color: #e0e0e0;">PYDANTIC_HEADER</span>
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">model</span>, <span style="color: #9CDCFE;">pydantic</span> <span style="color: #569CD6;">in</span> <span style="color: #ded492;">generate_strings</span>(tables):
+        <span style="color: #9CDCFE;">alchemy_data</span> <span style="color: #e0e0e0;">+=</span> model
+        <span style="color: #9CDCFE;">pydantic_data</span> <span style="color: #e0e0e0;">+=</span> pydantic
+</pre>
+</div>
+
+<p>
+The only things we need to change in every use case is the HEADER constants and our LOOKUP_TYPE dictionary as we may have different sets of columns and requirements.
+</p>
+
+<p>
+In my case, this tool solves the problem I was facing so I leave it as is and share it with the intention of both coming back to it in the future for other projects or motivate any other user that may find it useful to adapt it to their needs, so there you go, I hope this was useful in any way.
+</p>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://stackoverflow.com/questions/766372/python-non-greedy-regexes">https://stackoverflow.com/questions/766372/python-non-greedy-regexes</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://docs.sqlalchemy.org/en/14/orm/mapping_styles.html#orm-declarative-mapping">https://docs.sqlalchemy.org/en/14/orm/mapping_styles.html#orm-declarative-mapping</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.3" class="footnum" href="#fnr.3" role="doc-backlink">3</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://pydantic-docs.helpmanual.io/usage/models/">https://pydantic-docs.helpmanual.io/usage/models/</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4" role="doc-backlink">4</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://docs.python.org/3/library/dataclasses.html">https://docs.python.org/3/library/dataclasses.html</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5" role="doc-backlink">5</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://docs.python.org/3/library/typing.html#typing.Optional">https://docs.python.org/3/library/typing.html#typing.Optional</a>
+</p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Alberto Valdez</p>
+<p class="date">Created: 2022-11-19 Sat 21:57</p>
+</div>
+</body>
+</html>

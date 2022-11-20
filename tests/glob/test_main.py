@@ -1,4 +1,4 @@
-# [[file:../../static/glob-compare.org::#final-test-script][Final Test Script:1]]
+# [[file:../../static/glob-compare.org::*Final Test Script][Final Test Script:1]]
 from pathlib import Path
 from itertools import permutations
 import subprocess
