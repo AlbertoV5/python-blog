@@ -222,7 +222,7 @@ def main(argv: Namespace):
 
 if __name__ == "__main__":
     args = ArgumentParser()
-    args.add_argument("-n", "--name")
+    args.add_argument("name")
     main(args.parse_args())
 ```
 

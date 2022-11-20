@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-11-20 Sun 02:59 -->
+<!-- 2022-11-20 Sun 03:01 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Module Poetry</title>
@@ -58,7 +58,7 @@ The first steps and the development cycle.
 </p>
 
 
-<div id="orga140ee0" class="figure">
+<div id="org15c84fa" class="figure">
 <p><img src="../resources/pexels-suzy-hazelwood-1122865.jpg" alt="pexels-suzy-hazelwood-1122865.jpg" width="700px" />
 </p>
 </div>
@@ -77,7 +77,7 @@ We are going to go over the basic steps for creating a Python module with Poetry
 <li>poetry &gt;= 1.2.2</li>
 </ol>
 
-<div class="src-name" id="orgb2e3a17">
+<div class="src-name" id="orgafd3a6e">
 <p>
 
 </p>
@@ -88,11 +88,11 @@ We are going to go over the basic steps for creating a Python module with Poetry
 </pre>
 </div>
 
-<pre class="example" id="org96a59c0">
+<pre class="example" id="orgf8af9a4">
 ProductVersion:	10.15.7
 </pre>
 
-<div class="src-name" id="orgac1f3a4">
+<div class="src-name" id="org60b5d79">
 <p>
 
 </p>
@@ -103,11 +103,11 @@ ProductVersion:	10.15.7
 </pre>
 </div>
 
-<pre class="example" id="orgaa3ce90">
+<pre class="example" id="orgc07364f">
 pyenv 2.3.6
 </pre>
 
-<div class="src-name" id="orgdef3a63">
+<div class="src-name" id="orgc884d78">
 <p>
 
 </p>
@@ -118,7 +118,7 @@ pyenv 2.3.6
 </pre>
 </div>
 
-<pre class="example" id="orgf8af9a4">
+<pre class="example" id="org525fa14">
 Poetry (version 1.2.2)
 </pre>
 </div>
@@ -143,7 +143,7 @@ We want to use this utility in many different directories so instead of copying 
 We are going to create a directory and the necessary files for development.
 </p>
 
-<div class="src-name" id="orgf934f41">
+<div class="src-name" id="orgf211e6d">
 <p>
 
 </p>
@@ -158,7 +158,7 @@ We are going to create a directory and the necessary files for development.
 We create a source directory.
 </p>
 
-<div class="src-name" id="org09f795c">
+<div class="src-name" id="org910cb10">
 <p>
 
 </p>
@@ -173,7 +173,7 @@ We create a source directory.
 And our init and main files.
 </p>
 
-<div class="src-name" id="org1a8e347">
+<div class="src-name" id="org2267043">
 <p>
 
 </p>
@@ -188,7 +188,7 @@ And our init and main files.
 Then create a readme file (do it or Poetry won&rsquo;t be happy).
 </p>
 
-<div class="src-name" id="org1e12f47">
+<div class="src-name" id="org72fe3bd">
 <p>
 
 </p>
@@ -208,7 +208,7 @@ Then create a readme file (do it or Poetry won&rsquo;t be happy).
 We initialize git and change to &ldquo;main&rdquo;.
 </p>
 
-<div class="src-name" id="orgb648cd0">
+<div class="src-name" id="org0181fed">
 <p>
 
 </p>
@@ -223,7 +223,7 @@ We initialize git and change to &ldquo;main&rdquo;.
 Then we can start poetry.
 </p>
 
-<div class="src-name" id="orged7316f">
+<div class="src-name" id="orge3de477">
 <p>
 
 </p>
@@ -234,7 +234,7 @@ Then we can start poetry.
 </pre>
 </div>
 
-<pre class="example" id="orgfa30e4f">
+<pre class="example" id="org33b29eb">
 This command will guide you through creating your pyproject.toml config.
 
 Package name [html-index-maker]:
@@ -252,7 +252,7 @@ Would you like to define your development dependencies interactively? (yes/no) [
 Then we will get a resulting generated file.
 </p>
 
-<pre class="example" id="org36e9221">
+<pre class="example" id="org440ef0e">
 [tool.poetry]
 name = "html-index-maker"
 version = "0.1.0"
@@ -275,7 +275,7 @@ build-backend = "poetry.core.masonry.api"
 However, note that the <code>packages</code> must match the folder under &ldquo;src&rdquo;! So make sure to change it in the TOML file if needed.
 </p>
 
-<div class="src-name" id="org337f6a9">
+<div class="src-name" id="org568de15">
 <p>
 
 </p>
@@ -295,7 +295,7 @@ However, note that the <code>packages</code> must match the folder under &ldquo;
 Now we can start a &ldquo;venv&rdquo;. Note that Poetry tracks the absolute path of the venv directory, so try not changing the parent folder&rsquo;s name.
 </p>
 
-<div class="src-name" id="orgbd8710b">
+<div class="src-name" id="org4c9f416">
 <p>
 
 </p>
@@ -310,7 +310,7 @@ Now we can start a &ldquo;venv&rdquo;. Note that Poetry tracks the absolute path
 Make sure to activate the venv!
 </p>
 
-<div class="src-name" id="org1e0af96">
+<div class="src-name" id="orge26cc80">
 <p>
 
 </p>
@@ -325,7 +325,7 @@ Make sure to activate the venv!
 Now confirm that Poetry knows about the venv!
 </p>
 
-<div class="src-name" id="org77ec626">
+<div class="src-name" id="org7275c57">
 <p>
 
 </p>
@@ -336,7 +336,7 @@ Now confirm that Poetry knows about the venv!
 </pre>
 </div>
 
-<pre class="example" id="org7b5bec3">
+<pre class="example" id="orga35b609">
 Virtualenv
 Python:         3.7.13
 Implementation: CPython
@@ -365,7 +365,7 @@ We are ready to go!
 We will add the dependencies via Poetry.
 </p>
 
-<div class="src-name" id="orge57366b">
+<div class="src-name" id="orgd61d3c9">
 <p>
 
 </p>
@@ -376,7 +376,7 @@ We will add the dependencies via Poetry.
 </pre>
 </div>
 
-<div class="src-name" id="org5b639a8">
+<div class="src-name" id="org8ecd692">
 <p>
 
 </p>
@@ -387,7 +387,7 @@ We will add the dependencies via Poetry.
 </pre>
 </div>
 
-<div class="src-name" id="org90b58ef">
+<div class="src-name" id="org92c3c8a">
 <p>
 
 </p>
@@ -402,7 +402,7 @@ We will add the dependencies via Poetry.
 Then we will add the dev dependencies.
 </p>
 
-<div class="src-name" id="org321a70d">
+<div class="src-name" id="org718f528">
 <p>
 
 </p>
@@ -413,7 +413,7 @@ Then we will add the dev dependencies.
 </pre>
 </div>
 
-<div class="src-name" id="orgaf482d2">
+<div class="src-name" id="orgff7946e">
 <p>
 
 </p>
@@ -428,7 +428,7 @@ Then we will add the dev dependencies.
 Now our dependencies in the TOML file should look like this.
 </p>
 
-<div class="src-name" id="org8380f05">
+<div class="src-name" id="org5e52545">
 <p>
 
 </p>
@@ -475,7 +475,7 @@ main1
 
 <span style="color: #569CD6;">if</span> <span style="color: #9CDCFE;">__name__</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"__main__"</span>:
     <span style="color: #9CDCFE;">args</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">ArgumentParser</span>()
-    args.<span style="color: #ded492;">add_argument</span>(<span style="color: #CE9178;">"-n"</span>, <span style="color: #CE9178;">"--name"</span>)
+    args.<span style="color: #ded492;">add_argument</span>(<span style="color: #CE9178;">"name"</span>)
     <span style="color: #ded492;">main</span>(args.<span style="color: #ded492;">parse_args</span>())
 </pre>
 </div>
@@ -503,7 +503,7 @@ main2
 Then run the code with &ldquo;Bob&rdquo; as argument. Note that the code should work without &ldquo;poetry run&rdquo; if we are working in the &ldquo;venv&rdquo; environment but we are keeping it as a general practice.
 </p>
 
-<div class="src-name" id="org0be0b1d">
+<div class="src-name" id="org0789a48">
 <p>
 
 </p>
@@ -514,7 +514,7 @@ Then run the code with &ldquo;Bob&rdquo; as argument. Note that the code should 
 </pre>
 </div>
 
-<pre class="example" id="orgb5c98f2">
+<pre class="example" id="orgb605c77">
 Hello Bob
 </pre>
 </div>
@@ -527,7 +527,7 @@ Hello Bob
 We will create a test so we can verify that the code works after refactoring and adding functionality. So we will create a new directory and a new file for this.
 </p>
 
-<div class="src-name" id="org8e5a6e4">
+<div class="src-name" id="orga194b13">
 <p>
 
 </p>
@@ -542,7 +542,7 @@ We will create a test so we can verify that the code works after refactoring and
 If we use &ldquo;tree&rdquo;, we can verify the state of our directory.
 </p>
 
-<div class="src-name" id="orgad5a050">
+<div class="src-name" id="org8570f7f">
 <p>
 
 </p>
@@ -553,7 +553,7 @@ If we use &ldquo;tree&rdquo;, we can verify the state of our directory.
 </pre>
 </div>
 
-<pre class="example" id="org77da803">
+<pre class="example" id="orge7d5c34">
 .
 ├── README.md
 ├── poetry.lock
@@ -570,7 +570,7 @@ If we use &ldquo;tree&rdquo;, we can verify the state of our directory.
 Now we can create our code for testing.
 </p>
 
-<div class="src-name" id="orgb5686e6">
+<div class="src-name" id="org9d39f17">
 <p>
 
 </p>
@@ -594,7 +594,7 @@ Now we can create our code for testing.
 And run it simply via pytest.
 </p>
 
-<div class="src-name" id="org80deaa5">
+<div class="src-name" id="org8471dfb">
 <p>
 
 </p>
@@ -605,7 +605,7 @@ And run it simply via pytest.
 </pre>
 </div>
 
-<pre class="example" id="orge9a6c63">
+<pre class="example" id="orgff13084">
 ======================== test session starts =========================
 platform darwin -- Python 3.7.13, pytest-7.2.0, pluggy-1.0.0
 rootdir: /Users/albertovaldez/html-index-maker
@@ -620,7 +620,7 @@ tests/test_main.py .                                           [100%]
 Note that we didn&rsquo;t get any log information, but we can always tell pytest to register debug messages by adding it to the &ldquo;pyproject&rdquo; file.
 </p>
 
-<div class="src-name" id="orgd310803">
+<div class="src-name" id="org9600cd6">
 <p>
 
 </p>
@@ -643,7 +643,7 @@ Note that we didn&rsquo;t get any log information, but we can always tell pytest
 Now we can try again!
 </p>
 
-<div class="src-name" id="orge04041b">
+<div class="src-name" id="org22637f8">
 <p>
 
 </p>
@@ -654,7 +654,7 @@ Now we can try again!
 </pre>
 </div>
 
-<pre class="example" id="org7e2b110">
+<pre class="example" id="org79ce7d6">
 ======================== test session starts =========================
 platform darwin -- Python 3.7.13, pytest-7.2.0, pluggy-1.0.0
 rootdir: /Users/albertovaldez/html-index-maker, configfile: pyproject.toml
@@ -708,7 +708,7 @@ And even before that we will add the &ldquo;Black&rdquo; code formatter into the
 The last two steps can be reduced to:
 </p>
 
-<div class="src-name" id="org96af321">
+<div class="src-name" id="org5842147">
 <p>
 
 </p>
@@ -742,7 +742,7 @@ WIP &#x2026;
 We can install the module in editable mode in our global pyenv environment with the following command.
 </p>
 
-<div class="src-name" id="orgb280fbf">
+<div class="src-name" id="org241b2ff">
 <p>
 
 </p>
@@ -775,7 +775,7 @@ WIP &#x2026;
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-11-20 Sun 02:59</p>
+<p class="date">Created: 2022-11-20 Sun 03:01</p>
 </div>
 </body>
 </html>
