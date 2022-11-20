@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-11-20 Sun 02:45 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Module Poetry</title>
+<meta name="author" content="Alberto Valdez" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://albertovaldez5.gitlab.io/org-template/resources/theme/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://albertovaldez5.gitlab.io/org-template/resources/theme/js/readtheorg.js"></script>
+<link rel="shortcut icon" href="https://albertovaldez5.gitlab.io/org-template/resources/theme/favicon.ico">
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href=""> UP </a>
+ |
+ <a accesskey="H" href="../index.html"> HOME </a>
+</div><div id="content" class="content">
+<h1 class="title">Module Poetry
+<br />
+<span class="subtitle"><a href="https://github.com/AlbertoV5/python-blog">https://github.com/AlbertoV5/python-blog</a></span>
+</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#creating-python-modules-with-poetry-macos">1. Creating Python Modules with Poetry (macOS)</a>
+<ul>
+<li><a href="#module-context">1.1. Module Context</a></li>
+<li><a href="#creating-directories">1.2. Creating Directories</a></li>
+<li><a href="#initializing-git-and-poetry">1.3. Initializing Git and Poetry</a></li>
+<li><a href="#creating-the-environment">1.4. Creating the Environment</a></li>
+<li><a href="#adding-dependencies">1.5. Adding dependencies</a></li>
+<li><a href="#developing-the-module">1.6. Developing the Module</a></li>
+<li><a href="#creating-tests">1.7. Creating Tests</a></li>
+<li><a href="#the-development-cycle">1.8. The Development Cycle</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-creating-python-modules-with-poetry-macos" class="outline-2">
+<h2 id="creating-python-modules-with-poetry-macos"><span class="section-number-2">1.</span> Creating Python Modules with Poetry (macOS)</h2>
+<div class="outline-text-2" id="text-creating-python-modules-with-poetry-macos">
+<p>
+The first steps and the development cycle.
+</p>
+
+
+<div id="org6058904" class="figure">
+<p><img src="../resources/pexels-suzy-hazelwood-1122865.jpg" alt="pexels-suzy-hazelwood-1122865.jpg" width="700px" />
+</p>
+</div>
+
+<p>
+Photo by Suzy Hazelwood: <a href="https://www.pexels.com/photo/closeup-photo-of-assorted-title-books-1122865/">https://www.pexels.com/photo/closeup-photo-of-assorted-title-books-1122865/</a>
+</p>
+
+<p>
+We are going to go over the basic steps for creating a Python module with Poetry focusing on macOS just to keep it simple. Requirements:
+</p>
+
+<ol class="org-ol">
+<li>macOS &gt;= 10.15.7</li>
+<li>pyenv &gt;= 2.3.6</li>
+<li>poetry &gt;= 1.2.2</li>
+</ol>
+
+<div class="src-name" id="org0d20c44">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">sw_vers</span> <span style="color: #e0e0e0;">|</span> <span style="color: #ded492;">grep</span> ProductVersion
+</pre>
+</div>
+
+<pre class="example" id="orgb684c89">
+ProductVersion:	10.15.7
+</pre>
+
+<div class="src-name" id="org10a2cdb">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">pyenv</span> <span style="color: #e0e0e0;">--version</span>
+</pre>
+</div>
+
+<pre class="example" id="orgca8a96d">
+pyenv 2.3.6
+</pre>
+
+<div class="src-name" id="org30fffa3">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> <span style="color: #e0e0e0;">--version</span>
+</pre>
+</div>
+
+<pre class="example" id="org7ae5735">
+Poetry (version 1.2.2)
+</pre>
+</div>
+
+<div id="outline-container-module-context" class="outline-3">
+<h3 id="module-context"><span class="section-number-3">1.1.</span> Module Context</h3>
+<div class="outline-text-3" id="text-module-context">
+<p>
+Before starting the process, we are going to define the type of module we are creating. In this case, we are creating a simple &ldquo;local&rdquo; scraper that will open HTML files in a directory with JavaScript enabled, so we will use the classic Selenium and BeautifulSoup4 combination.
+</p>
+
+<p>
+We want to use this utility in many different directories so instead of copying and pasting it or using a git submodule, we are going to make it a python module that we can use in our global pyenv environment.
+</p>
+</div>
+</div>
+
+<div id="outline-container-creating-directories" class="outline-3">
+<h3 id="creating-directories"><span class="section-number-3">1.2.</span> Creating Directories</h3>
+<div class="outline-text-3" id="text-creating-directories">
+<p>
+We are going to create a directory and the necessary files for development.
+</p>
+
+<div class="src-name" id="org61a8ea5">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">mkdir</span> html-index-maker <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #C586C0;">cd</span> html-index-maker
+</pre>
+</div>
+
+<p>
+We create a source directory.
+</p>
+
+<div class="src-name" id="org021c6fd">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">mkdir</span> src <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #ded492;">mkdir</span> src/html-index-maker
+</pre>
+</div>
+
+<p>
+And our init and main files.
+</p>
+
+<div class="src-name" id="org639a810">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">touch</span> src/html-index-maker/__init__.py <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #ded492;">touch</span> src/html-index-maker/__main__.py
+</pre>
+</div>
+
+<p>
+Then create a readme file (do it or Poetry won&rsquo;t be happy).
+</p>
+
+<div class="src-name" id="org9eefef6">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">touch</span> ./README.md
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-initializing-git-and-poetry" class="outline-3">
+<h3 id="initializing-git-and-poetry"><span class="section-number-3">1.3.</span> Initializing Git and Poetry</h3>
+<div class="outline-text-3" id="text-initializing-git-and-poetry">
+<p>
+We initialize git and change to &ldquo;main&rdquo;.
+</p>
+
+<div class="src-name" id="orge21364b">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">git</span> init <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #ded492;">git</span> checkout <span style="color: #e0e0e0;">-b</span> main
+</pre>
+</div>
+
+<p>
+Then we can start poetry.
+</p>
+
+<div class="src-name" id="org3160eaf">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> init
+</pre>
+</div>
+
+<pre class="example" id="org1c82928">
+This command will guide you through creating your pyproject.toml config.
+
+Package name [html-index-maker]:
+Version [0.1.0]:
+Description []:
+Author [AlbertoV5 &lt;58243333+AlbertoV5@users.noreply.github.com&gt;, n to skip]:
+License []:  MIT
+Compatible Python versions [^3.10]:  ^3.7
+
+Would you like to define your main dependencies interactively? (yes/no) [yes] no
+Would you like to define your development dependencies interactively? (yes/no) [yes] no
+</pre>
+
+<p>
+Then we will get a resulting generated file.
+</p>
+
+<pre class="example" id="org9cd63ba">
+[tool.poetry]
+name = "html-index-maker"
+version = "0.1.0"
+description = ""
+authors = ["AlbertoV5 &lt;58243333+AlbertoV5@users.noreply.github.com&gt;"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "html_index_maker"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+</pre>
+
+<p>
+However, note that the <code>packages</code> must match the folder under &ldquo;src&rdquo;!
+</p>
+
+<p>
+So make sure to change it in the TOML file if needed.
+</p>
+
+<div class="src-name" id="orgdd8c6c5">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-toml"><span style="color: #9CDCFE;">packages</span> = [{include = <span style="color: #CE9178;">"html-index-maker"</span>}]
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-creating-the-environment" class="outline-3">
+<h3 id="creating-the-environment"><span class="section-number-3">1.4.</span> Creating the Environment</h3>
+<div class="outline-text-3" id="text-creating-the-environment">
+<p>
+Now we can start a &ldquo;venv&rdquo;. Note that Poetry tracks the absolute path of the venv directory, so try not changing the parent folder&rsquo;s name.
+</p>
+
+<div class="src-name" id="orgd366cb6">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">python</span> <span style="color: #e0e0e0;">-m</span> venv ./venv
+</pre>
+</div>
+
+<p>
+Make sure to activate the venv!
+</p>
+
+<div class="src-name" id="org7792e29">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #C586C0;">source</span> ./venv/bin/activate
+</pre>
+</div>
+
+<p>
+Now confirm that Poetry knows about the venv!
+</p>
+
+<div class="src-name" id="orgf288d2d">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> env info
+</pre>
+</div>
+
+<pre class="example" id="org7b14747">
+Virtualenv
+Python:         3.7.13
+Implementation: CPython
+Path:           /Users/albertovaldez/html-index-maker/venv
+Executable:     /Users/albertovaldez/html-index-maker/venv/bin/python
+Valid:          True
+
+System
+Platform:   darwin
+OS:         posix
+Python:     3.7.13
+Path:       /Users/albertovaldez/.pyenv/versions/3.7.13
+Executable: /Users/albertovaldez/.pyenv/versions/3.7.13/bin/python3.7
+</pre>
+
+<p>
+We are ready to go!
+</p>
+</div>
+</div>
+
+<div id="outline-container-adding-dependencies" class="outline-3">
+<h3 id="adding-dependencies"><span class="section-number-3">1.5.</span> Adding dependencies</h3>
+<div class="outline-text-3" id="text-adding-dependencies">
+<p>
+We will add the dependencies via Poetry.
+</p>
+
+<div class="src-name" id="org8d05382">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> add BeautifulSoup4
+</pre>
+</div>
+
+<div class="src-name" id="org90fa003">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> add selenium
+</pre>
+</div>
+
+<div class="src-name" id="org035860d">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> add webdriver-manager
+</pre>
+</div>
+
+<p>
+Then we will add the dev dependencies.
+</p>
+
+<div class="src-name" id="org9d04ebd">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> add <span style="color: #e0e0e0;">--group</span> dev black
+</pre>
+</div>
+
+<div class="src-name" id="org185d324">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> add <span style="color: #e0e0e0;">--group</span> dev pytest
+</pre>
+</div>
+
+<p>
+Now our dependencies in the TOML file should look like this.
+</p>
+
+<div class="src-name" id="org538811f">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-toml">[<span style="color: #35CDAF;">tool.poetry.dependencies</span>]
+<span style="color: #9CDCFE;">python</span> = <span style="color: #CE9178;">"^3.7"</span>
+<span style="color: #9CDCFE;">beautifulsoup4</span> = <span style="color: #CE9178;">"^4.11.1"</span>
+<span style="color: #9CDCFE;">selenium</span> = <span style="color: #CE9178;">"^4.6.0"</span>
+<span style="color: #9CDCFE;">webdriver-manager</span> = <span style="color: #CE9178;">"^3.8.5"</span>
+
+
+[<span style="color: #35CDAF;">tool.poetry.group.dev.dependencies</span>]
+<span style="color: #9CDCFE;">black</span> = <span style="color: #CE9178;">"^22.10.0"</span>
+<span style="color: #9CDCFE;">pytest</span> = <span style="color: #CE9178;">"^7.2.0"</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-developing-the-module" class="outline-3">
+<h3 id="developing-the-module"><span class="section-number-3">1.6.</span> Developing the Module</h3>
+<div class="outline-text-3" id="text-developing-the-module">
+<p>
+We can start by adding all our code to the <span class="underline"><span class="underline">main</span></span>.py file and then, if needed, we&rsquo;ll create additional files to import into main.
+</p>
+
+<p>
+Let&rsquo;s make sure we define a short loop before writing more code. So we are going to add a simple procedure to the main function and run the code via Poetry to make sure it works.
+</p>
+
+<div class="src-name" id="orgdf5d3e9">
+<p>
+main1
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> argparse </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">ArgumentParser</span><span style="color: #4EC9B0;">, </span><span style="color: #4EC9B0;">Namespace</span>
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">main</span>(<span style="color: #9CDCFE;">argv</span>: <span style="color: #4EC9B0;">Namespace</span>):
+    <span style="color: #C586C0;">print</span>(<span style="color: #CE9178;">"Hello"</span>, argv.<span style="color: #9CDCFE;">name</span>)
+
+<span style="color: #569CD6;">if</span> <span style="color: #9CDCFE;">__name__</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"__main__"</span>:
+    <span style="color: #9CDCFE;">args</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">ArgumentParser</span>()
+    args.<span style="color: #ded492;">add_argument</span>(<span style="color: #CE9178;">"-n"</span>, <span style="color: #CE9178;">"--name"</span>)
+    <span style="color: #ded492;">main</span>(args.<span style="color: #ded492;">parse_args</span>())
+</pre>
+</div>
+
+<p>
+This should print &ldquo;Hello &rdquo; and whatever name we give it as argument.
+</p>
+
+<p>
+Before running the code, we can install the module in the environment, then run it via Poetry.
+</p>
+
+<div class="src-name" id="orga050dbf">
+<p>
+main2
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> install
+</pre>
+</div>
+
+<p>
+Then run the code with &ldquo;Bob&rdquo; as argument. Note that the code should work without &ldquo;poetry run&rdquo; if we are working in the &ldquo;venv&rdquo; environment but we are keeping it as a general practice.
+</p>
+
+<div class="src-name" id="orgcee326c">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> run python <span style="color: #e0e0e0;">-m</span> html-index-maker Bob
+</pre>
+</div>
+
+<pre class="example" id="org3b2900d">
+Hello Bob
+</pre>
+</div>
+</div>
+
+<div id="outline-container-creating-tests" class="outline-3">
+<h3 id="creating-tests"><span class="section-number-3">1.7.</span> Creating Tests</h3>
+<div class="outline-text-3" id="text-creating-tests">
+<p>
+We will create a test so we can verify that the code works after refactoring and adding functionality. So we will create a new directory and a new file for this.
+</p>
+
+<div class="src-name" id="org7dd92cd">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">mkdir</span> ./tests <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #ded492;">touch</span> ./tests/test_main.py
+</pre>
+</div>
+
+<p>
+If we use &ldquo;tree&rdquo;, we can verify the state of our directory.
+</p>
+
+<div class="src-name" id="orgf314784">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">tree</span> <span style="color: #e0e0e0;">-I</span> <span style="color: #CE9178;">'venv|__pycache__'</span>
+</pre>
+</div>
+
+<pre class="example" id="org6c5d9ce">
+.
+├── README.md
+├── poetry.lock
+├── pyproject.toml
+├── src
+│   └── html-index-maker
+│       ├── __init__.py
+│       └── __main__.py
+└── tests
+    └── test_main.py
+</pre>
+
+<p>
+Now we can create our code for testing.
+</p>
+
+<div class="src-name" id="orge88ea84">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> subprocess</span>
+<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> logging</span>
+
+<span style="color: #9CDCFE;">log</span> <span style="color: #e0e0e0;">=</span> logging.<span style="color: #ded492;">getLogger</span>(<span style="color: #9CDCFE;">__name__</span>)
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">test_main</span>():
+    <span style="color: #9CDCFE;">command</span> <span style="color: #e0e0e0;">=</span> [<span style="color: #CE9178;">"poetry"</span>, <span style="color: #CE9178;">"run"</span>, <span style="color: #CE9178;">"python"</span>, <span style="color: #CE9178;">"-m"</span>, <span style="color: #CE9178;">"html-index-maker"</span>, <span style="color: #CE9178;">"Bob"</span>]
+    <span style="color: #9CDCFE;">out</span> <span style="color: #e0e0e0;">=</span> subprocess.<span style="color: #ded492;">check_output</span>(command)
+    <span style="color: #569CD6;">assert</span> out.<span style="color: #ded492;">decode</span>(<span style="color: #CE9178;">"utf-8"</span>) <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"Hello Bob</span><span style="color: #569CD6;">\n</span><span style="color: #CE9178;">"</span>
+    log.<span style="color: #ded492;">debug</span>(out)
+</pre>
+</div>
+
+<p>
+And run it simply via pytest.
+</p>
+
+<div class="src-name" id="orge96e78c">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> run pytest
+</pre>
+</div>
+
+<pre class="example" id="org1ab4c80">
+======================== test session starts =========================
+platform darwin -- Python 3.7.13, pytest-7.2.0, pluggy-1.0.0
+rootdir: /Users/albertovaldez/html-index-maker
+collected 1 item
+
+tests/test_main.py .                                           [100%]
+
+========================= 1 passed in 0.62s ==========================
+</pre>
+
+<p>
+Note that we didn&rsquo;t get any log information, but we can always tell pytest to register debug messages by adding it to the &ldquo;pyproject&rdquo; file.
+</p>
+
+<div class="src-name" id="orged20e49">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-toml">[<span style="color: #35CDAF;">tool.pytest.ini_options</span>]
+<span style="color: #9CDCFE;">log_cli</span> = <span style="color: #569CD6;">true</span>
+<span style="color: #9CDCFE;">log_cli_level</span> = <span style="color: #CE9178;">"DEBUG"</span>
+<span style="color: #9CDCFE;">log_cli_format</span> = <span style="color: #CE9178;">"%(asctime)s [%(levelname)s] (%(filename)s:%(lineno)s): %(message)s"</span>
+<span style="color: #9CDCFE;">log_cli_date_format</span> = <span style="color: #CE9178;">"%Y-%m-%d %H:%M:%S"</span>
+<span style="color: #9CDCFE;">log_file</span> = <span style="color: #CE9178;">"tests/tests.log"</span>
+<span style="color: #9CDCFE;">log_file_level</span> = <span style="color: #CE9178;">"DEBUG"</span>
+<span style="color: #9CDCFE;">log_file_format</span> = <span style="color: #CE9178;">"%(asctime)s [%(levelname)s] (%(filename)s:%(lineno)s): %(message)s"</span>
+<span style="color: #9CDCFE;">log_file_date_format</span> = <span style="color: #CE9178;">"%Y-%m-%d %H:%M:%S"</span>
+</pre>
+</div>
+
+<p>
+Now we can try again!
+</p>
+
+<div class="src-name" id="org29eb566">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> run pytest
+</pre>
+</div>
+
+<pre class="example" id="org53b5801">
+======================== test session starts =========================
+platform darwin -- Python 3.7.13, pytest-7.2.0, pluggy-1.0.0
+rootdir: /Users/albertovaldez/html-index-maker, configfile: pyproject.toml
+collected 1 item
+
+tests/test_main.py::test_main
+--------------------------- live log call ----------------------------
+2022-11-20 02:32:33 [DEBUG] (test_main.py:11): b'Hello Bob\n'
+PASSED                                                         [100%]
+
+========================= 1 passed in 1.21s ==========================
+</pre>
+
+<p>
+We get the string output in the pytest log so we can move on now!
+</p>
+</div>
+</div>
+
+<div id="outline-container-the-development-cycle" class="outline-3">
+<h3 id="the-development-cycle"><span class="section-number-3">1.8.</span> The Development Cycle</h3>
+<div class="outline-text-3" id="text-the-development-cycle">
+<p>
+Now that everything is ready to go, we will move by following the same steps:
+</p>
+
+<ol class="org-ol">
+<li>Write / Change code</li>
+<li>Run tests</li>
+</ol>
+
+<p>
+So if we change the functionality of our code, we will know if it is working as intended or not, but for that we need to change the test first to match our initial requirements.
+</p>
+
+<p>
+And even before that we will add the &ldquo;Black&rdquo; code formatter into the mix, we could add it to pre-commit instead but in this case we will run Black manually and leave pre-commit for another time. So the dev cycle will look like:
+</p>
+
+<ol class="org-ol">
+<li>Write code</li>
+<li>Test it</li>
+<li>Format it</li>
+</ol>
+
+<p>
+The last two steps can be reduced to:
+</p>
+
+<div class="src-name" id="org0304246">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> run black . <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #ded492;">poetry</span> run pytest
+</pre>
+</div>
+
+<p>
+So we can copy and paste that line into the command line and then repeat it after we make significant changes to our code. Black will run first and then pytest to make sure we get the pytest log after whatever Black outputs to the console.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Alberto Valdez</p>
+<p class="date">Created: 2022-11-20 Sun 02:45</p>
+</div>
+</body>
+</html>

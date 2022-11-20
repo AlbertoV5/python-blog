@@ -16,3 +16,8 @@ Follow-up to &ldquo;Glob generators in Python&rdquo;, comparing the os.walk and 
 ## [SQL Converter](./static/sql-converter.md)
 
 Using Regex and string processing to convert multiple SQL statements to Python classes (SQLAlchemy and Pydantic models) for using with FastAPI.
+
+
+## [Python Modules with Poetry](./static/module-poetry.md)
+
+Going over the steps for setting up a Poetry project for creating a Python module and starting a development cycle.

@@ -2,6 +2,10 @@
 
 Have you ever had to convert dozens of SQL tables to Python models? Well, you can always turn to Regex.
 
+![img](../resources/pexels-李进-3172740.jpg)
+
+Photo by 李进: <https://www.pexels.com/photo/low-angle-photography-of-gray-spiral-building-3172740/>
+
 In this article we will go over the steps for reading an SQL schema and match all the &ldquo;CREATE TABLE&rdquo; statements with a very simple Regex pattern, then write strings of Python classes/models with the column information.
 
 Final code [here.](https://github.com/AlbertoV5/psql-to-models)

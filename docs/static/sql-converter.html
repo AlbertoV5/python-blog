@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-11-19 Sat 21:57 -->
+<!-- 2022-11-19 Sat 22:40 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Sql Converter</title>
@@ -54,6 +54,16 @@
 Have you ever had to convert dozens of SQL tables to Python models? Well, you can always turn to Regex.
 </p>
 
+
+<div id="orgeb9d7ef" class="figure">
+<p><img src="../resources/pexels-李进-3172740.jpg" alt="pexels-李进-3172740.jpg" width="700px" />
+</p>
+</div>
+
+<p>
+Photo by 李进: <a href="https://www.pexels.com/photo/low-angle-photography-of-gray-spiral-building-3172740/">https://www.pexels.com/photo/low-angle-photography-of-gray-spiral-building-3172740/</a>
+</p>
+
 <p>
 In this article we will go over the steps for reading an SQL schema and match all the &ldquo;CREATE TABLE&rdquo; statements with a very simple Regex pattern, then write strings of Python classes/models with the column information.
 </p>
@@ -70,7 +80,7 @@ Note that we will use Python 3.10 for this exercise. The results are designed to
 Finally, we will use <a href="https://github.com/MIT-LCP/mimic-code/blob/main/mimic-iii/buildmimic/postgres/postgres_create_tables.sql">this</a> SQL schema as our use case, so we want to convert all 26 tables without partitions to SQLAlchemy/Pydantic models.
 </p>
 
-<div class="src-name" id="org2cf80a3">
+<div class="src-name" id="org324709b">
 <p>
 
 </p>
@@ -297,7 +307,7 @@ args
 Now that we have the overall logic of our program, we will go down one more layer to the &ldquo;Table&rdquo;, which is simply a data class that splits the SQL string into pieces.
 </p>
 
-<div class="src-name" id="org38d1308">
+<div class="src-name" id="org360f548">
 <p>
 table
 </p>
@@ -367,7 +377,7 @@ table
 </pre>
 </div>
 
-<pre class="example" id="org360f548">
+<pre class="example" id="org9bd2ae2">
 
 </pre>
 
@@ -578,7 +588,7 @@ In my case, this tool solves the problem I was facing so I leave it as is and sh
 </div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-11-19 Sat 21:57</p>
+<p class="date">Created: 2022-11-19 Sat 22:40</p>
 </div>
 </body>
 </html>
