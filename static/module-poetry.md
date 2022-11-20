@@ -365,3 +365,26 @@ poetry run black . && poetry run pytest
 ```
 
 So we can copy and paste that line into the command line and then repeat it after we make significant changes to our code. Black will run first and then pytest to make sure we get the pytest log after whatever Black outputs to the console.
+
+
+## Development
+
+WIP &#x2026;
+
+
+## Installing Globally
+
+We can install the module in editable mode in our global pyenv environment with the following command.
+
+```shell
+pip install -e .
+```
+
+This means that we don&rsquo;t need to use the poetry command before calling it, and every change we make to it will be reflected into the global version. However, dependencies may conflict with other modules and testeability may not be ideal so we will still want to run it via poetry when developing.
+
+However, this can allow us to run the module in any directory without the need to publish it to PyPi, and we can upload it to a public repository and anyone else can clone it and install it. Just remember than you may need to use either &ldquo;poetry build&rdquo; or &ldquo;poetry install&rdquo; to build the .whl file before using pip to install it globally in editable mode.
+
+
+## Publishing to PyPi
+
+WIP &#x2026;
