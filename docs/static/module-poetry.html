@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-11-20 Sun 03:01 -->
+<!-- 2022-11-20 Sun 23:14 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Module Poetry</title>
@@ -33,17 +33,22 @@
 <ul>
 <li><a href="#creating-python-modules-with-poetry-macos">1. Creating Python Modules with Poetry (macOS)</a>
 <ul>
-<li><a href="#module-context">1.1. Module Context</a></li>
-<li><a href="#creating-directories">1.2. Creating Directories</a></li>
-<li><a href="#initializing-git-and-poetry">1.3. Initializing Git and Poetry</a></li>
-<li><a href="#creating-the-environment">1.4. Creating the Environment</a></li>
-<li><a href="#adding-dependencies">1.5. Adding dependencies</a></li>
-<li><a href="#developing-the-module">1.6. Developing the Module</a></li>
-<li><a href="#creating-tests">1.7. Creating Tests</a></li>
-<li><a href="#the-development-cycle">1.8. The Development Cycle</a></li>
-<li><a href="#development">1.9. Development</a></li>
-<li><a href="#installing-globally">1.10. Installing Globally</a></li>
-<li><a href="#publishing-to-pypi">1.11. Publishing to PyPi</a></li>
+<li><a href="#creating-directories">1.1. Creating Directories</a></li>
+<li><a href="#initializing-git-and-poetry">1.2. Initializing Git and Poetry</a></li>
+<li><a href="#creating-the-environment">1.3. Creating the Environment</a></li>
+<li><a href="#adding-dependencies">1.4. Adding dependencies</a></li>
+<li><a href="#developing-the-module">1.5. Developing the Module</a></li>
+<li><a href="#creating-tests">1.6. Creating Tests</a></li>
+<li><a href="#the-development-loop">1.7. The Development Loop</a></li>
+<li><a href="#test-driven-development">1.8. Test Driven Development</a></li>
+<li><a href="#matching-the-expectations">1.9. Matching the Expectations</a></li>
+<li><a href="#separating-concerns">1.10. Separating Concerns</a></li>
+<li><a href="#refactoring-main">1.11. Refactoring Main</a></li>
+<li><a href="#running-the-tests">1.12. Running the Tests</a></li>
+<li><a href="#adding-more-tests">1.13. Adding more Tests</a></li>
+<li><a href="#result-example">1.14. Result Example</a></li>
+<li><a href="#installing-globally">1.15. Installing Globally</a></li>
+<li><a href="#publishing-to-pypi">1.16. Publishing to PyPi</a></li>
 </ul>
 </li>
 </ul>
@@ -54,11 +59,11 @@
 <h2 id="creating-python-modules-with-poetry-macos"><span class="section-number-2">1.</span> Creating Python Modules with Poetry (macOS)</h2>
 <div class="outline-text-2" id="text-creating-python-modules-with-poetry-macos">
 <p>
-The first steps and the development cycle.
+Setting up a module and the development loop.
 </p>
 
 
-<div id="org15c84fa" class="figure">
+<div id="org9fdf10f" class="figure">
 <p><img src="../resources/pexels-suzy-hazelwood-1122865.jpg" alt="pexels-suzy-hazelwood-1122865.jpg" width="700px" />
 </p>
 </div>
@@ -68,7 +73,7 @@ Photo by Suzy Hazelwood: <a href="https://www.pexels.com/photo/closeup-photo-of-
 </p>
 
 <p>
-We are going to go over the basic steps for creating a Python module with Poetry focusing on macOS just to keep it simple. Requirements:
+We are going to go over the basic steps for creating a Python module with Poetry focusing on macOS in order to keep it simple. Requirements:
 </p>
 
 <ol class="org-ol">
@@ -77,73 +82,23 @@ We are going to go over the basic steps for creating a Python module with Poetry
 <li>poetry &gt;= 1.2.2</li>
 </ol>
 
-<div class="src-name" id="orgafd3a6e">
 <p>
-
-</p>
-
-</div>
-<div class="org-src-container">
-<pre class="src src-shell"><span style="color: #ded492;">sw_vers</span> <span style="color: #e0e0e0;">|</span> <span style="color: #ded492;">grep</span> ProductVersion
-</pre>
-</div>
-
-<pre class="example" id="orgf8af9a4">
-ProductVersion:	10.15.7
-</pre>
-
-<div class="src-name" id="org60b5d79">
-<p>
-
-</p>
-
-</div>
-<div class="org-src-container">
-<pre class="src src-shell"><span style="color: #ded492;">pyenv</span> <span style="color: #e0e0e0;">--version</span>
-</pre>
-</div>
-
-<pre class="example" id="orgc07364f">
-pyenv 2.3.6
-</pre>
-
-<div class="src-name" id="orgc884d78">
-<p>
-
-</p>
-
-</div>
-<div class="org-src-container">
-<pre class="src src-shell"><span style="color: #ded492;">poetry</span> <span style="color: #e0e0e0;">--version</span>
-</pre>
-</div>
-
-<pre class="example" id="org525fa14">
-Poetry (version 1.2.2)
-</pre>
-</div>
-
-<div id="outline-container-module-context" class="outline-3">
-<h3 id="module-context"><span class="section-number-3">1.1.</span> Module Context</h3>
-<div class="outline-text-3" id="text-module-context">
-<p>
-Before starting the process, we are going to define the type of module we are creating. In this case, we are creating a simple &ldquo;local&rdquo; scraper that will open HTML files in a directory with JavaScript enabled, so we will use the classic Selenium and BeautifulSoup4 combination.
+We are creating a simple &ldquo;local&rdquo; scraper that will open HTML files in a directory with JavaScript enabled, so we will use the classic Selenium and BeautifulSoup4 combination.
 </p>
 
 <p>
-We want to use this utility in many different directories so instead of copying and pasting it or using a git submodule, we are going to make it a python module that we can use in our global pyenv environment.
+We want to use this utility in many different directories over time so instead of copying and pasting it or using a git submodule, we are going to make it a Python module that we can use in our global pyenv environment.
 </p>
-</div>
 </div>
 
 <div id="outline-container-creating-directories" class="outline-3">
-<h3 id="creating-directories"><span class="section-number-3">1.2.</span> Creating Directories</h3>
+<h3 id="creating-directories"><span class="section-number-3">1.1.</span> Creating Directories</h3>
 <div class="outline-text-3" id="text-creating-directories">
 <p>
-We are going to create a directory and the necessary files for development.
+We are going to create a directory and the necessary files for development. In this case, we are naming the module &ldquo;html-index-maker&rdquo; as we want a descriptive, short name that also follows PEP-8 <sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> naming convention. Alternatively, if we ever want to publish in PyPi <sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup>, we can verify that the package name doesn&rsquo;t exist yet.
 </p>
 
-<div class="src-name" id="orgf211e6d">
+<div class="src-name" id="org8a13144">
 <p>
 
 </p>
@@ -155,10 +110,10 @@ We are going to create a directory and the necessary files for development.
 </div>
 
 <p>
-We create a source directory.
+We create a source and module directory.
 </p>
 
-<div class="src-name" id="org910cb10">
+<div class="src-name" id="orgba64a1c">
 <p>
 
 </p>
@@ -170,10 +125,10 @@ We create a source directory.
 </div>
 
 <p>
-And our init and main files.
+And our init and main files in the module directory.
 </p>
 
-<div class="src-name" id="org2267043">
+<div class="src-name" id="org8c98e6d">
 <p>
 
 </p>
@@ -185,10 +140,10 @@ And our init and main files.
 </div>
 
 <p>
-Then create a readme file (do it or Poetry won&rsquo;t be happy).
+Then create a readme file (so Poetry will be happy).
 </p>
 
-<div class="src-name" id="org72fe3bd">
+<div class="src-name" id="orgcca6482">
 <p>
 
 </p>
@@ -202,13 +157,13 @@ Then create a readme file (do it or Poetry won&rsquo;t be happy).
 </div>
 
 <div id="outline-container-initializing-git-and-poetry" class="outline-3">
-<h3 id="initializing-git-and-poetry"><span class="section-number-3">1.3.</span> Initializing Git and Poetry</h3>
+<h3 id="initializing-git-and-poetry"><span class="section-number-3">1.2.</span> Initializing Git and Poetry</h3>
 <div class="outline-text-3" id="text-initializing-git-and-poetry">
 <p>
-We initialize git and change to &ldquo;main&rdquo;.
+We initialize git and change the branch to &ldquo;main&rdquo; or whatever we prefer.
 </p>
 
-<div class="src-name" id="org0181fed">
+<div class="src-name" id="org447e785">
 <p>
 
 </p>
@@ -223,7 +178,7 @@ We initialize git and change to &ldquo;main&rdquo;.
 Then we can start poetry.
 </p>
 
-<div class="src-name" id="orge3de477">
+<div class="src-name" id="org0b966b4">
 <p>
 
 </p>
@@ -234,7 +189,7 @@ Then we can start poetry.
 </pre>
 </div>
 
-<pre class="example" id="org33b29eb">
+<pre class="example" id="org5d3543f">
 This command will guide you through creating your pyproject.toml config.
 
 Package name [html-index-maker]:
@@ -252,7 +207,7 @@ Would you like to define your development dependencies interactively? (yes/no) [
 Then we will get a resulting generated file.
 </p>
 
-<pre class="example" id="org440ef0e">
+<pre class="example" id="org8a9d3c4">
 [tool.poetry]
 name = "html-index-maker"
 version = "0.1.0"
@@ -272,10 +227,10 @@ build-backend = "poetry.core.masonry.api"
 </pre>
 
 <p>
-However, note that the <code>packages</code> must match the folder under &ldquo;src&rdquo;! So make sure to change it in the TOML file if needed.
+However, note that the <code>packages</code> must match the folder under <b>&ldquo;src&rdquo;!</b> So make sure to change it in the TOML file if needed.
 </p>
 
-<div class="src-name" id="org568de15">
+<div class="src-name" id="org48e26c3">
 <p>
 
 </p>
@@ -285,17 +240,21 @@ However, note that the <code>packages</code> must match the folder under &ldquo;
 <pre class="src src-toml"><span style="color: #9CDCFE;">packages</span> = [{include = <span style="color: #CE9178;">"html-index-maker"</span>, from = <span style="color: #CE9178;">"src"</span>}]
 </pre>
 </div>
+
+<p>
+We can also add a .gitignore file from a template for Python and macOS like the following: <a href="https://www.toptal.com/developers/gitignore/api/python,macos">https://www.toptal.com/developers/gitignore/api/python,macos</a>
+</p>
 </div>
 </div>
 
 <div id="outline-container-creating-the-environment" class="outline-3">
-<h3 id="creating-the-environment"><span class="section-number-3">1.4.</span> Creating the Environment</h3>
+<h3 id="creating-the-environment"><span class="section-number-3">1.3.</span> Creating the Environment</h3>
 <div class="outline-text-3" id="text-creating-the-environment">
 <p>
 Now we can start a &ldquo;venv&rdquo;. Note that Poetry tracks the absolute path of the venv directory, so try not changing the parent folder&rsquo;s name.
 </p>
 
-<div class="src-name" id="org4c9f416">
+<div class="src-name" id="org6d7193b">
 <p>
 
 </p>
@@ -310,7 +269,7 @@ Now we can start a &ldquo;venv&rdquo;. Note that Poetry tracks the absolute path
 Make sure to activate the venv!
 </p>
 
-<div class="src-name" id="orge26cc80">
+<div class="src-name" id="orgedcef12">
 <p>
 
 </p>
@@ -325,7 +284,7 @@ Make sure to activate the venv!
 Now confirm that Poetry knows about the venv!
 </p>
 
-<div class="src-name" id="org7275c57">
+<div class="src-name" id="org0dad7f3">
 <p>
 
 </p>
@@ -336,7 +295,7 @@ Now confirm that Poetry knows about the venv!
 </pre>
 </div>
 
-<pre class="example" id="orga35b609">
+<pre class="example" id="org3289080">
 Virtualenv
 Python:         3.7.13
 Implementation: CPython
@@ -359,13 +318,13 @@ We are ready to go!
 </div>
 
 <div id="outline-container-adding-dependencies" class="outline-3">
-<h3 id="adding-dependencies"><span class="section-number-3">1.5.</span> Adding dependencies</h3>
+<h3 id="adding-dependencies"><span class="section-number-3">1.4.</span> Adding dependencies</h3>
 <div class="outline-text-3" id="text-adding-dependencies">
 <p>
 We will add the dependencies via Poetry.
 </p>
 
-<div class="src-name" id="orgd61d3c9">
+<div class="src-name" id="org5cbecdf">
 <p>
 
 </p>
@@ -376,7 +335,7 @@ We will add the dependencies via Poetry.
 </pre>
 </div>
 
-<div class="src-name" id="org8ecd692">
+<div class="src-name" id="orgf9bcfb7">
 <p>
 
 </p>
@@ -387,7 +346,7 @@ We will add the dependencies via Poetry.
 </pre>
 </div>
 
-<div class="src-name" id="org92c3c8a">
+<div class="src-name" id="orgd923d04">
 <p>
 
 </p>
@@ -399,10 +358,10 @@ We will add the dependencies via Poetry.
 </div>
 
 <p>
-Then we will add the dev dependencies.
+Then we will add the dev dependencies, which are not required for the package to run but will help the development process.
 </p>
 
-<div class="src-name" id="org718f528">
+<div class="src-name" id="org06f7cd5">
 <p>
 
 </p>
@@ -413,7 +372,7 @@ Then we will add the dev dependencies.
 </pre>
 </div>
 
-<div class="src-name" id="orgff7946e">
+<div class="src-name" id="orge694e20">
 <p>
 
 </p>
@@ -428,7 +387,7 @@ Then we will add the dev dependencies.
 Now our dependencies in the TOML file should look like this.
 </p>
 
-<div class="src-name" id="org5e52545">
+<div class="src-name" id="org8bed39e">
 <p>
 
 </p>
@@ -451,7 +410,7 @@ Now our dependencies in the TOML file should look like this.
 </div>
 
 <div id="outline-container-developing-the-module" class="outline-3">
-<h3 id="developing-the-module"><span class="section-number-3">1.6.</span> Developing the Module</h3>
+<h3 id="developing-the-module"><span class="section-number-3">1.5.</span> Developing the Module</h3>
 <div class="outline-text-3" id="text-developing-the-module">
 <p>
 We can start by adding all our code to the <span class="underline"><span class="underline">main</span></span>.py file and then, if needed, we&rsquo;ll create additional files to import into main.
@@ -485,12 +444,12 @@ This should print &ldquo;Hello &rdquo; and whatever name we give it as argument.
 </p>
 
 <p>
-Before running the code, we can install the module in the environment, then run it via Poetry.
+Before running the code, we can install the module in the venv environment, then run it via Poetry.
 </p>
 
-<div class="src-name" id="orga050dbf">
+<div class="src-name" id="org2cfc68b">
 <p>
-main2
+
 </p>
 
 </div>
@@ -500,10 +459,10 @@ main2
 </div>
 
 <p>
-Then run the code with &ldquo;Bob&rdquo; as argument. Note that the code should work without &ldquo;poetry run&rdquo; if we are working in the &ldquo;venv&rdquo; environment but we are keeping it as a general practice.
+Then run the code with a &ldquo;name&rdquo; argument. Note that the code could work without &ldquo;poetry run&rdquo; if we are working inside the &ldquo;venv&rdquo; environment, but we are keeping &ldquo;poetry run&rdquo; just to be consistent.
 </p>
 
-<div class="src-name" id="org0789a48">
+<div class="src-name" id="orgf0126c2">
 <p>
 
 </p>
@@ -514,20 +473,20 @@ Then run the code with &ldquo;Bob&rdquo; as argument. Note that the code should 
 </pre>
 </div>
 
-<pre class="example" id="orgb605c77">
+<pre class="example" id="org545a669">
 Hello Bob
 </pre>
 </div>
 </div>
 
 <div id="outline-container-creating-tests" class="outline-3">
-<h3 id="creating-tests"><span class="section-number-3">1.7.</span> Creating Tests</h3>
+<h3 id="creating-tests"><span class="section-number-3">1.6.</span> Creating Tests</h3>
 <div class="outline-text-3" id="text-creating-tests">
 <p>
 We will create a test so we can verify that the code works after refactoring and adding functionality. So we will create a new directory and a new file for this.
 </p>
 
-<div class="src-name" id="orga194b13">
+<div class="src-name" id="org5bb8bb5">
 <p>
 
 </p>
@@ -539,10 +498,10 @@ We will create a test so we can verify that the code works after refactoring and
 </div>
 
 <p>
-If we use &ldquo;tree&rdquo;, we can verify the state of our directory.
+If we use <a href="https://formulae.brew.sh/formula/tree#default">tree</a>, we can verify the state of our directory.
 </p>
 
-<div class="src-name" id="org8570f7f">
+<div class="src-name" id="orgb510f97">
 <p>
 
 </p>
@@ -553,7 +512,7 @@ If we use &ldquo;tree&rdquo;, we can verify the state of our directory.
 </pre>
 </div>
 
-<pre class="example" id="orge7d5c34">
+<pre class="example" id="org73f9a5e">
 .
 ├── README.md
 ├── poetry.lock
@@ -567,10 +526,10 @@ If we use &ldquo;tree&rdquo;, we can verify the state of our directory.
 </pre>
 
 <p>
-Now we can create our code for testing.
+Now we can create the test.
 </p>
 
-<div class="src-name" id="org9d39f17">
+<div class="src-name" id="org733fa41">
 <p>
 
 </p>
@@ -582,7 +541,7 @@ Now we can create our code for testing.
 
 <span style="color: #9CDCFE;">log</span> <span style="color: #e0e0e0;">=</span> logging.<span style="color: #ded492;">getLogger</span>(<span style="color: #9CDCFE;">__name__</span>)
 
-<span style="color: #569CD6;">def</span> <span style="color: #ded492;">test_main</span>():
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">test_file</span>():
     <span style="color: #9CDCFE;">command</span> <span style="color: #e0e0e0;">=</span> [<span style="color: #CE9178;">"poetry"</span>, <span style="color: #CE9178;">"run"</span>, <span style="color: #CE9178;">"python"</span>, <span style="color: #CE9178;">"-m"</span>, <span style="color: #CE9178;">"html-index-maker"</span>, <span style="color: #CE9178;">"Bob"</span>]
     <span style="color: #9CDCFE;">out</span> <span style="color: #e0e0e0;">=</span> subprocess.<span style="color: #ded492;">check_output</span>(command)
     <span style="color: #569CD6;">assert</span> out.<span style="color: #ded492;">decode</span>(<span style="color: #CE9178;">"utf-8"</span>) <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"Hello Bob</span><span style="color: #569CD6;">\n</span><span style="color: #CE9178;">"</span>
@@ -591,10 +550,10 @@ Now we can create our code for testing.
 </div>
 
 <p>
-And run it simply via pytest.
+And run it via <b>pytest</b>.
 </p>
 
-<div class="src-name" id="org8471dfb">
+<div class="src-name" id="orgfa0f1c5">
 <p>
 
 </p>
@@ -605,7 +564,7 @@ And run it simply via pytest.
 </pre>
 </div>
 
-<pre class="example" id="orgff13084">
+<pre class="example" id="org90be9f9">
 ======================== test session starts =========================
 platform darwin -- Python 3.7.13, pytest-7.2.0, pluggy-1.0.0
 rootdir: /Users/albertovaldez/html-index-maker
@@ -617,10 +576,10 @@ tests/test_main.py .                                           [100%]
 </pre>
 
 <p>
-Note that we didn&rsquo;t get any log information, but we can always tell pytest to register debug messages by adding it to the &ldquo;pyproject&rdquo; file.
+Note that we didn&rsquo;t get any log information, but we can always tell pytest to register debug messages by adding this to the &ldquo;pyproject&rdquo; file.
 </p>
 
-<div class="src-name" id="org9600cd6">
+<div class="src-name" id="org93f66c3">
 <p>
 
 </p>
@@ -640,10 +599,10 @@ Note that we didn&rsquo;t get any log information, but we can always tell pytest
 </div>
 
 <p>
-Now we can try again!
+This will also create a file under <b>tests/tests.log</b> that will store the latest log with the given configuration. Now we can run the tests again!
 </p>
 
-<div class="src-name" id="org22637f8">
+<div class="src-name" id="org6cbd0af">
 <p>
 
 </p>
@@ -654,13 +613,13 @@ Now we can try again!
 </pre>
 </div>
 
-<pre class="example" id="org79ce7d6">
+<pre class="example" id="org82a28d1">
 ======================== test session starts =========================
 platform darwin -- Python 3.7.13, pytest-7.2.0, pluggy-1.0.0
 rootdir: /Users/albertovaldez/html-index-maker, configfile: pyproject.toml
 collected 1 item
 
-tests/test_main.py::test_main
+tests/test_main.py::test_file
 --------------------------- live log call ----------------------------
 2022-11-20 02:32:33 [DEBUG] (test_main.py:11): b'Hello Bob\n'
 PASSED                                                         [100%]
@@ -671,18 +630,14 @@ PASSED                                                         [100%]
 <p>
 We get the string output in the pytest log so we can move on now!
 </p>
-
-<p>
-Note: Don&rsquo;t forget to commit your changes! You can also add a .gitignore template for Python and macOS: <a href="https://www.toptal.com/developers/gitignore/api/python,macos">https://www.toptal.com/developers/gitignore/api/python,macos</a>
-</p>
 </div>
 </div>
 
-<div id="outline-container-the-development-cycle" class="outline-3">
-<h3 id="the-development-cycle"><span class="section-number-3">1.8.</span> The Development Cycle</h3>
-<div class="outline-text-3" id="text-the-development-cycle">
+<div id="outline-container-the-development-loop" class="outline-3">
+<h3 id="the-development-loop"><span class="section-number-3">1.7.</span> The Development Loop</h3>
+<div class="outline-text-3" id="text-the-development-loop">
 <p>
-Now that everything is ready to go, we will move by following the same steps:
+Now that everything is ready to go, we will move by following the same two steps:
 </p>
 
 <ol class="org-ol">
@@ -691,11 +646,11 @@ Now that everything is ready to go, we will move by following the same steps:
 </ol>
 
 <p>
-So if we change the functionality of our code, we will know if it is working as intended or not, but for that we need to change the test first to match our initial requirements.
+So if we change the functionality of our code, we will know if it is working as intended or not. We must make sure the tests match the requirements, so we will change our temporary tests soon.
 </p>
 
 <p>
-And even before that we will add the &ldquo;Black&rdquo; code formatter into the mix, we could add it to pre-commit instead but in this case we will run Black manually and leave pre-commit for another time. So the dev cycle will look like:
+Before that, we will add the &ldquo;Black&rdquo; code formatter into the mix, we could add it to a pre-commit stage but in this case we will run &ldquo;Black&rdquo; manually and leave pre-commit for another time. So the dev cycle will look like:
 </p>
 
 <ol class="org-ol">
@@ -708,7 +663,7 @@ And even before that we will add the &ldquo;Black&rdquo; code formatter into the
 The last two steps can be reduced to:
 </p>
 
-<div class="src-name" id="org5842147">
+<div class="src-name" id="org7bc7b58">
 <p>
 
 </p>
@@ -720,29 +675,486 @@ The last two steps can be reduced to:
 </div>
 
 <p>
-So we can copy and paste that line into the command line and then repeat it after we make significant changes to our code. Black will run first and then pytest to make sure we get the pytest log after whatever Black outputs to the console.
+We can copy and paste that line into the command line and then repeat it after we make significant changes to our code. Black will run first and then pytest to make sure we get the pytest log after whatever Black outputs to the console.
 </p>
-</div>
-</div>
 
-<div id="outline-container-development" class="outline-3">
-<h3 id="development"><span class="section-number-3">1.9.</span> Development</h3>
-<div class="outline-text-3" id="text-development">
 <p>
-WIP &#x2026;
+As a last step before starting development, we will make the initial git commit.
+</p>
+
+<div class="src-name" id="org83bffeb">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">git</span> add . <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #ded492;">git</span> commit <span style="color: #e0e0e0;">-m</span> <span style="color: #CE9178;">"initial commit"</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-test-driven-development" class="outline-3">
+<h3 id="test-driven-development"><span class="section-number-3">1.8.</span> Test Driven Development</h3>
+<div class="outline-text-3" id="text-test-driven-development">
+<p>
+The first thing is to change our test to match the requirements. So we are going to copy a <b>use case</b> of HTML files with JavaScript functionality to a resources folder.
+</p>
+
+<div class="src-name" id="org4e04fa3">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">tree</span> ./resources
+</pre>
+</div>
+
+<pre class="example" id="org422f7db">
+./resources
+├── deeplearning.html
+├── ml.html
+└── unsupervised-ml.html
+</pre>
+
+<p>
+All the files contain a few scripts in the header which will modify the id attribute of some HTML elements that we may want to scrape, so we will load the file with Selenium and then scrape it with BeautifulSoup4.
+</p>
+
+<p>
+For out test, we will use the first <b>h2</b> and the first <b>h3</b> elements of the &ldquo;ml.html&rdquo; file.
+</p>
+
+<pre class="example" id="org88f91b0">
+&lt;h2 id="machine-learning"&gt;
+&lt;span class="section-number-2"&gt;1.&lt;/span&gt;
+ Machine Learning
+&lt;/h2&gt;
+&lt;h3 id="supervised-learning"&gt;&lt;span class="section-number-3"&gt;1.1.&lt;/span&gt; Supervised Learning&lt;/h3&gt;
+</pre>
+
+<p>
+Now we change our test to meet the requirements, which include a json file that will be generated from calling the command on a specific file. Then we expect the items in the json data to match the first_header and second_header variables, so we are defining how we want our data structure to look like.
+</p>
+
+<div class="src-name" id="orgdc3ffc5">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> subprocess</span>
+<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> logging</span>
+<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> json</span>
+
+
+<span style="color: #9CDCFE;">log</span> <span style="color: #e0e0e0;">=</span> logging.<span style="color: #ded492;">getLogger</span>(<span style="color: #9CDCFE;">__name__</span>)
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">test_file</span>():
+    <span style="color: #9CDCFE;">command</span> <span style="color: #e0e0e0;">=</span> [
+        <span style="color: #CE9178;">"poetry"</span>,
+        <span style="color: #CE9178;">"run"</span>,
+        <span style="color: #CE9178;">"python"</span>,
+        <span style="color: #CE9178;">"-m"</span>,
+        <span style="color: #CE9178;">"html-index-maker"</span>,
+        <span style="color: #CE9178;">"./resources/ml.html"</span>,
+    ]
+    log.<span style="color: #ded492;">debug</span>(command)
+    subprocess.<span style="color: #ded492;">run</span>(command)
+    <span style="color: #569CD6;">with</span> <span style="color: #C586C0;">open</span>(<span style="color: #CE9178;">"./data.json"</span>, <span style="color: #CE9178;">"r"</span>) <span style="color: #569CD6;">as</span> json_file:
+        <span style="color: #9CDCFE;">data</span> <span style="color: #e0e0e0;">=</span> json.<span style="color: #ded492;">loads</span>(json_file.<span style="color: #ded492;">read</span>())
+    <span style="color: #9CDCFE;">first_header</span> <span style="color: #e0e0e0;">=</span> {
+        <span style="color: #CE9178;">"tag"</span>: <span style="color: #CE9178;">"h2"</span>,
+        <span style="color: #CE9178;">"id"</span>: <span style="color: #CE9178;">"machine-learning"</span>,
+        <span style="color: #CE9178;">"text"</span>: <span style="color: #CE9178;">"1. Machine Learning"</span>,
+    }
+    <span style="color: #9CDCFE;">second_header</span> <span style="color: #e0e0e0;">=</span> {
+        <span style="color: #CE9178;">"tag"</span>: <span style="color: #CE9178;">"h3"</span>,
+        <span style="color: #CE9178;">"id"</span>: <span style="color: #CE9178;">"supervised-learning"</span>,
+        <span style="color: #CE9178;">"text"</span>: <span style="color: #CE9178;">"1.1. Supervised Learning"</span>,
+    }
+    <span style="color: #569CD6;">assert</span> data[<span style="color: #BBCCAA;">0</span>][<span style="color: #CE9178;">"headers"</span>][<span style="color: #BBCCAA;">0</span>] <span style="color: #e0e0e0;">==</span> first_header
+    <span style="color: #569CD6;">assert</span> data[<span style="color: #BBCCAA;">0</span>][<span style="color: #CE9178;">"headers"</span>][<span style="color: #BBCCAA;">1</span>] <span style="color: #e0e0e0;">==</span> second_header
+</pre>
+</div>
+
+<pre class="example" id="org525fa14">
+
+</pre>
+
+<p>
+If we run the test now, we get an error, so we will start development by matching those expectations.
+</p>
+
+<pre class="example" id="org8c19c55">
+E       FileNotFoundError: [Errno 2] No such file or directory: './data.json'
+</pre>
+</div>
+</div>
+
+<div id="outline-container-matching-the-expectations" class="outline-3">
+<h3 id="matching-the-expectations"><span class="section-number-3">1.9.</span> Matching the Expectations</h3>
+<div class="outline-text-3" id="text-matching-the-expectations">
+<p>
+We can start developing the main file now. We are going to do the following:
+</p>
+
+<ol class="org-ol">
+<li>Create an <b>Arguments</b> class to keep track of our ArgumentParser&rsquo;s values (use Protocol from typing in Python &gt;= 3.8).</li>
+<li>Create a Selenium driver factory function, named <b>get_driver</b>.</li>
+<li>Create a <b>scrape</b> function that will take the Selenium driver and the path to an html file and return a dictionary with the data we want.</li>
+<li>Develop the <b>main</b> function so it handles the logic of the program, if the filepath given is a directory, we assume that we want to get all HTML files in that directory so we return a list of results, if not, we return a list of one result.</li>
+</ol>
+
+<div class="src-name" id="org67ab536">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> selenium.webdriver </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Chrome</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> argparse </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">ArgumentParser</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
+
+
+<span style="color: #569CD6;">class</span> <span style="color: #4EC9B0;">Arguments</span>:
+    <span style="color: #9CDCFE;">filepath</span>: <span style="color: #4EC9B0;">str</span>
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_driver</span>() -&gt; <span style="color: #4EC9B0;">Chrome</span>:
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Creates a headless driver with Selenium.</span><span style="color: #CE9178;">"""</span>
+    ...
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">scrape</span>(<span style="color: #9CDCFE;">driver</span>: <span style="color: #4EC9B0;">Chrome</span>, <span style="color: #9CDCFE;">htmlfile</span>: <span style="color: #4EC9B0;">Path</span>) -&gt; <span style="color: #4EC9B0;">dict</span>:
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Returns a dictionary from the scraped htmlfile.</span><span style="color: #CE9178;">"""</span>
+    ...
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">main</span>(<span style="color: #9CDCFE;">argv</span>: <span style="color: #4EC9B0;">Arguments</span>):
+    <span style="color: #9CDCFE;">path</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Path</span>(argv.<span style="color: #9CDCFE;">filepath</span>).<span style="color: #ded492;">resolve</span>()
+    <span style="color: #9CDCFE;">driver</span> <span style="color: #e0e0e0;">=</span> <span style="color: #ded492;">get_driver</span>()
+    <span style="color: #569CD6;">if</span> <span style="color: #569CD6;">not</span> path.<span style="color: #ded492;">is_dir</span>():
+        <span style="color: #569CD6;">return</span> [<span style="color: #ded492;">scrape</span>(driver, path)]
+    <span style="color: #569CD6;">return</span> [<span style="color: #ded492;">scrape</span>(driver, filepath) <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">filepath</span> <span style="color: #569CD6;">in</span> path.<span style="color: #ded492;">glob</span>(<span style="color: #CE9178;">"**/*.html"</span>)]
+
+
+<span style="color: #569CD6;">if</span> <span style="color: #9CDCFE;">__name__</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"__main__"</span>:
+    <span style="color: #9CDCFE;">args</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">ArgumentParser</span>()
+    args.<span style="color: #ded492;">add_argument</span>(<span style="color: #CE9178;">"filepath"</span>, <span style="color: #9CDCFE;">help</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"File path or directory to scrape."</span>)
+    <span style="color: #ded492;">main</span>(args.<span style="color: #ded492;">parse_args</span>())
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-separating-concerns" class="outline-3">
+<h3 id="separating-concerns"><span class="section-number-3">1.10.</span> Separating Concerns</h3>
+<div class="outline-text-3" id="text-separating-concerns">
+<p>
+In order to keep things organized, we will create two new files in the html-index-maker path.
+</p>
+
+<div class="src-name" id="org1414a41">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">tree</span> src/html-index-maker <span style="color: #e0e0e0;">-I</span> __pycache__
+</pre>
+</div>
+
+<pre class="example" id="org08e730f">
+src/html-index-maker
+├── __init__.py
+├── __main__.py
+├── driver.py
+└── scraper.py
+</pre>
+
+<p>
+Then driver will contain the function that will give us a headless chrome driver from Selenium.
+</p>
+
+<div class="src-name" id="org3823363">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> webdriver_manager.chrome </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">ChromeDriverManager</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> selenium.webdriver.chrome.options </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Options</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> selenium.webdriver.chrome.service </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Service</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> selenium.webdriver </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Chrome</span>
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_driver</span>() -&gt; <span style="color: #4EC9B0;">Chrome</span>:
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Creates a headless driver with Selenium.</span><span style="color: #CE9178;">"""</span>
+    <span style="color: #9CDCFE;">options</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Options</span>()
+    options.<span style="color: #9CDCFE;">headless</span> <span style="color: #e0e0e0;">=</span> <span style="color: #569CD6;">True</span>
+    <span style="color: #9CDCFE;">service</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">Service</span>(<span style="color: #4EC9B0;">ChromeDriverManager</span>().<span style="color: #ded492;">install</span>())
+    <span style="color: #569CD6;">return</span> <span style="color: #4EC9B0;">Chrome</span>(<span style="color: #9CDCFE;">service</span><span style="color: #e0e0e0;">=</span>service, <span style="color: #9CDCFE;">options</span><span style="color: #e0e0e0;">=</span>options)
+</pre>
+</div>
+
+<p>
+So we can focus on the scraper file now, which will contain the following:
+</p>
+
+<ol class="org-ol">
+<li>A function <b>scrape</b> to load the HTML file with the Chrom driver.</li>
+<li>A function <b>get_headers</b> which will match all headers with a given pattern.</li>
+</ol>
+
+<div class="src-name" id="orga525973">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> selenium.webdriver </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Chrome</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> bs4 </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">BeautifulSoup</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
+<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> re</span>
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">scrape</span>(<span style="color: #9CDCFE;">driver</span>: <span style="color: #4EC9B0;">Chrome</span>, <span style="color: #9CDCFE;">htmlfile</span>: <span style="color: #4EC9B0;">Path</span>) -&gt; <span style="color: #4EC9B0;">dict</span>:
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Returns a dictionary from the scraped htmlfile.</span><span style="color: #CE9178;">"""</span>
+    driver.<span style="color: #ded492;">get</span>(<span style="color: #CE9178;">f"file://</span><span style="color: #569CD6; background-color: #252525;">{</span><span style="color: #9CDCFE; background-color: #252525;">htmlfile</span><span style="color: #569CD6; background-color: #252525;">}</span><span style="color: #CE9178;">"</span>)
+    <span style="color: #569CD6;">if</span> driver.<span style="color: #9CDCFE;">page_source</span> <span style="color: #569CD6;">is</span> <span style="color: #569CD6;">not</span> <span style="color: #569CD6;">None</span>:
+        <span style="color: #569CD6;">return</span> {<span style="color: #CE9178;">"file"</span>: <span style="color: #C586C0;">str</span>(htmlfile), <span style="color: #CE9178;">"headers"</span>: <span style="color: #ded492;">get_headers</span>(driver.<span style="color: #9CDCFE;">page_source</span>)}
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">get_headers</span>(<span style="color: #9CDCFE;">page_source</span>: <span style="color: #4EC9B0;">str</span>) -&gt; <span style="color: #4EC9B0;">dict</span>:
+    <span style="color: #CE9178;">"""</span><span style="color: #CE9178;">Get all h2 and h3 headers in html page.</span><span style="color: #CE9178;">"""</span>
+    <span style="color: #9CDCFE;">html</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">BeautifulSoup</span>(page_source, <span style="color: #CE9178;">"html.parser"</span>)
+    <span style="color: #9CDCFE;">headers</span> <span style="color: #e0e0e0;">=</span> html.<span style="color: #ded492;">find_all</span>(<span style="color: #4EC9B0;">re</span>.<span style="color: #ded492;">compile</span>(<span style="color: #CE9178;">"^h[2-3]$"</span>))
+    <span style="color: #9CDCFE;">data</span> <span style="color: #e0e0e0;">=</span> []
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">header</span> <span style="color: #569CD6;">in</span> headers:
+        <span style="color: #569CD6;">if</span> header <span style="color: #569CD6;">is</span> <span style="color: #569CD6;">not</span> <span style="color: #569CD6;">None</span>:
+            <span style="color: #9CDCFE;">id</span> <span style="color: #e0e0e0;">=</span> header.<span style="color: #ded492;">get</span>(<span style="color: #CE9178;">"id"</span>)
+            <span style="color: #569CD6;">if</span> id <span style="color: #569CD6;">is</span> <span style="color: #569CD6;">not</span> <span style="color: #569CD6;">None</span>:
+                data.<span style="color: #ded492;">append</span>({<span style="color: #CE9178;">"tag"</span>: header.<span style="color: #9CDCFE;">name</span>, <span style="color: #CE9178;">"id"</span>: id, <span style="color: #CE9178;">"text"</span>: header.<span style="color: #9CDCFE;">text</span>})
+    <span style="color: #569CD6;">return</span> data
+</pre>
+</div>
+
+<p>
+This should be enough for us so we can focus on the logic of writting the output file. So we are going to back to main and refactor it so it writes the list of dictionaries as a json file.
 </p>
 </div>
 </div>
 
+<div id="outline-container-refactoring-main" class="outline-3">
+<h3 id="refactoring-main"><span class="section-number-3">1.11.</span> Refactoring Main</h3>
+<div class="outline-text-3" id="text-refactoring-main">
+<p>
+Now that we placed the logic for scraping the data in separated files, we will finish the main function logic by adding the outputs after we&rsquo;ve scraped the data from our inputs. So we will:
+</p>
+
+<ol class="org-ol">
+<li>Add new arguments.</li>
+<li>Move the scraping logic to a helper function.</li>
+<li>Use the json module to write the output.</li>
+</ol>
+
+<div class="src-name" id="orgd3e01e6">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> argparse </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">ArgumentParser</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> pathlib </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> </span><span style="color: #4EC9B0;">Path</span>
+<span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> json</span>
+
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> .driver </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> get_driver</span>
+<span style="color: #569CD6;">from</span><span style="color: #4EC9B0;"> .scraper </span><span style="color: #569CD6;">import</span><span style="color: #4EC9B0;"> scrape</span>
+
+
+<span style="color: #569CD6;">class</span> <span style="color: #4EC9B0;">Arguments</span>:
+    <span style="color: #9CDCFE;">filepath</span>: <span style="color: #4EC9B0;">str</span>
+    <span style="color: #9CDCFE;">outpath</span>: <span style="color: #4EC9B0;">str</span>
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">scrape_files</span>(<span style="color: #9CDCFE;">path</span>: <span style="color: #4EC9B0;">Path</span>) -&gt; <span style="color: #4EC9B0;">list</span>:
+    <span style="color: #9CDCFE;">driver</span> <span style="color: #e0e0e0;">=</span> <span style="color: #ded492;">get_driver</span>()
+    <span style="color: #569CD6;">if</span> <span style="color: #569CD6;">not</span> path.<span style="color: #ded492;">is_dir</span>():
+        <span style="color: #569CD6;">return</span> [<span style="color: #ded492;">scrape</span>(driver, path)]
+    <span style="color: #569CD6;">return</span> [<span style="color: #ded492;">scrape</span>(driver, filepath) <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">filepath</span> <span style="color: #569CD6;">in</span> path.<span style="color: #ded492;">glob</span>(<span style="color: #CE9178;">"**/*.html"</span>)]
+
+
+<span style="color: #569CD6;">def</span> <span style="color: #ded492;">main</span>(<span style="color: #9CDCFE;">argv</span>: <span style="color: #4EC9B0;">Arguments</span>):
+    <span style="color: #9CDCFE;">data</span> <span style="color: #e0e0e0;">=</span> <span style="color: #ded492;">scrape_files</span>(<span style="color: #4EC9B0;">Path</span>(argv.<span style="color: #9CDCFE;">filepath</span>).<span style="color: #ded492;">resolve</span>())
+    <span style="color: #569CD6;">with</span> <span style="color: #C586C0;">open</span>(<span style="color: #4EC9B0;">Path</span>(argv.<span style="color: #9CDCFE;">outpath</span>).<span style="color: #ded492;">resolve</span>(), <span style="color: #CE9178;">"w"</span>) <span style="color: #569CD6;">as</span> json_file:
+        json_file.<span style="color: #ded492;">write</span>(json.<span style="color: #ded492;">dumps</span>(data, <span style="color: #9CDCFE;">indent</span><span style="color: #e0e0e0;">=</span><span style="color: #BBCCAA;">2</span>))
+
+
+<span style="color: #569CD6;">if</span> <span style="color: #9CDCFE;">__name__</span> <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"__main__"</span>:
+    <span style="color: #9CDCFE;">args</span> <span style="color: #e0e0e0;">=</span> <span style="color: #4EC9B0;">ArgumentParser</span>()
+    args.<span style="color: #ded492;">add_argument</span>(<span style="color: #CE9178;">"filepath"</span>, <span style="color: #9CDCFE;">help</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"File path or directory to scrape."</span>)
+    args.<span style="color: #ded492;">add_argument</span>(<span style="color: #CE9178;">"--outpath"</span>, <span style="color: #9CDCFE;">help</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"Output JSON file path."</span>, <span style="color: #9CDCFE;">default</span><span style="color: #e0e0e0;">=</span><span style="color: #CE9178;">"./data.json"</span>)
+    <span style="color: #ded492;">main</span>(args.<span style="color: #ded492;">parse_args</span>())
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-running-the-tests" class="outline-3">
+<h3 id="running-the-tests"><span class="section-number-3">1.12.</span> Running the Tests</h3>
+<div class="outline-text-3" id="text-running-the-tests">
+<p>
+We can go back to our favorite command, pytest.
+</p>
+
+<div class="src-name" id="org0838cd2">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> run black . <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #ded492;">poetry</span> run pytest
+</pre>
+</div>
+
+<pre class="example" id="org3261422">
+======================== test session starts =========================
+platform darwin -- Python 3.7.13, pytest-7.2.0, pluggy-1.0.0
+rootdir: /Users/albertovaldez/html-index-maker, configfile: pyproject.toml
+collected 1 item
+
+tests/test_main.py::test_file
+--------------------------- live log call ----------------------------
+2022-11-20 16:19:36 [DEBUG] (test_main.py:18): ['poetry', 'run', 'python', '-m', 'html-index-maker', './resources/ml.html']
+PASSED                                                         [100%]
+
+========================= 1 passed in 5.48s ==========================
+</pre>
+
+<p>
+Our test passed! We can move on to finishing our module now. We know that the module works with a single file but we want to make sure it works with a directory, so we will refactor the tests once more.
+</p>
+</div>
+</div>
+
+<div id="outline-container-adding-more-tests" class="outline-3">
+<h3 id="adding-more-tests"><span class="section-number-3">1.13.</span> Adding more Tests</h3>
+<div class="outline-text-3" id="text-adding-more-tests">
+<p>
+We will add another test function but this time we want to check the results from multiple files. In order to keep it simple, we will hard-code the tests to this specific use case, no special lookup tables, functions or parametrization, just checking that the values match the expectations.
+</p>
+
+<div class="src-name" id="orgc8d6f2d">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #569CD6;">def</span> <span style="color: #ded492;">test_directory</span>():
+    <span style="color: #9CDCFE;">command</span> <span style="color: #e0e0e0;">=</span> [
+        <span style="color: #CE9178;">"poetry"</span>,
+        <span style="color: #CE9178;">"run"</span>,
+        <span style="color: #CE9178;">"python"</span>,
+        <span style="color: #CE9178;">"-m"</span>,
+        <span style="color: #CE9178;">"html-index-maker"</span>,
+        <span style="color: #CE9178;">"./resources"</span>,
+    ]
+    log.<span style="color: #ded492;">debug</span>(command)
+    subprocess.<span style="color: #ded492;">run</span>(command)
+    <span style="color: #569CD6;">with</span> <span style="color: #C586C0;">open</span>(<span style="color: #CE9178;">"./data.json"</span>, <span style="color: #CE9178;">"r"</span>) <span style="color: #569CD6;">as</span> json_file:
+        <span style="color: #9CDCFE;">data</span> <span style="color: #e0e0e0;">=</span> json.<span style="color: #ded492;">loads</span>(json_file.<span style="color: #ded492;">read</span>())
+    <span style="color: #569CD6;">for</span> <span style="color: #9CDCFE;">file</span> <span style="color: #569CD6;">in</span> data:
+        <span style="color: #569CD6;">if</span> <span style="color: #CE9178;">"/unsupervised-ml.html"</span> <span style="color: #569CD6;">in</span> file[<span style="color: #CE9178;">"file"</span>]:
+            <span style="color: #569CD6;">assert</span> file[<span style="color: #CE9178;">"headers"</span>][<span style="color: #BBCCAA;">0</span>][<span style="color: #CE9178;">"id"</span>] <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"unsupervised-machine-learning"</span>
+            <span style="color: #569CD6;">assert</span> file[<span style="color: #CE9178;">"headers"</span>][<span style="color: #BBCCAA;">1</span>][<span style="color: #CE9178;">"id"</span>] <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"clustering"</span>
+        <span style="color: #569CD6;">if</span> <span style="color: #CE9178;">"/ml.html"</span> <span style="color: #569CD6;">in</span> file[<span style="color: #CE9178;">"file"</span>]:
+            <span style="color: #569CD6;">assert</span> file[<span style="color: #CE9178;">"headers"</span>][<span style="color: #BBCCAA;">0</span>][<span style="color: #CE9178;">"id"</span>] <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"machine-learning"</span>
+            <span style="color: #569CD6;">assert</span> file[<span style="color: #CE9178;">"headers"</span>][<span style="color: #BBCCAA;">1</span>][<span style="color: #CE9178;">"id"</span>] <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"supervised-learning"</span>
+        <span style="color: #569CD6;">if</span> <span style="color: #CE9178;">"/deeplearning.html"</span> <span style="color: #569CD6;">in</span> file[<span style="color: #CE9178;">"file"</span>]:
+            <span style="color: #569CD6;">assert</span> file[<span style="color: #CE9178;">"headers"</span>][<span style="color: #BBCCAA;">0</span>][<span style="color: #CE9178;">"id"</span>] <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"deep-learning"</span>
+            <span style="color: #569CD6;">assert</span> file[<span style="color: #CE9178;">"headers"</span>][<span style="color: #BBCCAA;">1</span>][<span style="color: #CE9178;">"id"</span>] <span style="color: #e0e0e0;">==</span> <span style="color: #CE9178;">"neural-networks"</span>
+</pre>
+</div>
+
+<p>
+We run the tests again.
+</p>
+
+<div class="src-name" id="orge15a3ba">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> run black . <span style="color: #e0e0e0;">&amp;&amp;</span> <span style="color: #ded492;">poetry</span> run pytest
+</pre>
+</div>
+
+<pre class="example" id="org62b47d9">
+======================== test session starts =========================
+platform darwin -- Python 3.7.13, pytest-7.2.0, pluggy-1.0.0
+rootdir: /Users/albertovaldez/html-index-maker, configfile: pyproject.toml
+collected 2 items
+
+tests/test_main.py::test_file
+--------------------------- live log call ----------------------------
+2022-11-20 16:34:46 [DEBUG] (test_main.py:18): ['poetry', 'run', 'python', '-m', 'html-index-maker', './resources/ml.html']
+PASSED                                                         [ 50%]
+tests/test_main.py::test_directory
+--------------------------- live log call ----------------------------
+2022-11-20 16:34:52 [DEBUG] (test_main.py:46): ['poetry', 'run', 'python', '-m', 'html-index-maker', './resources']
+PASSED                                                         [100%]
+
+========================= 2 passed in 13.89s =========================
+</pre>
+
+<p>
+We are basically done! Any other change to the module can be tested programatically and because this is a very simple program, we can live with two tests and a single use case. However, when wanting to generalize the code more, adding more command line arguments, etc. we will need to think of more tests to cover more possibilities. We know the steps, it&rsquo;s just a matter of executing to match the requirements and expectations.
+</p>
+</div>
+</div>
+
+<div id="outline-container-result-example" class="outline-3">
+<h3 id="result-example"><span class="section-number-3">1.14.</span> Result Example</h3>
+<div class="outline-text-3" id="text-result-example">
+<p>
+This is the JSON file that results from this use case:
+</p>
+
+<p>
+<a href="https://github.com/AlbertoV5/html-index-maker/blob/main/data.json">https://github.com/AlbertoV5/html-index-maker/blob/main/data.json</a>
+</p>
+
+<p>
+This is the end of this article, but development of the module keeps going. Make sure to update the README.md file and writing documentation, then we can publish it!
+</p>
+</div>
+</div>
 
 <div id="outline-container-installing-globally" class="outline-3">
-<h3 id="installing-globally"><span class="section-number-3">1.10.</span> Installing Globally</h3>
+<h3 id="installing-globally"><span class="section-number-3">1.15.</span> Installing Globally</h3>
 <div class="outline-text-3" id="text-installing-globally">
 <p>
 We can install the module in editable mode in our global pyenv environment with the following command.
 </p>
 
-<div class="src-name" id="org241b2ff">
+<div class="src-name" id="org33fde42">
 <p>
 
 </p>
@@ -764,18 +1176,123 @@ However, this can allow us to run the module in any directory without the need t
 </div>
 
 <div id="outline-container-publishing-to-pypi" class="outline-3">
-<h3 id="publishing-to-pypi"><span class="section-number-3">1.11.</span> Publishing to PyPi</h3>
+<h3 id="publishing-to-pypi"><span class="section-number-3">1.16.</span> Publishing to PyPi</h3>
 <div class="outline-text-3" id="text-publishing-to-pypi">
 <p>
-WIP &#x2026;
+We need three things to publish to PyPi:
+</p>
+
+<ol class="org-ol">
+<li>We need a PyPi token for authorization <a href="https://pypi.org/help/#apitoken">https://pypi.org/help/#apitoken</a></li>
+<li>We need to store the token in our environment variables.</li>
+</ol>
+
+<p>
+For the first one, we can follow the PyPi instructions, and then go to our environment file, which we can find in the root directory of our user account. We can open the environment file with our favorite editor.
+</p>
+
+<div class="src-name" id="org889e3e4">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">code</span> ~/.zshrc
+</pre>
+</div>
+
+<p>
+Then you can add the following lines:
+</p>
+
+<pre class="example" id="org39ab5f0">
+export pypiuser="__token__"
+export pypipass="pypi-................."
+</pre>
+
+<p>
+Make sure to identify which file is exporting the environment variables in your setup. Include your PyPi password in &ldquo;pypipass&rdquo; and then update the current environment by running:
+</p>
+
+<div class="src-name" id="orgfa43029">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #C586C0;">source</span> ~/.zshrc
+</pre>
+</div>
+
+<p>
+Now we can publish to PyPi by:
+</p>
+
+<ol class="org-ol">
+<li>Build the package.</li>
+<li>Publish it with the credentials.</li>
+</ol>
+
+<div class="src-name" id="org61df5fe">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> build
+</pre>
+</div>
+
+<p>
+<b>CAUTION</b>: Make sure to remove any credentials, keys and private information from your package before publishing it. Also it doesn&rsquo;t hurt to read PyPi&rsquo;s <a href="https://pypi.org/policy/terms-of-use/">Terms of Use</a>.
+</p>
+
+<div class="src-name" id="org7b4ddff">
+<p>
+
+</p>
+
+</div>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #ded492;">poetry</span> publish <span style="color: #e0e0e0;">-u</span> <span style="color: #569CD6; background-color: #252525;">$</span><span style="color: #9CDCFE;">pypiuser</span> <span style="color: #e0e0e0;">-p</span> <span style="color: #569CD6; background-color: #252525;">$</span><span style="color: #9CDCFE;">pypipass</span>
+</pre>
+</div>
+
+<p>
+Here is the module from this article: <a href="https://pypi.org/project/html-index-maker/">https://pypi.org/project/html-index-maker/</a>
+</p>
+
+<p>
+And the repository: <a href="https://github.com/AlbertoV5/html-index-maker">https://github.com/AlbertoV5/html-index-maker</a>
+</p>
+
+<p>
+Note that is likely that there were changes made to the module, tests and resources.
 </p>
 </div>
 </div>
 </div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://peps.python.org/pep-0008/#package-and-module-names">https://peps.python.org/pep-0008/#package-and-module-names</a>
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+<a href="https://pypi.org/">https://pypi.org/</a>
+</p></div></div>
+
+
 </div>
+</div></div>
 <div id="postamble" class="status">
 <p class="author">Author: Alberto Valdez</p>
-<p class="date">Created: 2022-11-20 Sun 03:01</p>
+<p class="date">Created: 2022-11-20 Sun 23:14</p>
 </div>
 </body>
 </html>
