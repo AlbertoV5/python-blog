@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/emacs,python,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=emacs,python,macos
 
+node_modules/
+
 ### Emacs ###
 # -*- mode: gitignore; -*-
 *~
