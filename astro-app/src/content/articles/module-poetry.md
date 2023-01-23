@@ -1,6 +1,6 @@
 # Creating Python Modules with Poetry (macOS)
 
-Setting up a module and the development loop.
+<h6>Setting up a module and the development loop.</h6>
 
 ![img](../resources/pexels-suzy-hazelwood-1122865.jpg)
 

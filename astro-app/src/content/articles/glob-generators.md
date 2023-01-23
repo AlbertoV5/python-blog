@@ -2,6 +2,7 @@
 
 ![img](../resources/susan-q-yin-2JIvboGLeho-unsplash.jpg)
 
+
 This is an exercise on using glob patterns<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> to find image files in a directory. We are going to use the `pathlib`<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> Python module which provides the `glob` method in the `Path` class.
 
 Glob patterns are also used in `.gitignore`<sup><a id="fnr.3" class="footref" href="#fn.3" role="doc-backlink">3</a></sup> files so any pattern that works here probably works in git ignore files too and vice versa.
@@ -154,8 +155,6 @@ We want to convert all `png` files into `jpeg`, as well as renaming `jpg` to `jp
 Before writing our main process, we will create a function that will replace the file suffix to `jpeg` as well as change its parent directory. We&rsquo;ll also create a `root` variable for printing purposes.
 
 ```python
-
-
 if __name__ == "__main__":
     max_width = 1280
     with_path = lambda f: Path('./converted').resolve() / f.with_suffix('.jpeg').name
