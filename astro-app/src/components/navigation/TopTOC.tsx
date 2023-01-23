@@ -20,16 +20,16 @@ const TopTOC: React.FC<TOCProps> = ({className, headings}) => {
         <div className="d-flex flex-row justify-content-center py-2">
           <h5 className="py-2 px-2"><a href={`#${headings[0].slug}`} className="list-group-item">{name}</a></h5>
           <div className="dropdown py-1">
-            <button className="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button className="btn btn-light dropdown-toggle mx-2" type="button" style={{width: "40px", height:"36px"}} data-bs-toggle="dropdown" aria-expanded="false">
             </button>
-            <ul className="dropdown-menu">
+            <ul className="dropdown-menu p-2 rounded">
               {headings.slice(1, undefined).map((h) => (
                 <li>
                   <a
                     key={`${h.slug}`}
                     href={`#${h.slug}`} 
                     className="dropdown-item border-bottom py-2"
-                    style={{fontSize: "0.9em"}}
+                    style={{fontSize: "1em"}}
                   >
                     {`${h.text}`}
                   </a>
