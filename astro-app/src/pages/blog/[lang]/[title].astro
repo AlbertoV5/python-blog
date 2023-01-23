@@ -1,6 +1,6 @@
 ---
 import type { MarkdownHeading, MarkdownInstance } from 'astro';
-import BlogLayout from '../../../layouts/BlogLayout.astro';
+import Blog from '../../../layouts/Blog.astro';
 
 interface BlogProps {
     headings: Array<MarkdownHeading>
@@ -32,6 +32,6 @@ const { headings, post } = Astro.props as BlogProps;
 const { lang, title } = Astro.params;
 
 ---
-<BlogLayout title={headings[0].text} headings={headings}>
+<Blog title={headings[0].text} headings={headings}>
     <post.Content/>
-</BlogLayout>
+</Blog>

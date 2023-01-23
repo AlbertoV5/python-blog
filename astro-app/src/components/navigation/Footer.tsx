@@ -1,7 +1,7 @@
 
-const BotNav = () => {
+const Footer = () => {
   return (
-    <div 
+    <footer 
     className={"border-top my-5 container-fluid"}
     style={{
         height: "6em"
@@ -17,8 +17,8 @@ const BotNav = () => {
             <div className="col-3">
             </div>
         </div>
-    </div>
+    </footer>
   )
 }
 
-export default BotNav
+export default Footer
