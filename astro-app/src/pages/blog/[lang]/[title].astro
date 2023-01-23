@@ -9,7 +9,9 @@ interface BlogProps {
 
 export async function getStaticPaths() {
     const english = await Astro.glob('../../../content/en/*.md');
-    return english.map((post) => {
+    // add other langs here
+    const content = [
+        ...english.map((post) => {
         const headings = post.getHeadings();
         return {
             params: {
@@ -22,10 +24,12 @@ export async function getStaticPaths() {
             }
         }
     })
+    ]
+    return content;
 }
 
-const { lang, title } = Astro.params;
 const { headings, post } = Astro.props as BlogProps;
+const { lang, title } = Astro.params;
 
 ---
 <BlogLayout title={headings[0].text} headings={headings}>
