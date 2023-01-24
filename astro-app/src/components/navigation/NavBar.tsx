@@ -1,4 +1,5 @@
-import { useReducer, useState } from "react"
+import { useEffect, useReducer, useState, useRef, useLayoutEffect } from "react"
+import ThemeIcon from "./ThemeIcon"
 
 
 interface NavLink {
@@ -10,33 +11,7 @@ interface NavLinks {
     children: Array<NavLink>
 }
 
-
-interface ThemeState {
-    theme: string;
-}
-
-const getPreferredTheme = (): ThemeState => {
-    const theme = localStorage.getItem('theme');
-    if (theme){
-        document.documentElement.setAttribute('data-bs-theme', theme);
-        return {theme: theme}
-    }
-    return {theme: 'dark'}
-}
-
 const Links: React.FC<NavLinks> = ({children}) => {
-
-    const [theme, setTheme] = useState(getPreferredTheme)
-
-    const handleClick = () => {
-        setTheme((prev) => {
-            const theme = prev.theme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-bs-theme', theme);
-            localStorage.setItem('theme', theme);
-            return {theme: theme}
-        })
-    }
-
     return (
         <>
         {children.map((link, index) => (
@@ -44,13 +19,6 @@ const Links: React.FC<NavLinks> = ({children}) => {
                 <a className="nav-link" href={link.href}>{link.title}</a>
             </li>
         ))}
-        <li className="nav-item">
-            <button className="btn px-3 py-1 nav-link" onClick={handleClick}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-moon" viewBox="0 0 16 16">
-                    <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278zM4.858 1.311A7.269 7.269 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.316 7.316 0 0 0 5.205-2.162c-.337.042-.68.063-1.029.063-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286z"/>
-                </svg>
-            </button>
-        </li>
         </>
     )
 }
@@ -70,7 +38,34 @@ const links = [
     }
 ]
 
+const changeTheme = (theme: string) => {
+    document.documentElement.setAttribute('data-bs-theme', theme);
+    localStorage.setItem('theme', theme);
+}
+
 const NavBar = () => {
+
+    const [theme, setTheme] = useState(() => {
+        let stored = localStorage?.getItem('theme');
+        return stored ? stored : 'auto'; // auto if no stored
+    })
+
+    // on state change
+    useEffect(() => {
+        changeTheme(theme);
+    }, [theme]); 
+
+    const swapTheme = () => {
+        // https://getbootstrap.com/docs/5.3/customize/color-modes/#javascript
+        setTheme((prev) => {
+            // if auto, set swap it by matching preferred color scheme
+            if (prev === 'auto'){
+                return window.matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark';
+            }
+            // if no auto, then just swap themes
+            return prev === 'dark' ? 'light' : 'dark'
+        })
+    }
     
     return (
         <nav
@@ -86,6 +81,14 @@ const NavBar = () => {
                     <div className="collapse navbar-collapse bg-body" id="navbar-scroll">
                         <ul className="navbar-nav">
                             <Links>{links}</Links>
+                            <li className="nav-item">
+                                <button 
+                                    className="btn px-3 py-1 nav-link" 
+                                    onClick={swapTheme}
+                                >
+                                    <ThemeIcon isDark={theme !== 'light'}></ThemeIcon>
+                                </button>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -94,4 +97,4 @@ const NavBar = () => {
     )
 }
 
-export default NavBar
+export default NavBar;
