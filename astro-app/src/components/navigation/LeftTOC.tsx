@@ -1,19 +1,10 @@
 // import React from 'react'
 import type { TOCProps } from "./TypesTOC"
-import { useEffect } from "react";
-
 
 const LeftTOC: React.FC<TOCProps> = ({className, headings}) => {
     // https://getbootstrap.com/docs/5.3/utilities/display/#hiding-elements
 
     const name = 'Table of Contents';
-
-    useEffect(() => {
-      if (document){
-        // console.log(document)
-        // scrollspy
-      }
-    }, [])
     
     return (
       <div
@@ -37,12 +28,12 @@ const LeftTOC: React.FC<TOCProps> = ({className, headings}) => {
               {headings.map((h) => (
                 <li
                   key={`toc-${h.slug}`}
-                  className="list-group-item"
+                  className="list-group-item list-group-item-action"
                 >
                   <a
                     key={`${h.slug}`}
-                    className="nav-link"
-                    href={`#${h.slug}`} 
+                    className={`nav-link`}
+                    href={`#${h.slug}`}
                     style={{fontSize: "0.9em"}}
                   >
                     {`${h.text}`}

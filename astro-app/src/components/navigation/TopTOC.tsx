@@ -7,7 +7,7 @@ const TopTOC: React.FC<TOCProps> = ({className, headings}) => {
   
   const name = 'Table of Contents';
   return (
-    <div 
+    <div
       className = {className}
       style={{
         position: "sticky",
@@ -16,7 +16,7 @@ const TopTOC: React.FC<TOCProps> = ({className, headings}) => {
         zIndex: "100"
       }}
     >
-      <div className="container bg-body border-bottom">
+      <div className="container-fluid bg-body border-bottom">
         <div className="d-flex flex-row justify-content-center py-2">
           <h5 className="py-2 px-2"><a href={`#top`} className="list-group-item">{name}</a></h5>
           <div className="dropdown py-1">

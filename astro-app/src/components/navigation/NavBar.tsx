@@ -35,7 +35,7 @@ const links = [
     }
 ]
 
-const TopNav = () => {
+const NavBar = () => {
     
     return (
         <nav
@@ -59,4 +59,4 @@ const TopNav = () => {
     )
 }
 
-export default TopNav
+export default NavBar
