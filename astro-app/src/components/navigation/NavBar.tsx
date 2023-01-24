@@ -2,6 +2,21 @@ import React, { useEffect, useReducer, useState } from "react"
 import ThemeIcon from "./ThemeIcon"
 
 
+const links = [
+    {
+        title: "Home",
+        href: "/"
+    },
+    {
+        title: "Blog",
+        href: "/blog"
+    },
+    {
+        title: "Contact",
+        href: "/contact"
+    }
+]
+
 interface NavLink {
     title: string
     href: string 
@@ -22,21 +37,6 @@ const Links: React.FC<NavLinks> = ({children}) => {
         </>
     )
 }
-
-const links = [
-    {
-        title: "Home",
-        href: "/"
-    },
-    {
-        title: "Blog",
-        href: "/blog"
-    },
-    {
-        title: "Contact",
-        href: "/contact"
-    }
-]
 
 const changeTheme = (theme: string) => {
     // https://getbootstrap.com/docs/5.3/customize/color-modes/#javascript
@@ -60,7 +60,6 @@ const initThemeState = () => {
 const NavBar = () => {
     
     const [theme, dispatch] = useReducer(swapThemeState, 'auto', initThemeState)
-    
     // on state change, change the theme
     useEffect(() => {
         changeTheme(theme);
@@ -69,15 +68,15 @@ const NavBar = () => {
     return (
         <nav
             id="navbar"
-            className="navbar navbar-expand-md sticky-top py-2 bg-body border-bottom"
-            style={{height: "4em"}}
+            className="navbar navbar-expand-md sticky-top py-2 bg-body border-bottom bg-opacity-75"
+            style={{height: "4em", backdropFilter:"blur(4px)", zIndex: "300"}}
         >
             <main id="navbar-content" className="container-fluid justify-content-center">
                 <div className="d-flex flex-row">
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-scroll" aria-controls="navbar-scroll" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    <div className="collapse navbar-collapse bg-body" id="navbar-scroll">
+                    <div className="collapse navbar-collapse" id="navbar-scroll">
                         <ul className="navbar-nav">
                             <Links>{links}</Links>
                             <li className="nav-item">

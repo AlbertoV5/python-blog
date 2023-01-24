@@ -11,7 +11,7 @@ const Footer = () => {
             </div>
             <div className="col-6">
                 <p>
-                    Copyright 2023
+                    Copyright Alberto Valdez 2023
                 </p>
             </div>
             <div className="col-3">
