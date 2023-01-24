@@ -1,0 +1,39 @@
+---
+import LeftTOC from '../components/navigation/LeftTOC';
+import TopTOC from '../components/navigation/TopTOC';
+
+import Layout from "./Layout.astro";
+
+const { title, headings } = Astro.props;
+---
+<Layout title={title}>
+	<LeftTOC
+		className="col-3 d-none d-md-block px-4"
+		headings={headings}
+		client:load
+	/>
+	<TopTOC
+		className="col-12 d-md-none"
+		headings={headings} 
+		client:load
+	/>
+	<div class="col-12 col-md-8 col-lg-6 px-4 overflow-x-hidden">
+		<slot></slot>
+	</div>
+	<!-- Adapt -->
+	<div class="col-1 col-md-3"></div>
+	<script>
+		Array.from(document.getElementsByClassName('astro-code')).map((e) => {
+			e.className += ' shadow-sm p-3 border rounded-2 my-4';
+		})
+		Array.from(document.getElementsByTagName("img")).map((e) => {
+			e.className += ' img-fluid py-2 rounded-4';
+		})
+		Array.from(document.getElementsByTagName("h1")).map((e) => {
+			e.className += ' pt-5 pb-3';
+		})
+		Array.from(document.getElementsByTagName("h2")).map((e) => {
+			e.className += ' pt-5 pb-3';
+		})
+	</script>
+</Layout>

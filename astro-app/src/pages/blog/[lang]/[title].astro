@@ -1,0 +1,37 @@
+---
+import type { MarkdownHeading, MarkdownInstance } from 'astro';
+import Blog from '../../../layouts/Blog.astro';
+
+interface BlogProps {
+    headings: Array<MarkdownHeading>
+    post: MarkdownInstance<Record<string, any>>
+}
+
+export async function getStaticPaths() {
+    const english = await Astro.glob('../../../content/en/*.md');
+    // add other langs here
+    const content = [
+        ...english.map((post) => {
+        const headings = post.getHeadings();
+        return {
+            params: {
+                lang: 'en',
+                title: headings[0].slug
+            },
+            props: {
+                headings: headings,
+                post: post
+            }
+        }
+    })
+    ]
+    return content;
+}
+
+const { headings, post } = Astro.props as BlogProps;
+const { lang, title } = Astro.params;
+
+---
+<Blog title={headings[0].text} headings={headings}>
+    <post.Content/>
+</Blog>

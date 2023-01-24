@@ -1,0 +1,43 @@
+:root {
+    --shiki-color-text: #EEEEEE;
+    --shiki-color-background: #333333;
+    --shiki-token-constant: #660000;
+    --shiki-token-string: #770000;
+    --shiki-token-comment: #880000;
+    --shiki-token-parameter: #AA0000;
+    --shiki-token-function: #BB0000;
+    --shiki-token-string-expression: #CC0000;
+    --shiki-token-punctuation: #DD0000;
+    --shiki-token-link: #EE0000;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --shiki-color-text: #EEEEEE;
+        --shiki-color-background: #333333;
+        --shiki-token-constant: #660000;
+        --shiki-token-string: #770000;
+        --shiki-token-comment: #880000;
+        --astro-code-token-keyword: #990000;
+        --shiki-token-parameter: #AA0000;
+        --shiki-token-function: #BB0000;
+        --shiki-token-string-expression: #CC0000;
+        --shiki-token-punctuation: #DD0000;
+        --shiki-token-link: #EE0000;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --astro-code-color-text: #EEEEEE;
+        --astro-code-color-background: #222222;
+        --astro-code-token-constant: #333eb6;
+        --shiki-token-string: #770000;
+        --shiki-token-comment: #2b16a0;
+        --astro-code-token-keyword: #1f9900;
+        --shiki-token-parameter: #AA0000;
+        --shiki-token-function: #BB0000;
+        --shiki-token-string-expression: #CC0000;
+        --shiki-token-punctuation: #DD0000;
+        --shiki-token-link: #EE0000;
+    }
+}
