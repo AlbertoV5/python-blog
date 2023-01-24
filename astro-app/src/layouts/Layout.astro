@@ -5,13 +5,15 @@ import Footer from '../components/navigation/Footer';
 export interface Props {
 	title: string;
 }
-
 const { title } = Astro.props;
 ---
-
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 	<head>
+		<script is:inline>
+			const theme = localStorage.getItem('theme') || 'light';
+			document.documentElement.setAttribute('data-bs-theme', theme);
+		</script>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -29,7 +31,4 @@ const { title } = Astro.props;
 		</div>
 		<Footer client:visible></Footer>
 	</body>
-	<script>
-		
-	</script>
 </html>

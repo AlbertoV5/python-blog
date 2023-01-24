@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState, useRef, useLayoutEffect } from "react"
+import React, { useEffect, useReducer, useState } from "react"
 import ThemeIcon from "./ThemeIcon"
 
 
@@ -39,33 +39,32 @@ const links = [
 ]
 
 const changeTheme = (theme: string) => {
+    // https://getbootstrap.com/docs/5.3/customize/color-modes/#javascript
     document.documentElement.setAttribute('data-bs-theme', theme);
     localStorage.setItem('theme', theme);
 }
 
+const swapThemeState = (prev: string, action: any): string => {
+    // if auto, set swap it by matching preferred color scheme
+    if (prev === 'auto'){
+        return window.matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark';
+    }
+    return prev === 'dark' ? 'light' : 'dark'
+}
+
+const initThemeState = () => {
+    let stored = localStorage?.getItem('theme');
+    return stored ? stored : 'auto'; // auto if no stored
+}
+
 const NavBar = () => {
-
-    const [theme, setTheme] = useState(() => {
-        let stored = localStorage?.getItem('theme');
-        return stored ? stored : 'auto'; // auto if no stored
-    })
-
-    // on state change
+    
+    const [theme, dispatch] = useReducer(swapThemeState, 'auto', initThemeState)
+    
+    // on state change, change the theme
     useEffect(() => {
         changeTheme(theme);
     }, [theme]); 
-
-    const swapTheme = () => {
-        // https://getbootstrap.com/docs/5.3/customize/color-modes/#javascript
-        setTheme((prev) => {
-            // if auto, set swap it by matching preferred color scheme
-            if (prev === 'auto'){
-                return window.matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark';
-            }
-            // if no auto, then just swap themes
-            return prev === 'dark' ? 'light' : 'dark'
-        })
-    }
     
     return (
         <nav
@@ -84,7 +83,7 @@ const NavBar = () => {
                             <li className="nav-item">
                                 <button 
                                     className="btn px-3 py-1 nav-link" 
-                                    onClick={swapTheme}
+                                    onClick={dispatch}
                                 >
                                     <ThemeIcon isDark={theme !== 'light'}></ThemeIcon>
                                 </button>
